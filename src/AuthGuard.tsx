@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { StrictMode, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import Keycloak from 'keycloak-js'
