@@ -1,20 +1,20 @@
+import React from 'react'
 import './App.css'
-//import useAuth from './hooks/useAuth'
-//import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
+import { AuthGuard } from './AuthGuard'
 
 function App() {
-	//const isLogin = useAuth()
-
-	// return isLogin ? <Protected /> : <Public />
-
 	return (
-		// <Routes>
-		// 	<Route element={<AuthGuard />}>
-		// 		<Route path="/path-1" element={<div>path 1</div>} />
-		// 		<Route path="/path-2" element={<div>path 2</div>} />
-		// 	</Route>
-		// </Routes>
-		<></>
+		<React.Suspense fallback={<div>Loading...</div>}>
+			<Routes>
+				<Route element={<AuthGuard />}>
+					<Route path="/a" element={<div>A</div>} />
+					<Route path="/b" element={<div>B</div>} />
+					<Route path="/c" element={<div>C</div>} />
+					<Route path="/" element={<div>D</div>} />
+				</Route>
+			</Routes>
+		</React.Suspense>
 	)
 }
 
