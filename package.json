@@ -12,8 +12,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "keycloak-js": "^23.0.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -42,7 +44,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,html,css,ts,tsx}": [
+    "src/**/*.{js,jsx,html,ts,tsx}": [
       "npm run lint",
       "npm run format"
     ]

@@ -40,4 +40,3 @@ jobs:
         uses: wagoid/commitlint-github-action@v3
         with:
           configFile: commitlint.config.cjs
-        

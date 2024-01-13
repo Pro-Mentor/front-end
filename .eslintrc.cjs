@@ -5,10 +5,10 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
-    "plugin:react/recommended",
-    "prettier"
+    'plugin:react/recommended',
+    'prettier',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs', "vite.config.ts"],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', '@typescript-eslint', 'react', 'prettier'],
   rules: {
@@ -18,13 +18,13 @@ module.exports = {
       { allowConstantExport: true },
     ],
     'prettier/prettier': [
-      "error",
+      'error',
       {
-        "endOfLine": "auto"
+        endOfLine: 'auto',
       },
     ],
   },
   settings: {
-    react: { version: 'detect'}
-  }
-}
+    react: { version: 'detect' },
+  },
+};
