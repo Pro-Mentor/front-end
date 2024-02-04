@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, { StrictMode, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import Keycloak from 'keycloak-js'
@@ -6,6 +5,7 @@ import {
 	AuthenticationConfig,
 	getAuthenticationConfig,
 } from './utils/getAuthenticationConfig'
+import Navbar from './components/shared/navbar/navbar'
 
 interface AuthGuardProps {
 	// You can define any props here if needed
@@ -15,7 +15,7 @@ const { hostname, protocol } = window.location
 
 const config: AuthenticationConfig = getAuthenticationConfig(hostname, protocol)
 
-export const keycloakInstant = new Keycloak({
+const keycloakInstant = new Keycloak({
 	realm: config.realm,
 	url: config.idpUrl,
 	clientId: config.clientId,
@@ -59,6 +59,7 @@ const AuthGuard: React.FC<AuthGuardProps> = () => {
 
 	return (
 		<StrictMode>
+			<Navbar />
 			<Outlet />
 		</StrictMode>
 	)
