@@ -5,6 +5,8 @@ import { AuthGuard } from './AuthGuard'
 import { Spinner } from 'react-bootstrap'
 import UniAdminDashboard from './pages/uni-admin/dashboard/uni-admin-dashboard'
 import UniStaff from './pages/uni-admin/staff/uni-staff'
+import Lecturers from './pages/uni-admin/lecturers/lecturers'
+import Students from './pages/uni-admin/students/students'
 
 document.title = 'ProMentor'
 
@@ -22,8 +24,8 @@ function App() {
 					<Route path="/" element={<UniAdminDashboard />} />
 					<Route path="/admin-dashboard" element={<UniAdminDashboard />} />
 					<Route path="/staff" element={<UniStaff />} />
-					<Route path="/students" element={<div>B</div>} />
-					<Route path="/lecturers" element={<div>C</div>} />
+					<Route path="/students" element={<Students />} />
+					<Route path="/lecturers" element={<Lecturers />} />
 				</Route>
 			</Routes>
 		</React.Suspense>

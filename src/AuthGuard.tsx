@@ -1,4 +1,4 @@
-import React, { StrictMode, useEffect } from 'react'
+import React, { StrictMode, useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Keycloak from 'keycloak-js'
 import {
@@ -24,6 +24,10 @@ const keycloakInstant = new Keycloak({
 const AuthGuard: React.FC<AuthGuardProps> = () => {
 	//const navigate = useNavigate()
 
+	const [loggedInUser, setLoggedInUser] = useState<string | undefined | null>(
+		null
+	)
+
 	useEffect(() => {
 		keycloakInstant
 			?.init({
@@ -32,6 +36,18 @@ const AuthGuard: React.FC<AuthGuardProps> = () => {
 			})
 			.then((authenticated: boolean) => {
 				console.log(authenticated, keycloakInstant)
+				console.log(keycloakInstant?.realmAccess?.roles)
+
+				setLoggedInUser(
+					keycloakInstant?.realmAccess?.roles.find(
+						(role) =>
+							role === 'admin' ||
+							role === 'resources-management' ||
+							role === 'lecture' ||
+							role === 'student' ||
+							role === 'user'
+					)
+				)
 			})
 			.catch((err: Error) => {
 				console.log(err)
@@ -56,7 +72,7 @@ const AuthGuard: React.FC<AuthGuardProps> = () => {
 			clearInterval(tokenCheckInterval)
 		}
 	}, [])
-
+	console.log(loggedInUser)
 	return (
 		<StrictMode>
 			<div className="main-wrapper">

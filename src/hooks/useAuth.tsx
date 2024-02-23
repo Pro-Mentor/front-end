@@ -1,5 +1,5 @@
 import Keycloak from 'keycloak-js'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const client = new Keycloak({
 	url: import.meta.env.VITE_KEYCLOAK_URL,

@@ -1,6 +1,13 @@
 import Sidebar from 'react-bootstrap-sidebar-menu'
-import navLogo from '@/assets/images/nav-logo.svg'
 import { useNavigate } from 'react-router-dom'
+import './navbar.scss'
+
+// icons
+import navLogo from '@/assets/images/nav-logo.svg'
+import NDashboard from '@/assets/images/nav-dashboard.svg'
+import NStaff from '@/assets/images/nav-staff.svg'
+import NStudents from '@/assets/images/nav-students.svg'
+import NLecturers from '@/assets/images/nav-lecturers.svg'
 
 type NavItemType = {
 	id: number
@@ -37,6 +44,39 @@ const NavbarLocal = () => {
 		},
 	]
 
+	// const uniStaffNavList: NavItemType[] = [
+	// 	{
+	// 		id: 1,
+	// 		title: 'Dashboard',
+	// 		path: '/admin-dashboard',
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		title: 'Students',
+	// 		path: '/students',
+	// 	},
+	// 	{
+	// 		id: 4,
+	// 		title: 'Lecturers',
+	// 		path: '/lecturers',
+	// 	},
+	// ]
+
+	function navIconSetter(id: number) {
+		switch (id) {
+			case 1:
+				return NDashboard
+			case 2:
+				return NStaff
+			case 3:
+				return NStudents
+			case 4:
+				return NLecturers
+			default:
+				return ''
+		}
+	}
+
 	return (
 		<Sidebar defaultExpanded variant={theme} bg={theme} expand="sm">
 			<Sidebar.Collapse getScrollValue={500}>
@@ -62,7 +102,13 @@ const NavbarLocal = () => {
 										active={item.path === window.location.pathname}
 										onSelect={() => navigate(item.path)}
 									>
-										<Sidebar.Nav.Icon>{/* menu item icon */}</Sidebar.Nav.Icon>
+										<Sidebar.Nav.Icon>
+											<img
+												className="nav-icon"
+												src={navIconSetter(item.id)}
+												alt="icon"
+											/>
+										</Sidebar.Nav.Icon>
 										<Sidebar.Nav.Title>{item.title}</Sidebar.Nav.Title>
 									</Sidebar.Nav.Link>
 								</Sidebar.Nav>

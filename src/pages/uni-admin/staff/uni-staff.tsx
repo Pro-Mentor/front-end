@@ -1,5 +1,3 @@
-import React from 'react'
-
 document.title = 'University Staff'
 
 const UniStaff = () => {
