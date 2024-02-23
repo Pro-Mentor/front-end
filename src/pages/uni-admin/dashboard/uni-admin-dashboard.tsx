@@ -1,4 +1,5 @@
 import CountsDisplayWidgets from '../../../components/uni-admin/dashboard/counts-display-widgets/counts-display-widgets'
+import EventsCalendar from '../../../components/uni-admin/dashboard/events-calendar/events-calendar'
 import EventsChart from '../../../components/uni-admin/dashboard/events-chart/events-chart'
 import JobPostsChart from '../../../components/uni-admin/dashboard/job-posts-chart/job-posts-chart'
 import './uni-admin-dashboard.scss'
@@ -16,7 +17,9 @@ const UniAdminDashboard = () => {
 						<EventsChart />
 					</div>
 				</div>
-				<div className="events-calendar">upcoming events calendar</div>
+				<div className="events-calendar">
+					<EventsCalendar />
+				</div>
 			</div>
 
 			<div className="right-container">
