@@ -7,10 +7,13 @@ import UniAdminDashboard from './pages/uni-admin/dashboard/uni-admin-dashboard'
 import UniStaff from './pages/uni-admin/staff/uni-staff'
 import Lecturers from './pages/uni-admin/lecturers/lecturers'
 import Students from './pages/uni-admin/students/students'
+import useAuth from './hooks/useAuth'
 
 document.title = 'ProMentor'
 
 function App() {
+	const { loggedInUser, isAuthenticated } = useAuth()
+
 	return (
 		<React.Suspense
 			fallback={
@@ -20,13 +23,14 @@ function App() {
 			}
 		>
 			<Routes>
-				<Route element={<AuthGuard />}>
-					<Route path="/" element={<UniAdminDashboard />} />
-					<Route path="/admin-dashboard" element={<UniAdminDashboard />} />
-					<Route path="/staff" element={<UniStaff />} />
-					<Route path="/students" element={<Students />} />
-					<Route path="/lecturers" element={<Lecturers />} />
-				</Route>
+				{loggedInUser === 'admin' && isAuthenticated && (
+					<Route element={<AuthGuard />}>
+						<Route path="/" element={<UniAdminDashboard />} />
+						<Route path="/staff" element={<UniStaff />} />
+						<Route path="/students" element={<Students />} />
+						<Route path="/lecturers" element={<Lecturers />} />
+					</Route>
+				)}
 			</Routes>
 		</React.Suspense>
 	)

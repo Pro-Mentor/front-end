@@ -25,7 +25,7 @@ const NavbarLocal = () => {
 		{
 			id: 1,
 			title: 'Dashboard',
-			path: '/admin-dashboard',
+			path: '/',
 		},
 		{
 			id: 2,
