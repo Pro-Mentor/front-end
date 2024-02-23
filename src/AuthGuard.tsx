@@ -5,7 +5,7 @@ import {
 	AuthenticationConfig,
 	getAuthenticationConfig,
 } from './utils/getAuthenticationConfig'
-import Navbar from './components/shared/navbar/navbar'
+import NavbarLocal from './components/shared/navbar/navbar'
 
 interface AuthGuardProps {
 	// You can define any props here if needed
@@ -59,8 +59,17 @@ const AuthGuard: React.FC<AuthGuardProps> = () => {
 
 	return (
 		<StrictMode>
-			<Navbar />
-			<Outlet />
+			<div className="main-wrapper">
+				{/* <Navbar className="main-header" expand="lg">
+					<Container fluid>
+						<Navbar.Brand href="#home">Brand link</Navbar.Brand>
+					</Container>
+				</Navbar> */}
+				<NavbarLocal />
+				<main className="main-container container-fluid">
+					<Outlet />
+				</main>
+			</div>
 		</StrictMode>
 	)
 }
