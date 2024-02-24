@@ -58,6 +58,7 @@ const data = [
 const JobPostsChart = () => {
 	return (
 		<div className="chart-container">
+			<div className="chart-title">Published Job Posts</div>
 			<ResponsiveContainer width="100%" height="100%">
 				<LineChart
 					width={500}

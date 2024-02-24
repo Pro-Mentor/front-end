@@ -59,6 +59,7 @@ const data = [
 const EventsChart = () => {
 	return (
 		<div className="chart-container">
+			<div className="chart-title">Published Events</div>
 			<ResponsiveContainer width="100%" height="100%">
 				<BarChart
 					width={500}

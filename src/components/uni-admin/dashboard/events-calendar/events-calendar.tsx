@@ -8,6 +8,7 @@ const localizer = momentLocalizer(moment) // or globalizeLocalizer
 const EventsCalendar = () => {
 	return (
 		<div className="calendar-container">
+			<div className="calendar-title">Upcoming Events</div>
 			<Calendar
 				localizer={localizer}
 				// events={myEventsList}
