@@ -36,6 +36,7 @@ const useAuth = () => {
 			.then((authenticated: boolean) => {
 				console.log(authenticated, keycloakInstant)
 				console.log(keycloakInstant?.realmAccess?.roles)
+				console.log(keycloakInstant?.token)
 
 				const userRole = keycloakInstant?.realmAccess?.roles.find(
 					(role) =>
