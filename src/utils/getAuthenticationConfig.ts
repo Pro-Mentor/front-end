@@ -14,7 +14,7 @@ export function getAuthenticationConfig(
 
 	return {
 		idpUrl: `${protocol}//idp.${topDomain}:8080`,
-		clientId: process.env.VITE_KEYCLOAK_CLIENT as string,
+		clientId: import.meta.env.VITE_KEYCLOAK_CLIENT as string,
 		// clientId: 'pro-mentor-web-app',
 		realm,
 	}

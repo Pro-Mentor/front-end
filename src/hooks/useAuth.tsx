@@ -20,7 +20,7 @@ const useAuth = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
 	const isRun = useRef(false)
 
-	const { loggedInUser, setupLoggedInUser } = useContext(
+	const { loggedInUser, setupLoggedInUser, setupToken } = useContext(
 		GlobalContext
 	) as GlobalContextType
 
@@ -34,9 +34,9 @@ const useAuth = () => {
 				checkLoginIframe: false,
 			})
 			.then((authenticated: boolean) => {
-				console.log(authenticated, keycloakInstant)
-				console.log(keycloakInstant?.realmAccess?.roles)
-				console.log(keycloakInstant?.token)
+				// console.log(authenticated, keycloakInstant)
+				// console.log(keycloakInstant?.realmAccess?.roles)
+				// console.log(keycloakInstant?.token)
 
 				const userRole = keycloakInstant?.realmAccess?.roles.find(
 					(role) =>
@@ -49,6 +49,7 @@ const useAuth = () => {
 
 				setupLoggedInUser(userRole || null)
 				setIsAuthenticated(authenticated)
+				setupToken(keycloakInstant?.token || null)
 			})
 			.catch((err: Error) => {
 				console.log(err)
@@ -72,17 +73,7 @@ const useAuth = () => {
 		return () => {
 			clearInterval(tokenCheckInterval)
 		}
-	}, [setupLoggedInUser])
-
-	console.log(loggedInUser)
-	// useEffect(() => {
-	// 	if (isRun.current) return
-	// 	isRun.current = true
-
-	// 	client
-	// 		.init({ onLoad: 'login-required' })
-	// 		.then((isAuthenticated) => setLogin(isAuthenticated))
-	// }, [])
+	}, [setupLoggedInUser, setupToken])
 
 	return { isAuthenticated, loggedInUser }
 }

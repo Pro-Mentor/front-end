@@ -1,22 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { SessionHandler } from '../utils/session-handler'
+
+const sessionHandler = new SessionHandler()
+const token = sessionHandler.getSession('token')
 
 // default request configs
 const client: AxiosInstance = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_GATEWAY_SERVICE_URL,
 	timeout: 20000,
 	headers: {
 		//'Accept': '',
-		Authorization: 'Bearer token',
+		Authorization: `Bearer ${token}`,
 	},
 })
 
 const fileUploadClient: AxiosInstance = axios.create({
-	baseURL: process.env.NEXT_PUBLIC_API_GATEWAY_SERVICE_URL,
 	timeout: 20000,
 	headers: {
 		//'Accept': '',
-		'Authorization-Token': 'xzx',
+		// 'Authorization-Token': 'xzx',
+		Authorization: `Bearer ${token}`,
 		'Content-Type': 'multipart/form-data',
 	},
 })
