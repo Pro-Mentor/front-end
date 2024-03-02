@@ -16,7 +16,13 @@ export class AuthService {
 		return this.gateway + 'students'
 	}
 
-	Get_Students(params: Record<string, string>) {
+	Get_Students(params: Record<string, string> = {}) {
 		return this.gateway + 'students' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_Staff(params: Record<string, string> = {}) {
+		return (
+			this.gateway + 'resource-managers' + '?' + this.qs.setQueryParams(params)
+		)
 	}
 }
