@@ -23,14 +23,16 @@ function App() {
 			}
 		>
 			<Routes>
-				{loggedInUser === 'admin' && isAuthenticated && (
-					<Route element={<AuthGuard />}>
-						<Route path="/" element={<UniAdminDashboard />} />
-						<Route path="/staff" element={<UniStaff />} />
-						<Route path="/students" element={<Students />} />
-						<Route path="/lecturers" element={<Lecturers />} />
-					</Route>
-				)}
+				<Route element={<AuthGuard />}>
+					{loggedInUser === 'admin' && isAuthenticated && (
+						<>
+							<Route path="/" element={<UniAdminDashboard />} />
+							<Route path="/staff" element={<UniStaff />} />
+							<Route path="/students" element={<Students />} />
+							<Route path="/lecturers" element={<Lecturers />} />
+						</>
+					)}
+				</Route>
 			</Routes>
 		</React.Suspense>
 	)

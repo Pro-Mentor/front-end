@@ -8,6 +8,7 @@ import NDashboard from '@/assets/images/nav-dashboard.svg'
 import NStaff from '@/assets/images/nav-staff.svg'
 import NStudents from '@/assets/images/nav-students.svg'
 import NLecturers from '@/assets/images/nav-lecturers.svg'
+import { keycloakInstant } from '../../../hooks/useAuth'
 
 type NavItemType = {
 	id: number
@@ -77,6 +78,13 @@ const NavbarLocal = () => {
 		}
 	}
 
+	function logoutHandler() {
+		const { hostname, protocol, port } = window.location
+		const hrefWothoutPath =
+			protocol + '//' + hostname + (port ? ':' + port : '')
+		keycloakInstant.logout({ redirectUri: hrefWothoutPath })
+	}
+
 	return (
 		<Sidebar defaultExpanded variant={theme} bg={theme} expand="sm">
 			<Sidebar.Collapse getScrollValue={500}>
@@ -141,6 +149,18 @@ const NavbarLocal = () => {
 							</Sidebar.Sub.Collapse>
 						</Sidebar.Sub> */}
 					</Sidebar.Body>
+					<Sidebar.Nav
+						data-toggle="tooltip"
+						data-placement="right"
+						title="Logout"
+					>
+						<Sidebar.Nav.Link onClick={logoutHandler}>
+							<Sidebar.Nav.Icon>
+								<img className="nav-icon" src={NDashboard} alt="icon" />
+							</Sidebar.Nav.Icon>
+							<Sidebar.Nav.Title>Logout</Sidebar.Nav.Title>
+						</Sidebar.Nav.Link>
+					</Sidebar.Nav>
 					<div className="powered-by-title">Powered by ProMentor © 2023</div>
 				</div>
 			</Sidebar.Collapse>

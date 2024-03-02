@@ -10,7 +10,7 @@ const { hostname, protocol } = window.location
 
 const config: AuthenticationConfig = getAuthenticationConfig(hostname, protocol)
 
-const keycloakInstant = new Keycloak({
+export const keycloakInstant = new Keycloak({
 	realm: config.realm,
 	url: config.idpUrl,
 	clientId: config.clientId,
@@ -34,9 +34,9 @@ const useAuth = () => {
 				checkLoginIframe: false,
 			})
 			.then((authenticated: boolean) => {
-				// console.log(authenticated, keycloakInstant)
-				// console.log(keycloakInstant?.realmAccess?.roles)
-				// console.log(keycloakInstant?.token)
+				console.log(authenticated, keycloakInstant)
+				console.log(keycloakInstant?.realmAccess?.roles)
+				console.log(keycloakInstant?.token)
 
 				const userRole = keycloakInstant?.realmAccess?.roles.find(
 					(role) =>
@@ -48,8 +48,11 @@ const useAuth = () => {
 				)
 
 				setupLoggedInUser(userRole || null)
-				setIsAuthenticated(authenticated)
 				setupToken(keycloakInstant?.token || null)
+				setIsAuthenticated(authenticated)
+				// setInterval(() => {
+				// 	setIsAuthenticated(authenticated)
+				// }, 5000)
 			})
 			.catch((err: Error) => {
 				console.log(err)

@@ -4,25 +4,7 @@ import { SessionHandler } from '../utils/session-handler'
 
 const sessionHandler = new SessionHandler()
 const token = sessionHandler.getSession('token')
-
-// default request configs
-const client: AxiosInstance = axios.create({
-	timeout: 20000,
-	headers: {
-		//'Accept': '',
-		Authorization: `Bearer ${token}`,
-	},
-})
-
-const fileUploadClient: AxiosInstance = axios.create({
-	timeout: 20000,
-	headers: {
-		//'Accept': '',
-		// 'Authorization-Token': 'xzx',
-		Authorization: `Bearer ${token}`,
-		'Content-Type': 'multipart/form-data',
-	},
-})
+// console.log(token)
 
 // service calls retrying configs
 interface RetryConfig extends AxiosRequestConfig {
@@ -34,6 +16,23 @@ const globalConfig: RetryConfig = {
 	retry: 3,
 	retryDelay: 2000,
 }
+
+// default request configs
+const client: AxiosInstance = axios.create({
+	timeout: 20000,
+	//retry: 3,
+	//retryDelay: 2000,
+})
+
+const fileUploadClient: AxiosInstance = axios.create({
+	timeout: 20000,
+	headers: {
+		//'Accept': '',
+		// 'Authorization-Token': 'xzx',
+		Authorization: `Bearer ${token}`,
+		'Content-Type': 'multipart/form-data',
+	},
+})
 
 client.interceptors.response.use(
 	(response) => response,
@@ -82,7 +81,13 @@ export async function GetRequestHandler<ResponseType>(
 	try {
 		const response: AxiosResponse<ResponseType> = await client.get(
 			endpoint,
-			globalConfig
+			{
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
+			}
+			//globalConfig
 		)
 		const { data } = response
 
