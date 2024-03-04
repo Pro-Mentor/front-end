@@ -11,7 +11,11 @@ const PageHeader = ({ title, children }: Props) => {
 		<div className="page-header">
 			<div className="title">{title}</div>
 
-			{children ? children : <div className="buttons-set"></div>}
+			{children ? (
+				<div className="buttons-set">{children}</div>
+			) : (
+				<div className="buttons-set"></div>
+			)}
 		</div>
 	)
 }

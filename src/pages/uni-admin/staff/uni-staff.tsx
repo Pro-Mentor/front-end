@@ -4,6 +4,10 @@ import PageHeader from '../../../components/shared/page-header/page-header'
 import './uni-staff.scss'
 import { useGetStaffTableDetails } from '../../../hooks/uni-admin/staff/useGetStaffTableDetails'
 import { useState } from 'react'
+import AddNewStaff from '../../../components/uni-admin/staff/add-new-staff/add-new-staff'
+import DeactivateStaff, {
+	DeactivateItem,
+} from '../../../components/uni-admin/staff/deactivate-staff/deactivate-staff'
 
 type StaffItem = {
 	name: string
@@ -11,7 +15,7 @@ type StaffItem = {
 	status: string
 }
 
-const tableHeaders = ['Name', 'Email', 'Status', '']
+const tableHeaders = ['', 'Name', 'Email', 'Status']
 const staffList: StaffItem[] = [
 	{
 		name: 'John Doe',
@@ -38,6 +42,9 @@ const staffList: StaffItem[] = [
 const UniStaff = () => {
 	const [isAddNewModalOpen, setIsAddNewModalOpen] = useState(false)
 	const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false)
+	const [deactivateStaffList, setDeactivateStaffList] = useState<
+		DeactivateItem[]
+	>([])
 
 	// const { staffData, isLoading, isValidating, error } =
 	// 	useGetStaffTableDetails()
@@ -46,23 +53,28 @@ const UniStaff = () => {
 	// if (isLoading || isValidating) return <div>Loading...</div>
 	// if (typeof staffData === 'string') return <div>Error!!!</div>
 
+	// open add new staff modal
 	const addNewHandler = () => {
 		setIsAddNewModalOpen(true)
 	}
 
+	// open deactivate staff modal
 	const deactivateHandler = () => {
 		setIsDeactivateModalOpen(true)
 	}
 
+	// close both add and deactivate modals
 	const modalCloseHandler = () => {
 		setIsAddNewModalOpen(false)
 		setIsDeactivateModalOpen(false)
 	}
 
+	// add new staff confirmed
 	const addNewConfirmHandler = () => {
 		setIsAddNewModalOpen(false)
 	}
 
+	// deactivate staff confirmed
 	const deactivateConfirmHandler = () => {
 		setIsDeactivateModalOpen(false)
 	}
@@ -71,14 +83,14 @@ const UniStaff = () => {
 		<>
 			<div className="page uni-staff-page">
 				<PageHeader title="Staff">
-					<div className="">
+					<>
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>
-						<Button variant="danger" onClick={deactivateHandler}>
+						<Button variant="primary" onClick={deactivateHandler}>
 							Deactivate
 						</Button>
-					</div>
+					</>
 				</PageHeader>
 				<div className="">
 					<CustomTable<StaffItem>
@@ -89,36 +101,19 @@ const UniStaff = () => {
 			</div>
 
 			{/* add new modal */}
-			<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
-				<Modal.Header closeButton>
-					<Modal.Title>Modal heading</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={modalCloseHandler}>
-						Close
-					</Button>
-					<Button variant="primary" onClick={addNewConfirmHandler}>
-						Save Changes
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<AddNewStaff
+				isAddNewModalOpen={isAddNewModalOpen}
+				modalCloseHandler={modalCloseHandler}
+				addNewConfirmHandler={addNewConfirmHandler}
+			/>
 
 			{/* deactivate confirm modal */}
-			<Modal show={isDeactivateModalOpen} onHide={modalCloseHandler}>
-				<Modal.Header closeButton>
-					<Modal.Title>Modal heading</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={modalCloseHandler}>
-						Close
-					</Button>
-					<Button variant="primary" onClick={deactivateConfirmHandler}>
-						Save Changes
-					</Button>
-				</Modal.Footer>
-			</Modal>
+			<DeactivateStaff
+				isDeactivateModalOpen={isDeactivateModalOpen}
+				modalCloseHandler={modalCloseHandler}
+				deactivateConfirmHandler={deactivateConfirmHandler}
+				deactivateStaffList={deactivateStaffList}
+			/>
 		</>
 	)
 }
