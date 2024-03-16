@@ -1,13 +1,14 @@
 // side navbar
 
 .nav-icon {
-	margin-left: -8px;
+	margin-left: 7px;
 	width: 40px;
 	margin-top: -4px;
 }
 .show .nav-icon {
 	width: 40px;
 	margin-top: -4px;
+	margin-left: 2px;
 }
 
 .sidebar-menu {
@@ -68,3 +69,7 @@
 // .show .sidebar-menu-body {
 //     display: block !important;
 // }
+
+.bottom-nav-container {
+	padding: 0.5rem;
+}

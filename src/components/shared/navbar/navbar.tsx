@@ -149,18 +149,21 @@ const NavbarLocal = () => {
 							</Sidebar.Sub.Collapse>
 						</Sidebar.Sub> */}
 					</Sidebar.Body>
-					<Sidebar.Nav
-						data-toggle="tooltip"
-						data-placement="right"
-						title="Logout"
-					>
-						<Sidebar.Nav.Link onClick={logoutHandler}>
-							<Sidebar.Nav.Icon>
-								<img className="nav-icon" src={NDashboard} alt="icon" />
-							</Sidebar.Nav.Icon>
-							<Sidebar.Nav.Title>Logout</Sidebar.Nav.Title>
-						</Sidebar.Nav.Link>
-					</Sidebar.Nav>
+
+					<div className="bottom-nav-container">
+						<Sidebar.Nav
+							data-toggle="tooltip"
+							data-placement="right"
+							title="Logout"
+						>
+							<Sidebar.Nav.Link onClick={logoutHandler}>
+								<Sidebar.Nav.Icon>
+									<img className="nav-icon" src={NDashboard} alt="icon" />
+								</Sidebar.Nav.Icon>
+								<Sidebar.Nav.Title>Logout</Sidebar.Nav.Title>
+							</Sidebar.Nav.Link>
+						</Sidebar.Nav>
+					</div>
 					<div className="powered-by-title">Powered by ProMentor © 2023</div>
 				</div>
 			</Sidebar.Collapse>
