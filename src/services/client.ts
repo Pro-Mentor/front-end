@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { SessionHandler } from '../utils/session-handler'
 
@@ -22,6 +21,11 @@ const client: AxiosInstance = axios.create({
 	timeout: 20000,
 	//retry: 3,
 	//retryDelay: 2000,
+	headers: {
+		//'Accept': '',
+		// 'Authorization-Token': 'xzx',
+		Authorization: `Bearer ${token}`,
+	},
 })
 
 const fileUploadClient: AxiosInstance = axios.create({
@@ -34,24 +38,24 @@ const fileUploadClient: AxiosInstance = axios.create({
 	},
 })
 
-client.interceptors.response.use(
-	(response) => response,
-	(error) => {
-		const { config } = error
+// client.interceptors.response.use(
+// 	(response) => response,
+// 	(error) => {
+// 		const { config } = error
 
-		if (!config || !config.retry) {
-			return Promise.reject(error)
-		}
-		config.retry -= 1
-		const delayRetryRequest = new Promise<void>((resolve) => {
-			setTimeout(() => {
-				console.log('retry the request', config.url)
-				resolve()
-			}, config.retryDelay || 3000)
-		})
-		return delayRetryRequest.then(() => client(config))
-	}
-)
+// 		if (!config || !config.retry) {
+// 			return Promise.reject(error)
+// 		}
+// 		config.retry -= 1
+// 		const delayRetryRequest = new Promise<void>((resolve) => {
+// 			setTimeout(() => {
+// 				console.log('retry the request', config.url)
+// 				resolve()
+// 			}, config.retryDelay || 3000)
+// 		})
+// 		return delayRetryRequest.then(() => client(config))
+// 	}
+// )
 export { client, globalConfig }
 
 // post request sending
@@ -60,24 +64,31 @@ export async function PostRequestHandler<RequestType, ResponseType>(
 	endpoint: string,
 	isFileUpload?: boolean,
 	file?: FormData
-): Promise<ResponseType | string> {
+) {
 	try {
 		let response: AxiosResponse<ResponseType>
 
 		if (isFileUpload && file) {
 			response = await fileUploadClient.post(endpoint, file, globalConfig)
-		} else response = await client.post(endpoint, requestModel, globalConfig)
-		const { data } = response
-
-		return data
+		} else {
+			response = await client.post(endpoint, requestModel, globalConfig)
+			// .catch((error) => {
+			// 	console.log(error)
+			// 	throw error
+			// })
+			//const { data } = response
+			//console.log(response)
+			return response
+		}
 	} catch (error: any) {
-		return error.message
+		console.log(error.response.data)
+		throw error.response.data
 	}
 }
 
 export async function GetRequestHandler<ResponseType>(
 	endpoint: string
-): Promise<ResponseType | string> {
+): Promise<ResponseType | any> {
 	try {
 		const response: AxiosResponse<ResponseType> = await client.get(
 			endpoint,
@@ -90,10 +101,11 @@ export async function GetRequestHandler<ResponseType>(
 			//globalConfig
 		)
 		const { data } = response
-
+		console.log(response)
 		return data
 	} catch (error: any) {
-		return error.message
+		console.log(error.response.data)
+		throw error
 	}
 }
 
@@ -111,7 +123,7 @@ export async function PutRequestHandler<RequestType, ResponseType>(
 
 		return data
 	} catch (error: any) {
-		return error.message
+		return error.response
 	}
 }
 
@@ -130,7 +142,7 @@ export async function DeleteRequestHandler<RequestType, ResponseType>(
 
 		return data
 	} catch (error: any) {
-		return error.message
+		return error.response
 	}
 }
 
@@ -148,7 +160,7 @@ export async function PatchRequestHandler<RequestType, ResponseType>(
 
 		return data
 	} catch (error: any) {
-		return error.message
+		return error.response
 	}
 }
 
@@ -167,6 +179,6 @@ export async function FileUploadHandler<ResponseType>(
 
 		return data
 	} catch (error: any) {
-		return error.message
+		return error.response
 	}
 }

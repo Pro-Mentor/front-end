@@ -25,4 +25,8 @@ export class AuthService {
 			this.gateway + 'resource-managers' + '?' + this.qs.setQueryParams(params)
 		)
 	}
+
+	Post_Staff() {
+		return this.gateway + 'resource-managers'
+	}
 }

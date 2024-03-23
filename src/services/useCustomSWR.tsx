@@ -7,6 +7,17 @@ import {
 	PutRequestHandler,
 } from './client'
 import useSWR from 'swr'
+import { ErrorCode } from '@promentor-app/shared-lib'
+
+export interface IGlobalError {
+	errors: ErrorObj[]
+	errorCode: ErrorCode
+}
+
+export interface ErrorObj {
+	message: string
+	field?: string
+}
 
 export function useCustomSWR<RequestType, ResponseType>(
 	endpoint: string,
@@ -18,35 +29,45 @@ export function useCustomSWR<RequestType, ResponseType>(
 		requestType === 'GET' ? true : false
 	)
 	const [request, setRequest] = useState<RequestType | null>(null)
+	const [globalError, setGlobalError] = useState<IGlobalError | string | null>(
+		null
+	)
 
 	useEffect(() => {
 		if (request) setIsRequestReady(true)
 	}, [request])
 
 	const fetcherDefault = async () => {
-		switch (requestType) {
-			case 'GET':
-				return await GetRequestHandler<ResponseType>(endpoint)
-			case 'PUT':
-				return await PutRequestHandler<RequestType, ResponseType>(
-					request,
-					endpoint
-				)
-			case 'DELETE':
-				return await DeleteRequestHandler<RequestType, ResponseType>(
-					request,
-					endpoint
-				)
-			case 'PATCH':
-				return await PatchRequestHandler<RequestType, ResponseType>(
-					request,
-					endpoint
-				)
-			case 'POST':
-				return await PostRequestHandler<RequestType, ResponseType>(
-					request,
-					endpoint
-				)
+		setIsRequestReady(false)
+
+		try {
+			switch (requestType) {
+				case 'GET':
+					return await GetRequestHandler<ResponseType>(endpoint)
+				case 'PUT':
+					return await PutRequestHandler<RequestType, ResponseType>(
+						request,
+						endpoint
+					)
+				case 'DELETE':
+					return await DeleteRequestHandler<RequestType, ResponseType>(
+						request,
+						endpoint
+					)
+				case 'PATCH':
+					return await PatchRequestHandler<RequestType, ResponseType>(
+						request,
+						endpoint
+					)
+				case 'POST':
+					return await PostRequestHandler<RequestType, ResponseType>(
+						request,
+						endpoint
+					)
+			}
+		} catch (e: any) {
+			console.log(e)
+			setGlobalError(e as IGlobalError)
 		}
 	}
 
@@ -54,15 +75,24 @@ export function useCustomSWR<RequestType, ResponseType>(
 		isRequestReady ? endpoint : null,
 		fetcherDefault,
 		{
-			revalidateOnFocus: revalidateOnFocus,
-			revalidateIfStale: revalidateIfStale,
+			revalidateOnFocus: true,
+			revalidateIfStale: true,
 		}
 	)
+
+	useEffect(() => {
+		console.log(error)
+
+		if (error !== undefined && error !== null) {
+			setGlobalError(error as string)
+		}
+	}, [error])
+
 	return {
 		data,
 		isLoading,
 		isValidating,
-		error,
+		error: globalError,
 		mutate,
 		setRequest,
 		setIsRequestReady,

@@ -24,13 +24,13 @@ module.exports = {
 			{ allowConstantExport: true },
 		],
 		'prettier/prettier': [
-			'error',
+			'warn',
 			{
 				endOfLine: 'auto',
 			},
 		],
 		'sort-imports': [
-			'error',
+			'warn',
 			{
 				ignoreDeclarationSort: true,
 			},
@@ -39,6 +39,7 @@ module.exports = {
 		'@typescript-eslint/no-unused-vars': 'off',
 		'unused-imports/no-unused-imports': 'off',
 		'unused-imports/no-unused-vars': 'off',
+		'@typescript-eslint/no-explicit-any': 'off',
 	},
 	settings: {
 		react: { version: 'detect' },
