@@ -11,10 +11,10 @@ export const useGetStaffTableDetails = () => {
 	>(api.Get_Staff(), 'GET')
 
 	return {
-		staffData: data,
-		error,
-		isLoading,
-		isValidating,
+		getStaffResponse: data,
+		error_getStaff: error,
+		isLoading_getStaff: isLoading,
+		isValidating_getStaff: isValidating,
 		mutate,
 	}
 }

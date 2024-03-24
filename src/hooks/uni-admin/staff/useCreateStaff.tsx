@@ -24,9 +24,7 @@ export const useCreateStaff = () => {
 
 	// useEffect(() => {
 	// 	console.log(data)
-	// 	console.log(error)
-	// 	if (isLoading || isValidating) console.log(isLoading, isValidating)
-	// }, [data, error, isLoading, isValidating])
+	// }, [data])
 
 	return {
 		createStaffResponse: data,

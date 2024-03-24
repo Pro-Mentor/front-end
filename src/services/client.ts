@@ -86,9 +86,7 @@ export async function PostRequestHandler<RequestType, ResponseType>(
 	}
 }
 
-export async function GetRequestHandler<ResponseType>(
-	endpoint: string
-): Promise<ResponseType | any> {
+export async function GetRequestHandler<ResponseType>(endpoint: string) {
 	try {
 		const response: AxiosResponse<ResponseType> = await client.get(
 			endpoint,
@@ -100,9 +98,11 @@ export async function GetRequestHandler<ResponseType>(
 			}
 			//globalConfig
 		)
-		const { data } = response
-		console.log(response)
-		return data
+		const responseData = response.data as any
+		// console.log(responseData)
+		// return responseData
+		if (responseData?.data) return responseData.data as ResponseType
+		else return responseData as ResponseType
 	} catch (error: any) {
 		console.log(error.response.data)
 		throw error

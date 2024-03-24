@@ -11,46 +11,29 @@ import DeactivateStaff, {
 	DeactivateItem,
 } from '../../../components/uni-admin/staff/deactivate-staff/deactivate-staff'
 import { useCreateStaff } from '../../../hooks/uni-admin/staff/useCreateStaff'
-import { isIGlobalError } from '../../../utils/isGlobalError'
 import { toast } from 'react-toastify'
+import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
+import { GetResourceManagersResponse } from '@promentor-app/shared-lib'
 
 type StaffItem = {
+	id: string
 	name: string
+	username: string
 	email: string
 	status: string
 }
 
-const tableHeaders = ['', 'Name', 'Email', 'Status']
-const staffList: StaffItem[] = [
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-]
+const tableHeaders = ['', 'Name', 'Username', 'Email', 'Status']
 
 const UniStaff = () => {
 	const [isLoading, setIsLoading] = useState(false)
+	const [loaderMsg, setLoaderMsg] = useState('')
 	const [isAddNewModalOpen, setIsAddNewModalOpen] = useState(false)
 	const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false)
 	const [deactivateStaffList, setDeactivateStaffList] = useState<
 		DeactivateItem[]
 	>([])
+	const [staffTableList, setStaffTableList] = useState<StaffItem[]>([])
 	const {
 		setCreateStaffRequest,
 		createStaffResponse,
@@ -60,12 +43,12 @@ const UniStaff = () => {
 		setIsRequestReady_createStaff,
 	} = useCreateStaff()
 
-	// const { staffData, isLoading, isValidating, error } =
-	// 	useGetStaffTableDetails()
-
-	// if (error) return <div>Failed to load</div>
-	// if (isLoading || isValidating) return <div>Loading...</div>
-	// if (typeof staffData === 'string') return <div>Error!!!</div>
+	const {
+		getStaffResponse,
+		isLoading_getStaff,
+		isValidating_getStaff,
+		error_getStaff,
+	} = useGetStaffTableDetails()
 
 	// open add new staff modal
 	const addNewHandler = () => {
@@ -85,7 +68,7 @@ const UniStaff = () => {
 
 	// add new staff confirmed
 	const addNewConfirmHandler = (data: FormData) => {
-		setIsLoading(true)
+		// setIsLoading(true)
 		setCreateStaffRequest(data)
 		setIsRequestReady_createStaff(true)
 		// setIsAddNewModalOpen(false)
@@ -96,26 +79,61 @@ const UniStaff = () => {
 		setIsDeactivateModalOpen(false)
 	}
 
+	// convert staff details response into table row data
+	const staffTableDataSetter = (response: GetResourceManagersResponse[]) => {
+		const staffList: StaffItem[] = response.map((item) => {
+			return {
+				id: item.id,
+				name: item?.firstName + ' ' + item?.lastName || '-',
+				username: item.username,
+				email: item.email,
+				status: item.enabled ? 'Active' : 'Inactive',
+			}
+		})
+		// console.log(staffList)
+
+		setStaffTableList(staffList)
+	}
+
 	useEffect(() => {
 		// console.log(createStaffResponse)
 		if (createStaffResponse) {
-			setIsLoading(false)
+			// setIsLoading(false)
 			toast.success('Staff created successfully.')
 			setIsAddNewModalOpen(false)
 		}
 	}, [createStaffResponse])
 
 	useEffect(() => {
-		// console.log(error_createStaff)
-		if (
-			error_createStaff !== undefined &&
-			error_createStaff !== null &&
-			typeof error_createStaff !== 'string'
-		) {
-			setIsLoading(false)
-			toast.error(error_createStaff.errors[0].message)
+		// console.log(getStaffResponse)
+		if (getStaffResponse && getStaffResponse.length > 0) {
+			staffTableDataSetter(getStaffResponse)
 		}
-	}, [error_createStaff])
+	}, [getStaffResponse])
+
+	useEffect(() => {
+		errorDisplayHandler(error_createStaff)
+		errorDisplayHandler(error_getStaff)
+	}, [error_createStaff, error_getStaff])
+
+	useEffect(() => {
+		if (
+			isLoading_createStaff ||
+			isLoading_getStaff ||
+			isValidating_createStaff ||
+			isValidating_getStaff
+		) {
+			setIsLoading(true)
+		} else {
+			setIsLoading(false)
+		}
+	}, [
+		isLoading_createStaff,
+		isLoading_getStaff,
+		isValidating_createStaff,
+		isValidating_getStaff,
+	])
+
 	return (
 		<>
 			<div className="page uni-staff-page">
@@ -130,10 +148,12 @@ const UniStaff = () => {
 					</>
 				</PageHeader>
 				<div className="">
-					<CustomTable<StaffItem>
-						tableHeaders={tableHeaders}
-						tableData={staffList}
-					/>
+					{staffTableList && (
+						<CustomTable<StaffItem>
+							tableHeaders={tableHeaders}
+							tableData={staffTableList}
+						/>
+					)}
 				</div>
 			</div>
 
@@ -156,20 +176,9 @@ const UniStaff = () => {
 			<Modal show={isLoading} backdrop="static" keyboard={false} centered>
 				<Modal.Body className="text-center">
 					<Spinner animation="border" role="status" />
-					<p>Creating staff member...</p>
+					<p>{loaderMsg}</p>
 				</Modal.Body>
 			</Modal>
-
-			{/* Toast
-			<Toast
-				show={showToast}
-				onClose={toggleToast}
-				delay={5000}
-				animation
-				autohide
-			>
-				<Toast.Body>{toastMessage}</Toast.Body>
-			</Toast> */}
 		</>
 	)
 }

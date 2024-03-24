@@ -29,6 +29,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 		requestType === 'GET' ? true : false
 	)
 	const [request, setRequest] = useState<RequestType | null>(null)
+	const [response, setResponse] = useState<any>()
 	const [globalError, setGlobalError] = useState<IGlobalError | string | null>(
 		null
 	)
@@ -41,32 +42,40 @@ export function useCustomSWR<RequestType, ResponseType>(
 		setIsRequestReady(false)
 
 		try {
+			let res
 			switch (requestType) {
 				case 'GET':
-					return await GetRequestHandler<ResponseType>(endpoint)
+					res = await GetRequestHandler<ResponseType>(endpoint)
+					break
 				case 'PUT':
-					return await PutRequestHandler<RequestType, ResponseType>(
+					res = await PutRequestHandler<RequestType, ResponseType>(
 						request,
 						endpoint
 					)
+					break
 				case 'DELETE':
-					return await DeleteRequestHandler<RequestType, ResponseType>(
+					res = await DeleteRequestHandler<RequestType, ResponseType>(
 						request,
 						endpoint
 					)
+					break
 				case 'PATCH':
-					return await PatchRequestHandler<RequestType, ResponseType>(
+					res = await PatchRequestHandler<RequestType, ResponseType>(
 						request,
 						endpoint
 					)
+					break
 				case 'POST':
-					return await PostRequestHandler<RequestType, ResponseType>(
+					res = await PostRequestHandler<RequestType, ResponseType>(
 						request,
 						endpoint
 					)
+					break
 			}
+			setResponse(res)
+			return res
 		} catch (e: any) {
-			console.log(e)
+			// console.log(e)
 			setGlobalError(e as IGlobalError)
 		}
 	}
@@ -75,13 +84,13 @@ export function useCustomSWR<RequestType, ResponseType>(
 		isRequestReady ? endpoint : null,
 		fetcherDefault,
 		{
-			revalidateOnFocus: true,
-			revalidateIfStale: true,
+			revalidateOnFocus: revalidateOnFocus,
+			revalidateIfStale: revalidateIfStale,
 		}
 	)
 
 	useEffect(() => {
-		console.log(error)
+		// console.log(error)
 
 		if (error !== undefined && error !== null) {
 			setGlobalError(error as string)
@@ -89,7 +98,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 	}, [error])
 
 	return {
-		data,
+		data: response,
 		isLoading,
 		isValidating,
 		error: globalError,

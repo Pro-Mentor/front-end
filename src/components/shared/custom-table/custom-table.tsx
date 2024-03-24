@@ -61,9 +61,33 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 												id={`custom-table-select-${index}`}
 											/>
 										</td>
-										{Object.entries(item).map(([key, value]) => (
-											<td key={key}>{value as string}</td>
-										))}
+										{Object.entries(item).map(([key, value]) => {
+											if (key === 'status' && value === 'Active') {
+												return (
+													<td key={key}>
+														<span className="badge text-bg-success">
+															{value as string}
+														</span>
+													</td>
+												)
+											} else if (key === 'status' && value === 'Inactive') {
+												return (
+													<td key={key}>
+														<span className="badge text-bg-success">
+															{value as string}
+														</span>
+													</td>
+												)
+											} else if (key !== 'id') {
+												return <td key={key}>{value as string}</td>
+											} else {
+												return (
+													<td key={key} hidden>
+														{value as string}
+													</td>
+												)
+											}
+										})}
 									</tr>
 								)
 							})}
