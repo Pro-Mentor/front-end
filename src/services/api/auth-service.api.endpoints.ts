@@ -29,4 +29,10 @@ export class AuthService {
 	Post_Staff() {
 		return this.gateway + 'resource-managers'
 	}
+
+	Patch_Staff(params: Record<string, string> = {}) {
+		return (
+			this.gateway + 'resource-managers' + '?' + this.qs.setQueryParams(params)
+		)
+	}
 }

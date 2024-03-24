@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { AuthService } from '../../../services/api/auth-service.api.endpoints'
 import { useCustomSWR } from '../../../services/useCustomSWR'
 import {

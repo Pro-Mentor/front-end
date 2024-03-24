@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 
 export type DeactivateItem = {
@@ -10,7 +9,7 @@ export type DeactivateItem = {
 type Props = {
 	isDeactivateModalOpen: boolean
 	modalCloseHandler: () => void
-	deactivateConfirmHandler: () => void
+	deactivateConfirmHandler: (list: DeactivateItem[]) => void
 	deactivateStaffList: DeactivateItem[]
 }
 
@@ -29,12 +28,12 @@ const DeactivateStaff = ({
 				<div className="">
 					Are you sure you want to deactive following selected staff accounts?
 				</div>
-				<div className="">
+				<div className="mt-4">
 					{deactivateStaffList &&
 						deactivateStaffList.map((staff, index) => (
-							<div key={index} className="">
+							<div key={index} className="d-flex gap-2">
 								<div className="">{staff.name}</div>
-								<div className="">{staff.email}</div>
+								<div className="">- {staff.email}</div>
 							</div>
 						))}
 				</div>
@@ -43,7 +42,10 @@ const DeactivateStaff = ({
 				<Button variant="secondary" onClick={modalCloseHandler}>
 					Cancel
 				</Button>
-				<Button variant="primary" onClick={deactivateConfirmHandler}>
+				<Button
+					variant="primary"
+					onClick={() => deactivateConfirmHandler(deactivateStaffList)}
+				>
 					Deactivate
 				</Button>
 			</Modal.Footer>

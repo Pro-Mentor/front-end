@@ -1,4 +1,4 @@
-import { Button, Modal, Spinner, Toast } from 'react-bootstrap'
+import { Button, Modal, Spinner } from 'react-bootstrap'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
 import PageHeader from '../../../components/shared/page-header/page-header'
 import './uni-staff.scss'
@@ -14,6 +14,7 @@ import { useCreateStaff } from '../../../hooks/uni-admin/staff/useCreateStaff'
 import { toast } from 'react-toastify'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 import { GetResourceManagersResponse } from '@promentor-app/shared-lib'
+import { useUpdateStaff } from '../../../hooks/uni-admin/staff/useUpdateStaff'
 
 type StaffItem = {
 	id: string
@@ -34,6 +35,8 @@ const UniStaff = () => {
 		DeactivateItem[]
 	>([])
 	const [staffTableList, setStaffTableList] = useState<StaffItem[]>([])
+	const [selectedStaffList, setSelectedStaffList] = useState<StaffItem[]>([])
+
 	const {
 		setCreateStaffRequest,
 		createStaffResponse,
@@ -50,6 +53,15 @@ const UniStaff = () => {
 		error_getStaff,
 	} = useGetStaffTableDetails()
 
+	// const {
+	// 	setUpdateStaffRequest,
+	// 	updateStaffResponse,
+	// 	isLoading_updateStaff,
+	// 	isValidating_updateStaff,
+	// 	error_updateStaff,
+	// 	setIsRequestReady_updateStaff,
+	// } = useUpdateStaff()
+
 	// open add new staff modal
 	const addNewHandler = () => {
 		setIsAddNewModalOpen(true)
@@ -57,6 +69,7 @@ const UniStaff = () => {
 
 	// open deactivate staff modal
 	const deactivateHandler = () => {
+		deactivateListSetter(selectedStaffList)
 		setIsDeactivateModalOpen(true)
 	}
 
@@ -75,8 +88,23 @@ const UniStaff = () => {
 	}
 
 	// deactivate staff confirmed
-	const deactivateConfirmHandler = () => {
+	const deactivateConfirmHandler = (list: DeactivateItem[]) => {
+		console.log(list)
 		setIsDeactivateModalOpen(false)
+	}
+
+	// convert table row data into deactivate list data
+	const deactivateListSetter = (list: StaffItem[]) => {
+		const dList: DeactivateItem[] = list.map((item) => {
+			return {
+				id: item.id,
+				email: item.email,
+				name: item.name,
+			}
+		})
+		// console.log(staffList)
+
+		setDeactivateStaffList(dList)
 	}
 
 	// convert staff details response into table row data
@@ -93,6 +121,19 @@ const UniStaff = () => {
 		// console.log(staffList)
 
 		setStaffTableList(staffList)
+	}
+
+	// select data row in the table
+	const selectHandler = (item: StaffItem) => {
+		if (selectedStaffList.some((selectedUser) => selectedUser.id === item.id)) {
+			// If already selected, remove from list
+			setSelectedStaffList(
+				selectedStaffList.filter((selectedUser) => selectedUser.id !== item.id)
+			)
+		} else {
+			// If not selected, add to list
+			setSelectedStaffList([...selectedStaffList, item])
+		}
 	}
 
 	useEffect(() => {
@@ -142,7 +183,11 @@ const UniStaff = () => {
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>
-						<Button variant="primary" onClick={deactivateHandler}>
+						<Button
+							variant="primary"
+							onClick={deactivateHandler}
+							disabled={!(selectedStaffList.length > 0)}
+						>
 							Deactivate
 						</Button>
 					</>
@@ -152,6 +197,8 @@ const UniStaff = () => {
 						<CustomTable<StaffItem>
 							tableHeaders={tableHeaders}
 							tableData={staffTableList}
+							rowClickHandler={selectHandler}
+							selectedDataRows={selectedStaffList}
 						/>
 					)}
 				</div>

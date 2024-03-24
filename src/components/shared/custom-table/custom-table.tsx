@@ -7,11 +7,13 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 	tableData,
 	children,
 	rowClickHandler,
+	selectedDataRows,
 }: {
 	tableHeaders?: string[]
 	tableData?: dataRowType[]
 	children?: React.ReactNode
 	rowClickHandler?: (item: dataRowType) => void
+	selectedDataRows?: dataRowType[]
 }) {
 	return (
 		<div className="custom-table">
@@ -55,12 +57,23 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 										style={rowClickHandler ? { cursor: 'pointer' } : {}}
 										// className={rowClickHandler ? 'clickable-row' : ''}
 									>
-										<td key={index}>
-											<Form.Check
-												type="checkbox"
-												id={`custom-table-select-${index}`}
-											/>
-										</td>
+										{rowClickHandler && selectedDataRows && (
+											<td key={index}>
+												<Form.Check
+													type="checkbox"
+													id={`custom-table-select-${index}`}
+													checked={selectedDataRows.some(
+														(selectedUser: dataRowType) =>
+															selectedUser.id === item.id
+													)}
+													onChange={
+														rowClickHandler
+															? () => rowClickHandler(item)
+															: undefined
+													}
+												/>
+											</td>
+										)}
 										{Object.entries(item).map(([key, value]) => {
 											if (key === 'status' && value === 'Active') {
 												return (

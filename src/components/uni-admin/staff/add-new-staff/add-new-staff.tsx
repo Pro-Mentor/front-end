@@ -1,5 +1,4 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import React from 'react'
 import { Button, Form, Modal } from 'react-bootstrap'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
