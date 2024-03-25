@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Modal, Spinner } from 'react-bootstrap'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
 import PageHeader from '../../../components/shared/page-header/page-header'
@@ -51,16 +52,19 @@ const UniStaff = () => {
 		isLoading_getStaff,
 		isValidating_getStaff,
 		error_getStaff,
+		mutate_getStaff,
 	} = useGetStaffTableDetails()
 
-	// const {
-	// 	setUpdateStaffRequest,
-	// 	updateStaffResponse,
-	// 	isLoading_updateStaff,
-	// 	isValidating_updateStaff,
-	// 	error_updateStaff,
-	// 	setIsRequestReady_updateStaff,
-	// } = useUpdateStaff()
+	const {
+		setUpdateStaffRequest,
+		updateStaffResponse,
+		isLoading_updateStaff,
+		isValidating_updateStaff,
+		error_updateStaff,
+		setStaffId,
+		setIsRequestReady_updateStaff,
+		mutate_updateStaff,
+	} = useUpdateStaff()
 
 	// open add new staff modal
 	const addNewHandler = () => {
@@ -90,6 +94,17 @@ const UniStaff = () => {
 	// deactivate staff confirmed
 	const deactivateConfirmHandler = (list: DeactivateItem[]) => {
 		console.log(list)
+
+		list.forEach((item) => {
+			setStaffId(item.id)
+			setUpdateStaffRequest({
+				enabled: false,
+				email: item.email,
+			})
+			setIsRequestReady_updateStaff(true)
+			mutate_updateStaff()
+		})
+
 		setIsDeactivateModalOpen(false)
 	}
 
@@ -139,8 +154,8 @@ const UniStaff = () => {
 	useEffect(() => {
 		// console.log(createStaffResponse)
 		if (createStaffResponse) {
-			// setIsLoading(false)
 			toast.success('Staff created successfully.')
+			mutate_getStaff()
 			setIsAddNewModalOpen(false)
 		}
 	}, [createStaffResponse])
@@ -153,16 +168,28 @@ const UniStaff = () => {
 	}, [getStaffResponse])
 
 	useEffect(() => {
+		if (updateStaffResponse) {
+			toast.info('Selected staff accounts deactivated successfully.')
+			setSelectedStaffList([])
+			setDeactivateStaffList([])
+			mutate_getStaff()
+		}
+	}, [updateStaffResponse])
+
+	useEffect(() => {
 		errorDisplayHandler(error_createStaff)
 		errorDisplayHandler(error_getStaff)
-	}, [error_createStaff, error_getStaff])
+		errorDisplayHandler(error_updateStaff)
+	}, [error_createStaff, error_getStaff, error_updateStaff])
 
 	useEffect(() => {
 		if (
 			isLoading_createStaff ||
 			isLoading_getStaff ||
 			isValidating_createStaff ||
-			isValidating_getStaff
+			isValidating_getStaff ||
+			isLoading_updateStaff ||
+			isValidating_updateStaff
 		) {
 			setIsLoading(true)
 		} else {
@@ -173,6 +200,8 @@ const UniStaff = () => {
 		isLoading_getStaff,
 		isValidating_createStaff,
 		isValidating_getStaff,
+		isLoading_updateStaff,
+		isValidating_updateStaff,
 	])
 
 	return (

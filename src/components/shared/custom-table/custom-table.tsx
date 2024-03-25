@@ -56,6 +56,11 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 										}
 										style={rowClickHandler ? { cursor: 'pointer' } : {}}
 										// className={rowClickHandler ? 'clickable-row' : ''}
+										className={
+											item.status === 'Inactive'
+												? 'disabled-div'
+												: 'enabled-div'
+										}
 									>
 										{rowClickHandler && selectedDataRows && (
 											<td key={index}>
@@ -86,7 +91,7 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 											} else if (key === 'status' && value === 'Inactive') {
 												return (
 													<td key={key}>
-														<span className="badge text-bg-success">
+														<span className="badge text-bg-danger">
 															{value as string}
 														</span>
 													</td>

@@ -30,9 +30,7 @@ export class AuthService {
 		return this.gateway + 'resource-managers'
 	}
 
-	Patch_Staff(params: Record<string, string> = {}) {
-		return (
-			this.gateway + 'resource-managers' + '?' + this.qs.setQueryParams(params)
-		)
+	Patch_Staff(id: string) {
+		return this.gateway + 'resource-managers/' + id
 	}
 }

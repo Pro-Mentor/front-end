@@ -39,7 +39,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 	}, [request])
 
 	const fetcherDefault = async () => {
-		setIsRequestReady(false)
+		// setIsRequestReady(false)
 
 		try {
 			let res
@@ -73,9 +73,13 @@ export function useCustomSWR<RequestType, ResponseType>(
 					break
 			}
 			setResponse(res)
+			setIsRequestReady(false)
+			setRequest(null)
 			return res
 		} catch (e: any) {
 			// console.log(e)
+			setIsRequestReady(false)
+			setRequest(null)
 			setGlobalError(e as IGlobalError)
 		}
 	}
@@ -105,5 +109,6 @@ export function useCustomSWR<RequestType, ResponseType>(
 		mutate,
 		setRequest,
 		setIsRequestReady,
+		customMutate: fetcherDefault,
 	}
 }

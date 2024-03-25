@@ -8,7 +8,7 @@ import UniStaff from './pages/uni-admin/staff/uni-staff'
 import Lecturers from './pages/uni-admin/lecturers/lecturers'
 import Students from './pages/uni-admin/students/students'
 import useAuth from './hooks/useAuth'
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 document.title = 'ProMentor'
@@ -26,7 +26,7 @@ function App() {
 		>
 			<ToastContainer
 				position="top-right"
-				autoClose={3000}
+				autoClose={5000}
 				closeOnClick
 				pauseOnFocusLoss={false}
 				pauseOnHover={false}

@@ -5,16 +5,14 @@ import { Group } from '@promentor-app/shared-lib'
 const api = new AuthService()
 
 export const useGetStaffTableDetails = () => {
-	const { data, error, isLoading, isValidating, mutate } = useCustomSWR<
-		unknown,
-		Group
-	>(api.Get_Staff(), 'GET')
+	const { data, error, isLoading, isValidating, mutate, customMutate } =
+		useCustomSWR<unknown, Group>(api.Get_Staff(), 'GET')
 
 	return {
 		getStaffResponse: data,
 		error_getStaff: error,
 		isLoading_getStaff: isLoading,
 		isValidating_getStaff: isValidating,
-		mutate,
+		mutate_getStaff: customMutate,
 	}
 }

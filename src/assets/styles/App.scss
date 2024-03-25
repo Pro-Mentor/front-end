@@ -31,3 +31,13 @@
 .page {
 	height: 100%;
 }
+
+.disabled-div {
+	pointer-events: none;
+	opacity: 0.6;
+}
+
+.enabled-div {
+	pointer-events: visible;
+	opacity: 1;
+}
