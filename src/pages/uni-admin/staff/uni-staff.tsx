@@ -29,7 +29,6 @@ const tableHeaders = ['', 'Name', 'Username', 'Email', 'Status']
 
 const UniStaff = () => {
 	const [isLoading, setIsLoading] = useState(false)
-	const [loaderMsg, setLoaderMsg] = useState('')
 	const [isAddNewModalOpen, setIsAddNewModalOpen] = useState(false)
 	const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false)
 	const [deactivateStaffList, setDeactivateStaffList] = useState<
@@ -252,7 +251,7 @@ const UniStaff = () => {
 			<Modal show={isLoading} backdrop="static" keyboard={false} centered>
 				<Modal.Body className="text-center">
 					<Spinner animation="border" role="status" />
-					<p>{loaderMsg}</p>
+					{/* <p>{loaderMsg}</p> */}
 				</Modal.Body>
 			</Modal>
 		</>

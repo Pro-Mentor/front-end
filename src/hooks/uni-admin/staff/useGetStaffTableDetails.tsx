@@ -1,12 +1,12 @@
 import { AuthService } from '../../../services/api/auth-service.api.endpoints'
 import { useCustomSWR } from '../../../services/useCustomSWR'
-import { Group } from '@promentor-app/shared-lib'
+import { GetResourceManagersResponse, Group } from '@promentor-app/shared-lib'
 
 const api = new AuthService()
 
 export const useGetStaffTableDetails = () => {
 	const { data, error, isLoading, isValidating, mutate, customMutate } =
-		useCustomSWR<unknown, Group>(api.Get_Staff(), 'GET')
+		useCustomSWR<unknown, GetResourceManagersResponse[]>(api.Get_Staff(), 'GET')
 
 	return {
 		getStaffResponse: data,

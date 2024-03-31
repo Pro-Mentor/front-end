@@ -33,4 +33,16 @@ export class AuthService {
 	Patch_Staff(id: string) {
 		return this.gateway + 'resource-managers/' + id
 	}
+
+	Post_Lecturer() {
+		return this.gateway + 'lecturers'
+	}
+
+	Get_Lecturers(params: Record<string, string> = {}) {
+		return this.gateway + 'lecturers' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Patch_Lecturers(id: string) {
+		return this.gateway + 'lecturers/' + id
+	}
 }

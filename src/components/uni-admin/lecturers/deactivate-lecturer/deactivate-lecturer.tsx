@@ -10,7 +10,7 @@ export type DeactivateItem = {
 type Props = {
 	isDeactivateModalOpen: boolean
 	modalCloseHandler: () => void
-	deactivateConfirmHandler: () => void
+	deactivateConfirmHandler: (list: DeactivateItem[]) => void
 	deactivateList: DeactivateItem[]
 }
 
@@ -33,7 +33,7 @@ const DeactivateLecturer = ({
 				<div className="">
 					{deactivateList &&
 						deactivateList.map((lec, index) => (
-							<div key={index} className="">
+							<div key={index} className="d-flex gap-2">
 								<div className="">{lec.name}</div>
 								<div className="">{lec.email}</div>
 							</div>
@@ -44,7 +44,10 @@ const DeactivateLecturer = ({
 				<Button variant="secondary" onClick={modalCloseHandler}>
 					Cancel
 				</Button>
-				<Button variant="primary" onClick={deactivateConfirmHandler}>
+				<Button
+					variant="primary"
+					onClick={() => deactivateConfirmHandler(deactivateList)}
+				>
 					Deactivate
 				</Button>
 			</Modal.Footer>
