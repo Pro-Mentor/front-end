@@ -1,46 +1,70 @@
-import { Button } from 'react-bootstrap'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Modal, Spinner } from 'react-bootstrap'
 import PageHeader from '../../../components/shared/page-header/page-header'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
-import { useState } from 'react'
-import AddNewLecturer from '../../../components/uni-admin/lecturers/add-new-lecturer/add-new-lecturer'
+import { useEffect, useState } from 'react'
+import AddNewLecturer, {
+	AddLecturerFormData,
+} from '../../../components/uni-admin/lecturers/add-new-lecturer/add-new-lecturer'
 import DeactivateLecturer, {
 	DeactivateItem,
 } from '../../../components/uni-admin/lecturers/deactivate-lecturer/deactivate-lecturer'
+import { useCreateLecturer } from '../../../hooks/uni-admin/lecturers/useCreateLecturer'
+import { useGetLecturersTableDetails } from '../../../hooks/uni-admin/lecturers/useGetLecturersTableDetails'
+import { useUpdateLecturer } from '../../../hooks/uni-admin/lecturers/useUpdateLecturer'
+import { GetLecturerResponse } from '@promentor-app/shared-lib'
+import { toast } from 'react-toastify'
+import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 
 type LecturerItem = {
+	id: string
 	name: string
+	username: string
 	email: string
 	status: string
 }
 
-const tableHeaders = ['', 'Name', 'Email', 'Status']
-const lecturerList: LecturerItem[] = [
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-	{
-		name: 'John Doe',
-		email: 'john@gmail.com',
-		status: 'Active',
-	},
-]
+const tableHeaders = ['', 'Name', 'Username', 'Email', 'Status']
 
 const Lecturers = () => {
+	const [isLoading, setIsLoading] = useState(false)
 	const [isAddNewModalOpen, setIsAddNewModalOpen] = useState(false)
 	const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false)
 	const [deactivateList, setDeactivateList] = useState<DeactivateItem[]>([])
+	const [lecturersTableList, setLecturersTableList] = useState<LecturerItem[]>(
+		[]
+	)
+	const [selectedLecturerList, setSelectedLecturerList] = useState<
+		LecturerItem[]
+	>([])
+
+	const {
+		setCreateLecturerRequest,
+		createLecturerResponse,
+		isLoading_createLecturer,
+		isValidating_createLecturer,
+		error_createLecturer,
+		setIsRequestReady_createLecturer,
+	} = useCreateLecturer()
+
+	const {
+		getLecturersResponse,
+		isLoading_getLecturers,
+		isValidating_getLecturers,
+		error_getLecturers,
+		mutate_getLecturers,
+	} = useGetLecturersTableDetails()
+
+	const {
+		setUpdateLecturersRequest,
+		updateLecturersResponse,
+		isLoading_updateLecturer,
+		isValidating_updateLecturer,
+		error_updateLecturer,
+		setLecId,
+		setIsRequestReady_updateLecturer,
+		mutate_updateLecturer,
+	} = useUpdateLecturer()
 
 	// open add new lecturer modal
 	const addNewHandler = () => {
@@ -49,6 +73,7 @@ const Lecturers = () => {
 
 	// open deactivate lecturer modal
 	const deactivateHandler = () => {
+		deactivateListSetter(selectedLecturerList)
 		setIsDeactivateModalOpen(true)
 	}
 
@@ -59,14 +84,120 @@ const Lecturers = () => {
 	}
 
 	// add new lecturer confirmed
-	const addNewConfirmHandler = () => {
-		setIsAddNewModalOpen(false)
+	const addNewConfirmHandler = (data: AddLecturerFormData) => {
+		setCreateLecturerRequest(data)
+		setIsRequestReady_createLecturer(true)
 	}
 
 	// deactivate lecturer confirmed
-	const deactivateConfirmHandler = () => {
+	const deactivateConfirmHandler = (list: DeactivateItem[]) => {
+		list.forEach((item) => {
+			setLecId(item.id)
+			setUpdateLecturersRequest({
+				enabled: false,
+				email: item.email,
+			})
+			setIsRequestReady_updateLecturer(true)
+			mutate_updateLecturer()
+		})
+
 		setIsDeactivateModalOpen(false)
 	}
+
+	// convert table row data into deactivate list data
+	const deactivateListSetter = (list: LecturerItem[]) => {
+		const dList: DeactivateItem[] = list.map((item) => {
+			return {
+				id: item.id,
+				email: item.email,
+				name: item.name,
+			}
+		})
+
+		setDeactivateList(dList)
+	}
+
+	// convert lecturers details response into table row data
+	const lecturersTableDataSetter = (response: GetLecturerResponse[]) => {
+		const lecList: LecturerItem[] = response.map((item) => {
+			return {
+				id: item.id,
+				name: item?.firstName + ' ' + item?.lastName || '-',
+				username: item.username,
+				email: item.email,
+				status: item.enabled ? 'Active' : 'Inactive',
+			}
+		})
+		setLecturersTableList(lecList)
+	}
+
+	// select data row in the table
+	const selectHandler = (item: LecturerItem) => {
+		if (
+			selectedLecturerList.some((selectedUser) => selectedUser.id === item.id)
+		) {
+			// If already selected, remove from list
+			setSelectedLecturerList(
+				selectedLecturerList.filter(
+					(selectedUser) => selectedUser.id !== item.id
+				)
+			)
+		} else {
+			// If not selected, add to list
+			setSelectedLecturerList([...selectedLecturerList, item])
+		}
+	}
+
+	useEffect(() => {
+		if (createLecturerResponse) {
+			toast.success('Lecturer created successfully.')
+			mutate_getLecturers()
+			setIsAddNewModalOpen(false)
+		}
+	}, [createLecturerResponse])
+
+	useEffect(() => {
+		if (getLecturersResponse && getLecturersResponse.length > 0) {
+			lecturersTableDataSetter(getLecturersResponse)
+		}
+	}, [getLecturersResponse])
+
+	useEffect(() => {
+		if (updateLecturersResponse) {
+			toast.info('Selected lecturer accounts deactivated successfully.')
+			setSelectedLecturerList([])
+			setDeactivateList([])
+			mutate_getLecturers()
+		}
+	}, [updateLecturersResponse])
+
+	useEffect(() => {
+		errorDisplayHandler(error_createLecturer)
+		errorDisplayHandler(error_getLecturers)
+		errorDisplayHandler(error_updateLecturer)
+	}, [error_createLecturer, error_getLecturers, error_updateLecturer])
+
+	useEffect(() => {
+		if (
+			isLoading_createLecturer ||
+			isLoading_getLecturers ||
+			isLoading_updateLecturer ||
+			isValidating_createLecturer ||
+			isValidating_getLecturers ||
+			isValidating_updateLecturer
+		) {
+			setIsLoading(true)
+		} else {
+			setIsLoading(false)
+		}
+	}, [
+		isLoading_createLecturer,
+		isLoading_getLecturers,
+		isLoading_updateLecturer,
+		isValidating_createLecturer,
+		isValidating_getLecturers,
+		isValidating_updateLecturer,
+	])
 
 	return (
 		<>
@@ -76,7 +207,11 @@ const Lecturers = () => {
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>
-						<Button variant="primary" onClick={deactivateHandler}>
+						<Button
+							variant="primary"
+							onClick={deactivateHandler}
+							disabled={!(selectedLecturerList.length > 0)}
+						>
 							Deactivate
 						</Button>
 					</>
@@ -84,7 +219,9 @@ const Lecturers = () => {
 				<div className="">
 					<CustomTable<LecturerItem>
 						tableHeaders={tableHeaders}
-						tableData={lecturerList}
+						tableData={lecturersTableList}
+						rowClickHandler={selectHandler}
+						selectedDataRows={selectedLecturerList}
 					/>
 				</div>
 			</div>
@@ -103,6 +240,14 @@ const Lecturers = () => {
 				deactivateConfirmHandler={deactivateConfirmHandler}
 				deactivateList={deactivateList}
 			/>
+
+			{/* Loader overlay */}
+			<Modal show={isLoading} backdrop="static" keyboard={false} centered>
+				<Modal.Body className="text-center">
+					<Spinner animation="border" role="status" />
+					{/* <p>{loaderMsg}</p> */}
+				</Modal.Body>
+			</Modal>
 		</>
 	)
 }

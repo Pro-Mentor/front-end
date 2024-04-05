@@ -1,3 +1,4 @@
+import { UserGroups } from '@promentor-app/shared-lib'
 import { QueryParamsSetter } from '../../utils/query-params-setter'
 
 export class AuthService {
@@ -32,5 +33,23 @@ export class AuthService {
 
 	Patch_Staff(id: string) {
 		return this.gateway + 'resource-managers/' + id
+	}
+
+	Post_Lecturer() {
+		return this.gateway + 'lecturers'
+	}
+
+	Get_Lecturers(params: Record<string, string> = {}) {
+		return this.gateway + 'lecturers' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Patch_Lecturers(id: string) {
+		return this.gateway + 'lecturers/' + id
+	}
+
+	Get_Groups(
+		group: UserGroups.CLASS | UserGroups.DEGREE_PROGRAM | UserGroups.SCHOOL
+	) {
+		return this.gateway + 'groups/' + group
 	}
 }
