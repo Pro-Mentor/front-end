@@ -10,11 +10,12 @@ import Students from './pages/uni-admin/students/students'
 import useAuth from './hooks/useAuth'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Login from './pages/login'
 
 document.title = 'ProMentor'
 
 function App() {
-	const { loggedInUser, isAuthenticated } = useAuth()
+	const { loggedInUser, isAuthenticated, setIsAuthenticated } = useAuth()
 
 	return (
 		<React.Suspense
@@ -32,6 +33,7 @@ function App() {
 				pauseOnHover={false}
 			/>
 			<Routes>
+				<Route path="/login" element={<Login />} />
 				<Route element={<AuthGuard />}>
 					{loggedInUser === 'admin' && isAuthenticated && (
 						<>
