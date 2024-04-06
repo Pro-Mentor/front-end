@@ -42,11 +42,6 @@ const NavbarLocal = () => {
 			path: '/',
 		},
 		{
-			id: 2,
-			title: 'Staff',
-			path: '/staff',
-		},
-		{
 			id: 3,
 			title: 'Students',
 			path: '/students',
@@ -160,6 +155,30 @@ const NavbarLocal = () => {
 								)
 							})}
 
+						{loggedInUser === 'admin' && (
+							<Sidebar.Nav
+								key={2}
+								data-toggle="tooltip"
+								data-placement="right"
+								title="Staff"
+							>
+								<Sidebar.Nav.Link
+									eventKey="/staff"
+									active={'/staff' === window.location.pathname}
+									onSelect={() => navigate('/staff')}
+								>
+									<Sidebar.Nav.Icon>
+										<img
+											className="nav-icon"
+											src={navIconSetter(2)}
+											alt="icon"
+										/>
+									</Sidebar.Nav.Icon>
+									<Sidebar.Nav.Title>Staff</Sidebar.Nav.Title>
+								</Sidebar.Nav.Link>
+							</Sidebar.Nav>
+						)}
+
 						{(loggedInUser === 'lecture' ||
 							loggedInUser === 'student' ||
 							loggedInUser === 'user') &&
@@ -188,6 +207,30 @@ const NavbarLocal = () => {
 									</Sidebar.Nav>
 								)
 							})}
+
+						{loggedInUser === 'student' && (
+							<Sidebar.Nav
+								key={66}
+								data-toggle="tooltip"
+								data-placement="right"
+								title="Career Guide"
+							>
+								<Sidebar.Nav.Link
+									eventKey="/career-guide"
+									active={'/career-guide' === window.location.pathname}
+									onSelect={() => navigate('/career-guide')}
+								>
+									<Sidebar.Nav.Icon>
+										<img
+											className="nav-icon"
+											src={navIconSetter(22)}
+											alt="icon"
+										/>
+									</Sidebar.Nav.Icon>
+									<Sidebar.Nav.Title>Career Guide</Sidebar.Nav.Title>
+								</Sidebar.Nav.Link>
+							</Sidebar.Nav>
+						)}
 					</Sidebar.Body>
 
 					<div className="bottom-nav-container">

@@ -7,11 +7,15 @@ import UniAdminDashboard from './pages/uni-admin/dashboard/uni-admin-dashboard'
 import UniStaff from './pages/uni-admin/staff/uni-staff'
 import Lecturers from './pages/uni-admin/lecturers/lecturers'
 import Students from './pages/uni-admin/students/students'
-import useAuth from './hooks/useAuth'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Login from './pages/login'
 import { GlobalContext, GlobalContextType } from './context/global.context'
+import WebDashboard from './pages/web/web-dashboard/web-dashboard'
+import WebEvents from './pages/web/web-events/web-events'
+import Jobs from './pages/web/jobs/jobs'
+import Chats from './pages/web/chats/chats'
+import Profile from './pages/web/profile/profile'
 
 document.title = 'ProMentor'
 
@@ -40,12 +44,36 @@ function App() {
 
 				{isAuthenticated && (
 					<Route element={<AuthGuard />}>
-						{loggedInUser === 'admin' && (
+						{(loggedInUser === 'admin' ||
+							loggedInUser === 'resources-management') && (
 							<>
 								<Route path="/" element={<UniAdminDashboard />} />
-								<Route path="/staff" element={<UniStaff />} />
 								<Route path="/students" element={<Students />} />
 								<Route path="/lecturers" element={<Lecturers />} />
+							</>
+						)}
+
+						{loggedInUser === 'admin' && (
+							<>
+								<Route path="/staff" element={<UniStaff />} />
+							</>
+						)}
+
+						{(loggedInUser === 'student' ||
+							loggedInUser === 'lecture' ||
+							loggedInUser === 'user') && (
+							<>
+								<Route path="/" element={<WebDashboard />} />
+								<Route path="/jobs" element={<Jobs />} />
+								<Route path="/events" element={<WebEvents />} />
+								<Route path="/chats" element={<Chats />} />
+								<Route path="/profile" element={<Profile />} />
+							</>
+						)}
+
+						{loggedInUser === 'student' && (
+							<>
+								{/* <Route path="/career-guide" element={<CareerGuide />} /> */}
 							</>
 						)}
 					</Route>
