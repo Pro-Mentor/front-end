@@ -8,6 +8,7 @@ import NDashboard from '@/assets/images/nav-dashboard.svg'
 import NStaff from '@/assets/images/nav-staff.svg'
 import NStudents from '@/assets/images/nav-students.svg'
 import NLecturers from '@/assets/images/nav-lecturers.svg'
+import { SessionHandler } from '../../../utils/session-handler'
 // import { keycloakInstant } from '../../../hooks/useAuth'
 
 type NavItemType = {
@@ -17,6 +18,7 @@ type NavItemType = {
 	path: string
 	subMenu?: NavItemType[]
 }
+const sessionHandler = new SessionHandler()
 
 const NavbarLocal = () => {
 	const theme = 'light'
@@ -79,10 +81,14 @@ const NavbarLocal = () => {
 	}
 
 	function logoutHandler() {
-		const { hostname, protocol, port } = window.location
-		const hrefWothoutPath =
-			protocol + '//' + hostname + (port ? ':' + port : '')
-		// keycloakInstant.logout({ redirectUri: hrefWothoutPath })
+		// const { hostname, protocol, port } = window.location
+		// const hrefWothoutPath =
+		// 	protocol + '//' + hostname + (port ? ':' + port : '')
+
+		sessionHandler.destroySession('token')
+		sessionHandler.destroySession('user')
+		sessionHandler.destroySession('isAuthenticated')
+		navigate('/login')
 	}
 
 	return (

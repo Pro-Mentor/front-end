@@ -16,8 +16,9 @@ import { GlobalContext, GlobalContextType } from './context/global.context'
 document.title = 'ProMentor'
 
 function App() {
-	const { loggedInUser, setupLoggedInUser, setupToken, isAuthenticated } =
-		useContext(GlobalContext) as GlobalContextType
+	const { loggedInUser, isAuthenticated } = useContext(
+		GlobalContext
+	) as GlobalContextType
 
 	return (
 		<React.Suspense
@@ -36,16 +37,22 @@ function App() {
 			/>
 			<Routes>
 				<Route path="/login" element={<Login />} />
-				<Route element={<AuthGuard />}>
-					{loggedInUser === 'admin' && isAuthenticated && (
-						<>
-							<Route path="/" element={<UniAdminDashboard />} />
-							<Route path="/staff" element={<UniStaff />} />
-							<Route path="/students" element={<Students />} />
-							<Route path="/lecturers" element={<Lecturers />} />
-						</>
-					)}
-				</Route>
+
+				{isAuthenticated && (
+					<Route element={<AuthGuard />}>
+						{loggedInUser === 'admin' && (
+							<>
+								<Route path="/" element={<UniAdminDashboard />} />
+								<Route path="/staff" element={<UniStaff />} />
+								<Route path="/students" element={<Students />} />
+								<Route path="/lecturers" element={<Lecturers />} />
+							</>
+						)}
+					</Route>
+				)}
+
+				{/* if user is not logged-in, redirect all the paths to login page */}
+				{!isAuthenticated && <Route path="*" element={<Login />} />}
 			</Routes>
 		</React.Suspense>
 	)
