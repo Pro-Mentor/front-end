@@ -20,13 +20,12 @@ import { useNavigate } from 'react-router-dom'
 // })
 
 const useAuth = () => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false)
+	// const [isAuthenticated, setIsAuthenticated] = useState(false)
 	const isRun = useRef(false)
-	const history = useNavigate()
+	const navigate = useNavigate()
 
-	const { loggedInUser, setupLoggedInUser, setupToken } = useContext(
-		GlobalContext
-	) as GlobalContextType
+	const { loggedInUser, setupLoggedInUser, setupToken, isAuthenticated } =
+		useContext(GlobalContext) as GlobalContextType
 
 	useEffect(() => {
 		if (isRun.current) return
@@ -34,7 +33,7 @@ const useAuth = () => {
 
 		if (!isAuthenticated) {
 			// Redirect to the Login component with state
-			history('/login')
+			navigate('/login')
 		} else {
 			window.location.href = '/'
 		}
@@ -88,7 +87,7 @@ const useAuth = () => {
 		}
 	}, [setupLoggedInUser, setupToken])
 
-	return { isAuthenticated, setIsAuthenticated, loggedInUser }
+	return { isAuthenticated, loggedInUser }
 }
 
 export default useAuth

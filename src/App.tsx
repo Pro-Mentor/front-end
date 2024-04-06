@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '@/assets/styles/App.scss'
 import { Route, Routes } from 'react-router-dom'
 import { AuthGuard } from './AuthGuard'
@@ -11,11 +11,13 @@ import useAuth from './hooks/useAuth'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Login from './pages/login'
+import { GlobalContext, GlobalContextType } from './context/global.context'
 
 document.title = 'ProMentor'
 
 function App() {
-	const { loggedInUser, isAuthenticated, setIsAuthenticated } = useAuth()
+	const { loggedInUser, setupLoggedInUser, setupToken, isAuthenticated } =
+		useContext(GlobalContext) as GlobalContextType
 
 	return (
 		<React.Suspense
