@@ -21,6 +21,9 @@ export interface AddLecturerFormData {
 	firstName: string
 	lastName: string
 	contactNumber?: string
+	assignedSchools?: any
+	assignedClasses?: any
+	assignedDegrees?: any
 }
 
 const schema = yup.object().shape({
@@ -116,10 +119,23 @@ const AddNewLecturer = ({
 		errorDisplayHandler(error_getClassesGroups)
 	}, [error_getSchoolsGroups, error_getDegreesGroups, error_getClassesGroups])
 
+	const mapSelectedGroups = (
+		selectedGroups: { [key: string]: boolean },
+		groups: Group[]
+	) => {
+		return groups.filter((group) => selectedGroups[group.id])
+	}
+
 	return (
 		<>
 			<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
-				<Form onSubmit={handleSubmit(addNewConfirmHandler)}>
+				{/* <Form onSubmit={handleSubmit(addNewConfirmHandler)}> */}
+				<Form
+					onSubmit={handleSubmit((data) => {
+						console.log(data)
+						console.log(mapSelectedGroups(data.assignedClasses, classesList))
+					})}
+				>
 					<Modal.Header closeButton>
 						<Modal.Title>Add Lecturer</Modal.Title>
 					</Modal.Header>
@@ -194,17 +210,44 @@ const AddNewLecturer = ({
 						<div className="">
 							<div className="">Faculty Details</div>
 
-							<div className="">
-								<div className="">Schools</div>
-							</div>
+							<Form.Group controlId="schools">
+								<Form.Label>Schools</Form.Label>
+								{schoolsList &&
+									schoolsList.map((school) => (
+										<Form.Check
+											key={school.id}
+											type="checkbox"
+											label={school.name}
+											{...control.register(`assignedSchools.${school.id}`)}
+										/>
+									))}
+							</Form.Group>
 
-							<div className="">
-								<div className="">Degree Programs</div>
-							</div>
+							<Form.Group controlId="degrees">
+								<Form.Label>Degree Programs</Form.Label>
+								{degreesList &&
+									degreesList.map((degree) => (
+										<Form.Check
+											key={degree.id}
+											type="checkbox"
+											label={degree.name}
+											{...control.register(`assignedDegrees.${degree.id}`)}
+										/>
+									))}
+							</Form.Group>
 
-							<div className="">
-								<div className="">Classes</div>
-							</div>
+							<Form.Group controlId="classes">
+								<Form.Label>Classes</Form.Label>
+								{classesList &&
+									classesList.map((class1) => (
+										<Form.Check
+											key={class1.id}
+											type="checkbox"
+											label={class1.name}
+											{...control.register(`assignedClasses.${class1.id}`)}
+										/>
+									))}
+							</Form.Group>
 						</div>
 					</Modal.Body>
 					<Modal.Footer>
