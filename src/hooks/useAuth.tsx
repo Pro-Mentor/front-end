@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // import Keycloak from 'keycloak-js'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 // import {
 // 	AuthenticationConfig,
 // 	getAuthenticationConfig,
