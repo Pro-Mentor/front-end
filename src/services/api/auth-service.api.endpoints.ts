@@ -52,4 +52,8 @@ export class AuthService {
 	) {
 		return this.gateway + 'groups/' + group
 	}
+
+	Post_Login() {
+		return this.gateway + 'test/get-access-token'
+	}
 }

@@ -8,7 +8,7 @@ import NDashboard from '@/assets/images/nav-dashboard.svg'
 import NStaff from '@/assets/images/nav-staff.svg'
 import NStudents from '@/assets/images/nav-students.svg'
 import NLecturers from '@/assets/images/nav-lecturers.svg'
-import { keycloakInstant } from '../../../hooks/useAuth'
+// import { keycloakInstant } from '../../../hooks/useAuth'
 
 type NavItemType = {
 	id: number
@@ -82,7 +82,7 @@ const NavbarLocal = () => {
 		const { hostname, protocol, port } = window.location
 		const hrefWothoutPath =
 			protocol + '//' + hostname + (port ? ':' + port : '')
-		keycloakInstant.logout({ redirectUri: hrefWothoutPath })
+		// keycloakInstant.logout({ redirectUri: hrefWothoutPath })
 	}
 
 	return (

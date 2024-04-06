@@ -77,8 +77,10 @@ export async function PostRequestHandler<RequestType, ResponseType>(
 			// 	throw error
 			// })
 			//const { data } = response
-			//console.log(response)
-			return response
+
+			const responseData = response.data as any
+			if (responseData?.data) return responseData.data as ResponseType
+			else return responseData as ResponseType
 		}
 	} catch (error: any) {
 		console.log(error.response.data)
@@ -99,8 +101,6 @@ export async function GetRequestHandler<ResponseType>(endpoint: string) {
 			//globalConfig
 		)
 		const responseData = response.data as any
-		// console.log(responseData)
-		// return responseData
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
