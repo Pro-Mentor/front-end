@@ -115,6 +115,7 @@ const LoginComponent = () => {
 											{...field}
 											type="text"
 											placeholder="Enter username"
+											autoComplete="username"
 										/>
 									)}
 								/>
@@ -134,6 +135,7 @@ const LoginComponent = () => {
 											{...field}
 											type="password"
 											placeholder="Enter password"
+											autoComplete="current-password"
 										/>
 									)}
 								/>
