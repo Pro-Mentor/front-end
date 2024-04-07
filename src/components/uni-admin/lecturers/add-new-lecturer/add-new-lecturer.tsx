@@ -5,14 +5,14 @@ import * as yup from 'yup'
 import { useGetSchoolsGroupList } from '../../../../hooks/uni-admin/lecturers/useGetSchoolsGroupList'
 import { useEffect, useState } from 'react'
 import { errorDisplayHandler } from '../../../../utils/errorDisplayHandler'
-import { Group } from '@promentor-app/shared-lib'
+import { Group, LecturerCreateRequest } from '@promentor-app/shared-lib'
 import { useGetDegreesGroupList } from '../../../../hooks/uni-admin/lecturers/useGetDegreesGroupList'
 import { useGetClassesGroupList } from '../../../../hooks/uni-admin/lecturers/useGetClassesGroupList'
 
 type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
-	addNewConfirmHandler: (data: AddLecturerFormData) => void
+	addNewConfirmHandler: (data: LecturerCreateRequest) => void
 }
 
 export interface AddLecturerFormData {
@@ -21,9 +21,9 @@ export interface AddLecturerFormData {
 	firstName: string
 	lastName: string
 	contactNumber?: string
-	assignedSchools?: any
-	assignedClasses?: any
-	assignedDegrees?: any
+	assignedSchools?: any | Group[]
+	assignedClasses?: any | Group[]
+	assignedDegrees?: any | Group[]
 }
 
 const schema = yup.object().shape({
@@ -57,6 +57,7 @@ const AddNewLecturer = ({
 		error_getSchoolsGroups,
 		isLoading_getSchoolsGroups,
 		isValidating_getSchoolsGroups,
+		mutate_getSchoolsGroups,
 	} = useGetSchoolsGroupList()
 
 	const {
@@ -64,6 +65,7 @@ const AddNewLecturer = ({
 		error_getDegreesGroups,
 		isLoading_getDegreesGroups,
 		isValidating_getDegreesGroups,
+		mutate_getDegreesGroups,
 	} = useGetDegreesGroupList()
 
 	const {
@@ -71,7 +73,14 @@ const AddNewLecturer = ({
 		error_getClassesGroups,
 		isLoading_getClassesGroups,
 		isValidating_getClassesGroups,
+		mutate_getClassesGroups,
 	} = useGetClassesGroupList()
+
+	useEffect(() => {
+		mutate_getSchoolsGroups()
+		mutate_getDegreesGroups()
+		mutate_getClassesGroups()
+	})
 
 	useEffect(() => {
 		if (getSchoolsGroupsListResponse) {
@@ -120,22 +129,56 @@ const AddNewLecturer = ({
 	}, [error_getSchoolsGroups, error_getDegreesGroups, error_getClassesGroups])
 
 	const mapSelectedGroups = (
-		selectedGroups: { [key: string]: boolean },
+		selectedGroups: { [key: string]: boolean } | null,
 		groups: Group[]
 	) => {
-		return groups.filter((group) => selectedGroups[group.id])
+		if (selectedGroups === null) return []
+		else
+			return groups
+				.filter((group) => selectedGroups[group.id])
+				.map((cls) => cls.name)
+	}
+
+	const formDataConverter = (formData: AddLecturerFormData) => {
+		const selectedClasses = mapSelectedGroups(
+			formData?.assignedClasses || null,
+			classesList
+		)
+		const selectedDegrees = mapSelectedGroups(
+			formData?.assignedDegrees || null,
+			degreesList
+		)
+		const selectedSchools = mapSelectedGroups(
+			formData?.assignedSchools || null,
+			schoolsList
+		)
+		formData.assignedClasses = selectedClasses
+		formData.assignedDegrees = selectedDegrees
+		formData.assignedSchools = selectedSchools
+
+		const data: LecturerCreateRequest = {
+			email: formData.email,
+			username: formData.username,
+			contactNumber: formData.contactNumber,
+			firstName: formData.firstName,
+			lastName: formData.lastName,
+			degreeProgram: selectedDegrees,
+			school: selectedSchools,
+			studentClass: selectedClasses,
+		}
+		addNewConfirmHandler(data)
 	}
 
 	return (
 		<>
 			<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
-				{/* <Form onSubmit={handleSubmit(addNewConfirmHandler)}> */}
-				<Form
+				<Form onSubmit={handleSubmit(formDataConverter)}>
+					{/* <Form
 					onSubmit={handleSubmit((data) => {
 						console.log(data)
 						console.log(mapSelectedGroups(data.assignedClasses, classesList))
 					})}
-				>
+				> */}
 					<Modal.Header closeButton>
 						<Modal.Title>Add Lecturer</Modal.Title>
 					</Modal.Header>
