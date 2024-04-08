@@ -50,6 +50,7 @@ const LoginComponent = () => {
 		isValidating_login,
 		error_login,
 		setIsRequestReady_login,
+		mutate_login,
 	} = useLogin()
 	const navigate = useNavigate()
 
@@ -58,6 +59,7 @@ const LoginComponent = () => {
 
 		setLoginRequest(data)
 		setIsRequestReady_login(true)
+		mutate_login()
 	}
 
 	useEffect(() => {

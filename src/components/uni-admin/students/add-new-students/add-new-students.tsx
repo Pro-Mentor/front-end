@@ -78,10 +78,12 @@ const AddNewStudents = ({
 	} = useGetClassesGroupList()
 
 	useEffect(() => {
-		mutate_getSchoolsGroups()
-		mutate_getDegreesGroups()
-		mutate_getClassesGroups()
-	}, [])
+		if (isAddNewModalOpen) {
+			if (schoolsList.length === 0) mutate_getSchoolsGroups()
+			if (degreesList.length === 0) mutate_getDegreesGroups()
+			if (classesList.length === 0) mutate_getClassesGroups()
+		}
+	}, [isAddNewModalOpen])
 
 	useEffect(() => {
 		if (getSchoolsGroupsListResponse) {
