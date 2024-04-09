@@ -151,6 +151,10 @@ const Lecturers = () => {
 	}
 
 	useEffect(() => {
+		mutate_getLecturers()
+	}, [])
+
+	useEffect(() => {
 		if (createLecturerResponse) {
 			toast.success('Lecturer created successfully.')
 			mutate_getLecturers()
@@ -233,6 +237,7 @@ const Lecturers = () => {
 				isAddNewModalOpen={isAddNewModalOpen}
 				modalCloseHandler={modalCloseHandler}
 				addNewConfirmHandler={addNewConfirmHandler}
+				isFormReset={createLecturerResponse ? true : false}
 			/>
 
 			{/* deactivate confirm modal */}

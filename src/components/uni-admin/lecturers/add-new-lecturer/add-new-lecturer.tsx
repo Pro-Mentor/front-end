@@ -14,6 +14,7 @@ type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
 	addNewConfirmHandler: (data: LecturerCreateRequest) => void
+	isFormReset: boolean
 }
 
 export interface AddLecturerFormData {
@@ -41,11 +42,13 @@ const AddNewLecturer = ({
 	isAddNewModalOpen,
 	modalCloseHandler,
 	addNewConfirmHandler,
+	isFormReset,
 }: Props) => {
 	const {
 		handleSubmit,
 		control,
 		formState: { errors },
+		reset,
 	} = useForm<AddLecturerFormData>({
 		resolver: yupResolver(schema),
 	})
@@ -128,6 +131,10 @@ const AddNewLecturer = ({
 		errorDisplayHandler(error_getDegreesGroups)
 		errorDisplayHandler(error_getClassesGroups)
 	}, [error_getSchoolsGroups, error_getDegreesGroups, error_getClassesGroups])
+
+	useEffect(() => {
+		if (isFormReset) reset()
+	}, [isFormReset])
 
 	const mapSelectedGroups = (
 		selectedGroups: { [key: string]: boolean } | null,

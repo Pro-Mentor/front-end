@@ -151,6 +151,10 @@ const UniStaff = () => {
 	}
 
 	useEffect(() => {
+		mutate_getStaff()
+	}, [])
+
+	useEffect(() => {
 		// console.log(createStaffResponse)
 		if (createStaffResponse) {
 			toast.success('Staff created successfully.')

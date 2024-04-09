@@ -56,4 +56,12 @@ export class AuthService {
 	Post_Login() {
 		return this.gateway + 'test/get-access-token'
 	}
+
+	Post_Student() {
+		return this.gateway + 'students'
+	}
+
+	Patch_Students(id: string) {
+		return this.gateway + 'students/' + id
+	}
 }

@@ -1,9 +1,17 @@
 import { Button, Modal, Spinner } from 'react-bootstrap'
 import PageHeader from '../../../components/shared/page-header/page-header'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
 import AddNewStudents from '../../../components/uni-admin/students/add-new-students/add-new-students'
-import { StudentCreateRequest } from '@promentor-app/shared-lib'
+import {
+	GetStudentsResponse,
+	StudentCreateRequest,
+} from '@promentor-app/shared-lib'
+import { useCreateStudent } from '../../../hooks/uni-admin/students/useCreateStudent'
+import { useGetStudentsTableDetails } from '../../../hooks/uni-admin/students/useGetStudentsTableDetails'
+import { useUpdateStudent } from '../../../hooks/uni-admin/students/useUpdateStudent'
+import { toast } from 'react-toastify'
+import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 
 type StudentItem = {
 	id: string
@@ -24,6 +32,33 @@ const Students = () => {
 	const [selectedStudentsList, setSelectedStudentsList] = useState<
 		StudentItem[]
 	>([])
+	const {
+		setCreateStudentRequest,
+		createStudentResponse,
+		isLoading_createStudent,
+		isValidating_createStudent,
+		error_createStudent,
+		setIsRequestReady_createStudent,
+	} = useCreateStudent()
+
+	const {
+		getStudentsResponse,
+		isLoading_getStudents,
+		isValidating_getStudents,
+		error_getStudents,
+		mutate_getStudents,
+	} = useGetStudentsTableDetails()
+
+	const {
+		setUpdateStudentsRequest,
+		updateStudentsResponse,
+		isLoading_updateStudent,
+		isValidating_updateStudent,
+		error_updateStudent,
+		setStudentId,
+		setIsRequestReady_updateStudent,
+		mutate_updateStudent,
+	} = useUpdateStudent()
 
 	// open add new lecturer modal
 	const addNewHandler = () => {
@@ -61,13 +96,75 @@ const Students = () => {
 	// add new student confirmed
 	const addNewConfirmHandler = (data: StudentCreateRequest) => {
 		console.log(data)
-		// setCreateStudentRequest(data)
-		// setIsRequestReady_createStudent(true)
+		setCreateStudentRequest(data)
+		setIsRequestReady_createStudent(true)
 	}
+
+	// convert students details response into table row data
+	const studentsTableDataSetter = (response: GetStudentsResponse[]) => {
+		const lecList: StudentItem[] = response.map((item) => {
+			return {
+				id: item.id,
+				name: item?.firstName + ' ' + item?.lastName || '-',
+				username: item.username,
+				email: item.email,
+				status: item.enabled ? 'Active' : 'Inactive',
+			}
+		})
+		setStudentsTableList(lecList)
+	}
+
+	useEffect(() => {
+		mutate_getStudents()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	useEffect(() => {
+		if (createStudentResponse) {
+			toast.success('Student created successfully.')
+			mutate_getStudents()
+			setIsAddNewModalOpen(false)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [createStudentResponse])
+
+	useEffect(() => {
+		if (getStudentsResponse && getStudentsResponse.length > 0) {
+			studentsTableDataSetter(getStudentsResponse)
+		}
+	}, [getStudentsResponse])
+
+	useEffect(() => {
+		errorDisplayHandler(error_createStudent)
+		errorDisplayHandler(error_getStudents)
+		errorDisplayHandler(error_updateStudent)
+	}, [error_createStudent, error_getStudents, error_updateStudent])
+
+	useEffect(() => {
+		if (
+			isLoading_createStudent ||
+			isLoading_getStudents ||
+			isLoading_updateStudent ||
+			isValidating_createStudent ||
+			isValidating_getStudents ||
+			isValidating_updateStudent
+		) {
+			setIsLoading(true)
+		} else {
+			setIsLoading(false)
+		}
+	}, [
+		isLoading_createStudent,
+		isLoading_getStudents,
+		isLoading_updateStudent,
+		isValidating_createStudent,
+		isValidating_getStudents,
+		isValidating_updateStudent,
+	])
 
 	return (
 		<>
-			<div className="page uni-lecturer-page">
+			<div className="page uni-students-page">
 				<PageHeader title="Students">
 					<>
 						<Button variant="primary" onClick={addNewHandler}>
@@ -97,6 +194,7 @@ const Students = () => {
 				isAddNewModalOpen={isAddNewModalOpen}
 				modalCloseHandler={modalCloseHandler}
 				addNewConfirmHandler={addNewConfirmHandler}
+				isFormReset={createStudentResponse ? true : false}
 			/>
 
 			{/* deactivate confirm modal */}

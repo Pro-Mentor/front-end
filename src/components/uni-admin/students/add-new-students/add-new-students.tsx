@@ -9,11 +9,13 @@ import { useGetDegreesGroupList } from '../../../../hooks/uni-admin/lecturers/us
 import { useEffect, useState } from 'react'
 import { useGetClassesGroupList } from '../../../../hooks/uni-admin/lecturers/useGetClassesGroupList'
 import { errorDisplayHandler } from '../../../../utils/errorDisplayHandler'
+import './add-new-students.scss'
 
 type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
 	addNewConfirmHandler: (data: StudentCreateRequest) => void
+	isFormReset: boolean
 }
 
 const schema = yup.object().shape({
@@ -41,10 +43,12 @@ const AddNewStudents = ({
 	isAddNewModalOpen,
 	modalCloseHandler,
 	addNewConfirmHandler,
+	isFormReset,
 }: Props) => {
 	const {
 		handleSubmit,
 		control,
+		reset,
 		formState: { errors },
 	} = useForm<FormData>({
 		resolver: yupResolver(schema),
@@ -172,83 +176,101 @@ const AddNewStudents = ({
 		addNewConfirmHandler(data)
 	}
 
+	// if (isFormReset) {
+	// 	reset()
+	// 	// reset the form if submission was successful
+	// }
+
+	useEffect(() => {
+		if (isFormReset) reset()
+	}, [isFormReset])
+
 	return (
 		<>
-			<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
+			<Modal
+				show={isAddNewModalOpen}
+				onHide={modalCloseHandler}
+				size="lg"
+				className="add-new-students-modal"
+			>
 				<Form onSubmit={handleSubmit(formDataConverter)}>
 					<Modal.Header closeButton>
 						<Modal.Title>Add Student</Modal.Title>
 					</Modal.Header>
-					<Modal.Body>
-						<Form.Group controlId="firstName">
-							<Form.Label>First Name</Form.Label>
-							<Controller
-								name="firstName"
-								control={control}
-								defaultValue=""
-								render={({ field }) => <Form.Control {...field} />}
-							/>
-							<Form.Text className="text-danger">
-								{errors.firstName?.message}
-							</Form.Text>
-						</Form.Group>
+					<Modal.Body className="col2-container">
+						<div className="col1">
+							<div className="add-details-topic">General Details</div>
 
-						<Form.Group controlId="lastName">
-							<Form.Label>Last Name</Form.Label>
-							<Controller
-								name="lastName"
-								control={control}
-								defaultValue=""
-								render={({ field }) => <Form.Control {...field} />}
-							/>
-							<Form.Text className="text-danger">
-								{errors.lastName?.message}
-							</Form.Text>
-						</Form.Group>
+							<Form.Group controlId="firstName">
+								<Form.Label>First Name</Form.Label>
+								<Controller
+									name="firstName"
+									control={control}
+									defaultValue=""
+									render={({ field }) => <Form.Control {...field} />}
+								/>
+								<Form.Text className="text-danger">
+									{errors.firstName?.message}
+								</Form.Text>
+							</Form.Group>
 
-						<Form.Group controlId="username">
-							<Form.Label>Username</Form.Label>
-							<Controller
-								name="username"
-								control={control}
-								defaultValue=""
-								render={({ field }) => <Form.Control {...field} />}
-							/>
-							<Form.Text className="text-danger">
-								{errors.username?.message}
-							</Form.Text>
-						</Form.Group>
+							<Form.Group controlId="lastName">
+								<Form.Label>Last Name</Form.Label>
+								<Controller
+									name="lastName"
+									control={control}
+									defaultValue=""
+									render={({ field }) => <Form.Control {...field} />}
+								/>
+								<Form.Text className="text-danger">
+									{errors.lastName?.message}
+								</Form.Text>
+							</Form.Group>
 
-						<Form.Group controlId="email">
-							<Form.Label>Email</Form.Label>
-							<Controller
-								name="email"
-								control={control}
-								defaultValue=""
-								render={({ field }) => <Form.Control {...field} />}
-							/>
-							<Form.Text className="text-danger">
-								{errors.email?.message}
-							</Form.Text>
-						</Form.Group>
+							<Form.Group controlId="username">
+								<Form.Label>Username</Form.Label>
+								<Controller
+									name="username"
+									control={control}
+									defaultValue=""
+									render={({ field }) => <Form.Control {...field} />}
+								/>
+								<Form.Text className="text-danger">
+									{errors.username?.message}
+								</Form.Text>
+							</Form.Group>
 
-						<Form.Group controlId="contactNumber">
-							<Form.Label>Contact No.</Form.Label>
-							<Controller
-								name="contactNumber"
-								control={control}
-								defaultValue=""
-								render={({ field }) => <Form.Control {...field} />}
-							/>
-							<Form.Text className="text-danger">
-								{errors.contactNumber?.message}
-							</Form.Text>
-						</Form.Group>
+							<Form.Group controlId="email">
+								<Form.Label>Email</Form.Label>
+								<Controller
+									name="email"
+									control={control}
+									defaultValue=""
+									render={({ field }) => <Form.Control {...field} />}
+								/>
+								<Form.Text className="text-danger">
+									{errors.email?.message}
+								</Form.Text>
+							</Form.Group>
 
-						<div className="">
-							<div className="">Faculty Details</div>
+							<Form.Group controlId="contactNumber">
+								<Form.Label>Contact No.</Form.Label>
+								<Controller
+									name="contactNumber"
+									control={control}
+									defaultValue=""
+									render={({ field }) => <Form.Control {...field} />}
+								/>
+								<Form.Text className="text-danger">
+									{errors.contactNumber?.message}
+								</Form.Text>
+							</Form.Group>
+						</div>
 
-							<Form.Group controlId="schools">
+						<div className="col1">
+							<div className="add-details-topic">Faculty Details</div>
+
+							<Form.Group controlId="schools" className="group-section">
 								<Form.Label>Schools</Form.Label>
 								{schoolsList &&
 									schoolsList.map((school) => (
@@ -261,7 +283,7 @@ const AddNewStudents = ({
 									))}
 							</Form.Group>
 
-							<Form.Group controlId="degrees">
+							<Form.Group controlId="degrees" className="group-section">
 								<Form.Label>Degree Programs</Form.Label>
 								{degreesList &&
 									degreesList.map((degree) => (
@@ -274,7 +296,7 @@ const AddNewStudents = ({
 									))}
 							</Form.Group>
 
-							<Form.Group controlId="classes">
+							<Form.Group controlId="classes" className="group-section">
 								<Form.Label>Classes</Form.Label>
 								{classesList &&
 									classesList.map((class1) => (
