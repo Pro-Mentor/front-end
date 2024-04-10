@@ -16,6 +16,7 @@ import { toast } from 'react-toastify'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 import { GetResourceManagersResponse } from '@promentor-app/shared-lib'
 import { useUpdateStaff } from '../../../hooks/uni-admin/staff/useUpdateStaff'
+import { useGetStaffById } from '../../../hooks/uni-admin/staff/useGetStaffById'
 
 type StaffItem = {
 	id: string
@@ -25,17 +26,22 @@ type StaffItem = {
 	status: string
 }
 
-const tableHeaders = ['', 'Name', 'Username', 'Email', 'Status']
+const tableHeaders = ['', 'Name', 'Username', 'Email', 'Status', '']
 
 const UniStaff = () => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [isAddNewModalOpen, setIsAddNewModalOpen] = useState(false)
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 	const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false)
+	const [isDeactivated, setIsDeactivated] = useState(false)
 	const [deactivateStaffList, setDeactivateStaffList] = useState<
 		DeactivateItem[]
 	>([])
 	const [staffTableList, setStaffTableList] = useState<StaffItem[]>([])
 	const [selectedStaffList, setSelectedStaffList] = useState<StaffItem[]>([])
+	const [editStaffData, setEditStaffData] = useState<FormData | undefined>(
+		undefined
+	)
 
 	const {
 		setCreateStaffRequest,
@@ -53,6 +59,16 @@ const UniStaff = () => {
 		error_getStaff,
 		mutate_getStaff,
 	} = useGetStaffTableDetails()
+
+	const {
+		getStaffByIdResponse,
+		isLoading_getStaffById,
+		isValidating_getStaffById,
+		error_getStaffById,
+		mutate_getStaffById,
+		setStaffById,
+		setIsRequestReady_getStaffById,
+	} = useGetStaffById()
 
 	const {
 		setUpdateStaffRequest,
@@ -80,6 +96,9 @@ const UniStaff = () => {
 	const modalCloseHandler = () => {
 		setIsAddNewModalOpen(false)
 		setIsDeactivateModalOpen(false)
+		setIsEditModalOpen(false)
+		setIsDeactivated(false)
+		setEditStaffData(undefined)
 	}
 
 	// add new staff confirmed
@@ -92,7 +111,8 @@ const UniStaff = () => {
 
 	// deactivate staff confirmed
 	const deactivateConfirmHandler = (list: DeactivateItem[]) => {
-		console.log(list)
+		// console.log(list)
+		setIsDeactivated(true)
 
 		list.forEach((item) => {
 			setStaffId(item.id)
@@ -132,8 +152,6 @@ const UniStaff = () => {
 				status: item.enabled ? 'Active' : 'Inactive',
 			}
 		})
-		// console.log(staffList)
-
 		setStaffTableList(staffList)
 	}
 
@@ -148,6 +166,25 @@ const UniStaff = () => {
 			// If not selected, add to list
 			setSelectedStaffList([...selectedStaffList, item])
 		}
+	}
+
+	// edit button clicked, open edit modal
+	const editHandler = (item: StaffItem) => {
+		console.log(item)
+		setStaffId(item.id)
+
+		// get staff details by id
+		setStaffById(item.id)
+		mutate_getStaffById()
+		setIsRequestReady_getStaffById(true)
+	}
+
+	// edit data
+	const editConfirmHandler = (data: FormData) => {
+		setUpdateStaffRequest(data)
+		setIsRequestReady_updateStaff(true)
+		mutate_updateStaff()
+		setIsRequestReady_getStaffById(false)
 	}
 
 	useEffect(() => {
@@ -171,10 +208,32 @@ const UniStaff = () => {
 	}, [getStaffResponse])
 
 	useEffect(() => {
+		if (getStaffByIdResponse) {
+			console.log(getStaffByIdResponse)
+			setEditStaffData({
+				username: getStaffByIdResponse.username,
+				firstName: getStaffByIdResponse.firstName || '',
+				lastName: getStaffByIdResponse.lastName || '',
+				contactNumber: getStaffByIdResponse.contactNumber,
+				email: getStaffByIdResponse.email,
+			})
+			setIsEditModalOpen(true)
+		}
+	}, [getStaffByIdResponse])
+
+	useEffect(() => {
 		if (updateStaffResponse) {
-			toast.info('Selected staff accounts deactivated successfully.')
-			setSelectedStaffList([])
-			setDeactivateStaffList([])
+			if (!isDeactivated) {
+				toast.info('Selected staff account details updated successfully.')
+				setIsEditModalOpen(false)
+				setEditStaffData(undefined)
+			} else {
+				toast.info('Selected staff accounts deactivated successfully.')
+				setSelectedStaffList([])
+				setDeactivateStaffList([])
+				setIsDeactivated(false)
+			}
+
 			mutate_getStaff()
 		}
 	}, [updateStaffResponse])
@@ -183,7 +242,8 @@ const UniStaff = () => {
 		errorDisplayHandler(error_createStaff)
 		errorDisplayHandler(error_getStaff)
 		errorDisplayHandler(error_updateStaff)
-	}, [error_createStaff, error_getStaff, error_updateStaff])
+		errorDisplayHandler(error_getStaffById)
+	}, [error_createStaff, error_getStaff, error_updateStaff, error_getStaffById])
 
 	useEffect(() => {
 		if (
@@ -192,7 +252,9 @@ const UniStaff = () => {
 			isValidating_createStaff ||
 			isValidating_getStaff ||
 			isLoading_updateStaff ||
-			isValidating_updateStaff
+			isValidating_updateStaff ||
+			isLoading_getStaffById ||
+			isValidating_getStaffById
 		) {
 			setIsLoading(true)
 		} else {
@@ -205,6 +267,8 @@ const UniStaff = () => {
 		isValidating_getStaff,
 		isLoading_updateStaff,
 		isValidating_updateStaff,
+		isLoading_getStaffById,
+		isValidating_getStaffById,
 	])
 
 	return (
@@ -231,6 +295,7 @@ const UniStaff = () => {
 							tableData={staffTableList}
 							rowClickHandler={selectHandler}
 							selectedDataRows={selectedStaffList}
+							editClickHandler={editHandler}
 						/>
 					)}
 				</div>
@@ -242,6 +307,18 @@ const UniStaff = () => {
 				modalCloseHandler={modalCloseHandler}
 				addNewConfirmHandler={addNewConfirmHandler}
 			/>
+
+			{/* edit modal */}
+			{editStaffData !== undefined &&
+				getStaffByIdResponse &&
+				isEditModalOpen && (
+					<AddNewStaff
+						isAddNewModalOpen={isEditModalOpen}
+						modalCloseHandler={modalCloseHandler}
+						addNewConfirmHandler={editConfirmHandler}
+						editData={editStaffData}
+					/>
+				)}
 
 			{/* deactivate confirm modal */}
 			<DeactivateStaff

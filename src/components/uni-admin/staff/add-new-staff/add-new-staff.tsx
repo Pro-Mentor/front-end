@@ -7,6 +7,7 @@ type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
 	addNewConfirmHandler: (data: FormData) => void
+	editData?: FormData
 }
 
 const schema = yup.object().shape({
@@ -31,6 +32,7 @@ const AddNewStaff = ({
 	isAddNewModalOpen,
 	modalCloseHandler,
 	addNewConfirmHandler,
+	editData,
 }: Props) => {
 	const {
 		handleSubmit,
@@ -38,13 +40,23 @@ const AddNewStaff = ({
 		formState: { errors },
 	} = useForm<FormData>({
 		resolver: yupResolver(schema),
+		defaultValues: editData || undefined,
 	})
 
+	if (editData) console.log(editData)
+
+	const closeHandler = () => {
+		if (editData) editData = undefined
+		modalCloseHandler()
+	}
+
 	return (
-		<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
+		<Modal show={isAddNewModalOpen} onHide={() => closeHandler()}>
 			<Form onSubmit={handleSubmit(addNewConfirmHandler)}>
 				<Modal.Header closeButton>
-					<Modal.Title>Add Staff Member</Modal.Title>
+					<Modal.Title>
+						{editData ? 'Edit Staff Member Details' : 'Add Staff Member'}
+					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form.Group controlId="firstName">
@@ -52,7 +64,6 @@ const AddNewStaff = ({
 						<Controller
 							name="firstName"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
 						/>
 						<Form.Text className="text-danger">
@@ -65,7 +76,6 @@ const AddNewStaff = ({
 						<Controller
 							name="lastName"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
 						/>
 						<Form.Text className="text-danger">
@@ -78,8 +88,8 @@ const AddNewStaff = ({
 						<Controller
 							name="username"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
+							disabled={editData ? true : false}
 						/>
 						<Form.Text className="text-danger">
 							{errors.username?.message}
@@ -91,8 +101,8 @@ const AddNewStaff = ({
 						<Controller
 							name="email"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
+							disabled={editData ? true : false}
 						/>
 						<Form.Text className="text-danger">
 							{errors.email?.message}
@@ -104,7 +114,6 @@ const AddNewStaff = ({
 						<Controller
 							name="contactNumber"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
 						/>
 						<Form.Text className="text-danger">
@@ -113,11 +122,11 @@ const AddNewStaff = ({
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={modalCloseHandler}>
+					<Button variant="secondary" onClick={closeHandler}>
 						Close
 					</Button>
 					<Button type="submit" variant="primary">
-						Add Staff
+						{editData ? 'Edit' : 'Add'}
 					</Button>
 				</Modal.Footer>
 			</Form>

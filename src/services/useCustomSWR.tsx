@@ -20,8 +20,14 @@ export interface ErrorObj {
 }
 
 export function useCustomSWR<RequestType, ResponseType>(
-	endpoint: string,
-	requestType: 'GET' | 'PUT' | 'DELETE' | 'PATCH' | 'POST' = 'GET',
+	endpoint: string | null,
+	requestType:
+		| 'GET'
+		| 'GET_LATER'
+		| 'PUT'
+		| 'DELETE'
+		| 'PATCH'
+		| 'POST' = 'GET',
 	revalidateOnFocus: boolean = false,
 	revalidateIfStale: boolean = false
 ) {
@@ -43,39 +49,45 @@ export function useCustomSWR<RequestType, ResponseType>(
 
 		try {
 			let res
-			switch (requestType) {
-				case 'GET':
-					res = await GetRequestHandler<ResponseType>(endpoint)
-					break
-				case 'PUT':
-					res = await PutRequestHandler<RequestType, ResponseType>(
-						request,
-						endpoint
-					)
-					break
-				case 'DELETE':
-					res = await DeleteRequestHandler<RequestType, ResponseType>(
-						request,
-						endpoint
-					)
-					break
-				case 'PATCH':
-					res = await PatchRequestHandler<RequestType, ResponseType>(
-						request,
-						endpoint
-					)
-					break
-				case 'POST':
-					res = await PostRequestHandler<RequestType, ResponseType>(
-						request,
-						endpoint
-					)
-					break
+			if (endpoint !== null) {
+				switch (requestType) {
+					case 'GET':
+						res = await GetRequestHandler<ResponseType>(endpoint)
+						break
+					case 'GET_LATER':
+						res = await GetRequestHandler<ResponseType>(endpoint)
+						break
+					case 'PUT':
+						res = await PutRequestHandler<RequestType, ResponseType>(
+							request,
+							endpoint
+						)
+						break
+					case 'DELETE':
+						res = await DeleteRequestHandler<RequestType, ResponseType>(
+							request,
+							endpoint
+						)
+						break
+					case 'PATCH':
+						res = await PatchRequestHandler<RequestType, ResponseType>(
+							request,
+							endpoint
+						)
+						break
+					case 'POST':
+						res = await PostRequestHandler<RequestType, ResponseType>(
+							request,
+							endpoint
+						)
+						break
+				}
+
+				setResponse(res)
+				setIsRequestReady(false)
+				setRequest(null)
+				return res
 			}
-			setResponse(res)
-			setIsRequestReady(false)
-			setRequest(null)
-			return res
 		} catch (e: any) {
 			// console.log(e)
 			setIsRequestReady(false)
@@ -100,6 +112,10 @@ export function useCustomSWR<RequestType, ResponseType>(
 			setGlobalError(error as string)
 		}
 	}, [error])
+
+	useEffect(() => {
+		console.log(isRequestReady)
+	}, [isRequestReady])
 
 	return {
 		data: response,
