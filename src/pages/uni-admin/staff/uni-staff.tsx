@@ -170,7 +170,7 @@ const UniStaff = () => {
 
 	// edit button clicked, open edit modal
 	const editHandler = (item: StaffItem) => {
-		console.log(item)
+		// console.log(item)
 		setStaffId(item.id)
 
 		// get staff details by id
@@ -181,10 +181,11 @@ const UniStaff = () => {
 
 	// edit data
 	const editConfirmHandler = (data: FormData) => {
+		console.log(data)
 		setUpdateStaffRequest(data)
 		setIsRequestReady_updateStaff(true)
 		mutate_updateStaff()
-		setIsRequestReady_getStaffById(false)
+		// setIsRequestReady_getStaffById(false)
 	}
 
 	useEffect(() => {
@@ -209,7 +210,7 @@ const UniStaff = () => {
 
 	useEffect(() => {
 		if (getStaffByIdResponse) {
-			console.log(getStaffByIdResponse)
+			// console.log(getStaffByIdResponse)
 			setEditStaffData({
 				username: getStaffByIdResponse.username,
 				firstName: getStaffByIdResponse.firstName || '',
@@ -217,9 +218,12 @@ const UniStaff = () => {
 				contactNumber: getStaffByIdResponse.contactNumber,
 				email: getStaffByIdResponse.email,
 			})
-			setIsEditModalOpen(true)
 		}
 	}, [getStaffByIdResponse])
+
+	useEffect(() => {
+		if (editStaffData?.username !== undefined) setIsEditModalOpen(true)
+	}, [editStaffData])
 
 	useEffect(() => {
 		if (updateStaffResponse) {
@@ -302,23 +306,23 @@ const UniStaff = () => {
 			</div>
 
 			{/* add new modal */}
-			<AddNewStaff
-				isAddNewModalOpen={isAddNewModalOpen}
-				modalCloseHandler={modalCloseHandler}
-				addNewConfirmHandler={addNewConfirmHandler}
-			/>
+			{isAddNewModalOpen && (
+				<AddNewStaff
+					isAddNewModalOpen={isAddNewModalOpen}
+					modalCloseHandler={modalCloseHandler}
+					addNewConfirmHandler={addNewConfirmHandler}
+				/>
+			)}
 
 			{/* edit modal */}
-			{editStaffData !== undefined &&
-				getStaffByIdResponse &&
-				isEditModalOpen && (
-					<AddNewStaff
-						isAddNewModalOpen={isEditModalOpen}
-						modalCloseHandler={modalCloseHandler}
-						addNewConfirmHandler={editConfirmHandler}
-						editData={editStaffData}
-					/>
-				)}
+			{editStaffData?.username !== undefined && isEditModalOpen && (
+				<AddNewStaff
+					isAddNewModalOpen={isEditModalOpen}
+					modalCloseHandler={modalCloseHandler}
+					addNewConfirmHandler={editConfirmHandler}
+					editData={editStaffData}
+				/>
+			)}
 
 			{/* deactivate confirm modal */}
 			<DeactivateStaff

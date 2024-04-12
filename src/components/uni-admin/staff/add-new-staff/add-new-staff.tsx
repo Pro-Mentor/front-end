@@ -39,20 +39,27 @@ const AddNewStaff = ({
 		control,
 		formState: { errors },
 	} = useForm<FormData>({
-		resolver: yupResolver(schema),
+		resolver: editData === undefined ? yupResolver(schema) : undefined,
 		defaultValues: editData || undefined,
 	})
 
-	if (editData) console.log(editData)
+	// if (editData) console.log(editData.username)
 
 	const closeHandler = () => {
 		if (editData) editData = undefined
 		modalCloseHandler()
 	}
 
+	const submitHandler = (data: FormData) => {
+		// if (editData) addNewConfirmHandler(data, )
+		if (editData) editData = undefined
+		addNewConfirmHandler(data)
+	}
+
 	return (
 		<Modal show={isAddNewModalOpen} onHide={() => closeHandler()}>
-			<Form onSubmit={handleSubmit(addNewConfirmHandler)}>
+			<Form onSubmit={handleSubmit(submitHandler)}>
+				{/* <Form onSubmit={handleSubmit((data) => console.log(data))}> */}
 				<Modal.Header closeButton>
 					<Modal.Title>
 						{editData ? 'Edit Staff Member Details' : 'Add Staff Member'}
@@ -88,8 +95,13 @@ const AddNewStaff = ({
 						<Controller
 							name="username"
 							control={control}
-							render={({ field }) => <Form.Control {...field} />}
-							disabled={editData ? true : false}
+							render={({ field }) => (
+								<Form.Control
+									{...field}
+									readOnly={!!editData}
+									disabled={editData ? true : false}
+								/>
+							)}
 						/>
 						<Form.Text className="text-danger">
 							{errors.username?.message}
@@ -101,8 +113,13 @@ const AddNewStaff = ({
 						<Controller
 							name="email"
 							control={control}
-							render={({ field }) => <Form.Control {...field} />}
-							disabled={editData ? true : false}
+							render={({ field }) => (
+								<Form.Control
+									{...field}
+									readOnly={!!editData}
+									disabled={editData ? true : false}
+								/>
+							)}
 						/>
 						<Form.Text className="text-danger">
 							{errors.email?.message}
@@ -122,7 +139,7 @@ const AddNewStaff = ({
 					</Form.Group>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={closeHandler}>
+					<Button variant="secondary" onClick={() => closeHandler()}>
 						Close
 					</Button>
 					<Button type="submit" variant="primary">

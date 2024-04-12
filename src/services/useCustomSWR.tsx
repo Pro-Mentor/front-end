@@ -96,7 +96,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 		}
 	}
 
-	const { data, isLoading, error, mutate, isValidating } = useSWR(
+	const { isLoading, error, mutate, isValidating } = useSWR(
 		isRequestReady ? endpoint : null,
 		fetcherDefault,
 		{
@@ -114,7 +114,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 	}, [error])
 
 	useEffect(() => {
-		console.log(isRequestReady)
+		// console.log(isRequestReady)
 	}, [isRequestReady])
 
 	return {
