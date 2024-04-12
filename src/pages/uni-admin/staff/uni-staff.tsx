@@ -221,6 +221,8 @@ const UniStaff = () => {
 		// console.log(getStaffResponse)
 		if (getStaffResponse && getStaffResponse.length > 0) {
 			staffTableDataSetter(getStaffResponse)
+		} else if (getStaffResponse.length === 0) {
+			setStaffTableList([])
 		}
 	}, [getStaffResponse])
 
@@ -297,6 +299,15 @@ const UniStaff = () => {
 			<div className="page uni-staff-page">
 				<PageHeader title="Staff">
 					<>
+						<Form onSubmit={handleSubmit(searchHandler)}>
+							<FormControl
+								type="text"
+								placeholder="Search"
+								className="mr-sm-2"
+								{...register('search')}
+								onKeyDown={keyDownHandler} // Listen for Enter key press
+							/>
+						</Form>
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>
@@ -309,17 +320,7 @@ const UniStaff = () => {
 						</Button>
 					</>
 				</PageHeader>
-				<div className="">
-					<Form onSubmit={handleSubmit(searchHandler)}>
-						<FormControl
-							type="text"
-							placeholder="Search"
-							className="mr-sm-2"
-							{...register('search')}
-							onKeyDown={keyDownHandler} // Listen for Enter key press
-						/>
-					</Form>
-				</div>
+				<div className=""></div>
 				<div className="">
 					{staffTableList && (
 						<CustomTable<StaffItem>
