@@ -13,18 +13,14 @@ export class AuthService {
 		return this.gateway + 'groups/class'
 	}
 
-	Post_Students() {
-		return this.gateway + 'students'
-	}
-
-	Get_Students(params: Record<string, string> = {}) {
-		return this.gateway + 'students' + '?' + this.qs.setQueryParams(params)
-	}
-
 	Get_Staff(params: Record<string, string> = {}) {
 		return (
 			this.gateway + 'resource-managers' + '?' + this.qs.setQueryParams(params)
 		)
+	}
+
+	Get_StaffById(id: string) {
+		return this.gateway + 'resource-managers' + '/' + id
 	}
 
 	Post_Staff() {
@@ -55,5 +51,17 @@ export class AuthService {
 
 	Post_Login() {
 		return this.gateway + 'test/get-access-token'
+	}
+
+	Post_Student() {
+		return this.gateway + 'students'
+	}
+
+	Get_Students(params: Record<string, string> = {}) {
+		return this.gateway + 'students' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Patch_Students(id: string) {
+		return this.gateway + 'students/' + id
 	}
 }

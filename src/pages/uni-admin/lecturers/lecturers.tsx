@@ -3,16 +3,17 @@ import { Button, Modal, Spinner } from 'react-bootstrap'
 import PageHeader from '../../../components/shared/page-header/page-header'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
 import { useEffect, useState } from 'react'
-import AddNewLecturer, {
-	AddLecturerFormData,
-} from '../../../components/uni-admin/lecturers/add-new-lecturer/add-new-lecturer'
+import AddNewLecturer from '../../../components/uni-admin/lecturers/add-new-lecturer/add-new-lecturer'
 import DeactivateLecturer, {
 	DeactivateItem,
 } from '../../../components/uni-admin/lecturers/deactivate-lecturer/deactivate-lecturer'
 import { useCreateLecturer } from '../../../hooks/uni-admin/lecturers/useCreateLecturer'
 import { useGetLecturersTableDetails } from '../../../hooks/uni-admin/lecturers/useGetLecturersTableDetails'
 import { useUpdateLecturer } from '../../../hooks/uni-admin/lecturers/useUpdateLecturer'
-import { GetLecturerResponse } from '@promentor-app/shared-lib'
+import {
+	GetLecturerResponse,
+	LecturerCreateRequest,
+} from '@promentor-app/shared-lib'
 import { toast } from 'react-toastify'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 
@@ -84,7 +85,8 @@ const Lecturers = () => {
 	}
 
 	// add new lecturer confirmed
-	const addNewConfirmHandler = (data: AddLecturerFormData) => {
+	const addNewConfirmHandler = (data: LecturerCreateRequest) => {
+		console.log(data)
 		setCreateLecturerRequest(data)
 		setIsRequestReady_createLecturer(true)
 	}
@@ -147,6 +149,10 @@ const Lecturers = () => {
 			setSelectedLecturerList([...selectedLecturerList, item])
 		}
 	}
+
+	useEffect(() => {
+		mutate_getLecturers()
+	}, [])
 
 	useEffect(() => {
 		if (createLecturerResponse) {
@@ -231,6 +237,7 @@ const Lecturers = () => {
 				isAddNewModalOpen={isAddNewModalOpen}
 				modalCloseHandler={modalCloseHandler}
 				addNewConfirmHandler={addNewConfirmHandler}
+				isFormReset={createLecturerResponse ? true : false}
 			/>
 
 			{/* deactivate confirm modal */}

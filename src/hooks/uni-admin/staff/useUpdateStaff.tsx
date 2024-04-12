@@ -23,9 +23,9 @@ export const useUpdateStaff = () => {
 		'PATCH'
 	)
 
-	// useEffect(() => {
-	// 	console.log(data)
-	// }, [data])
+	useEffect(() => {
+		// console.log(data)
+	}, [data])
 
 	return {
 		updateStaffResponse: data,

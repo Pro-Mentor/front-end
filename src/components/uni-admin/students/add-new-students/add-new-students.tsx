@@ -1,31 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { yupResolver } from '@hookform/resolvers/yup'
+import { Group, StudentCreateRequest } from '@promentor-app/shared-lib'
 import { Button, Form, Modal, Spinner } from 'react-bootstrap'
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { useGetSchoolsGroupList } from '../../../../hooks/uni-admin/lecturers/useGetSchoolsGroupList'
-import { useEffect, useState } from 'react'
-import { errorDisplayHandler } from '../../../../utils/errorDisplayHandler'
-import { Group, LecturerCreateRequest } from '@promentor-app/shared-lib'
 import { useGetDegreesGroupList } from '../../../../hooks/uni-admin/lecturers/useGetDegreesGroupList'
+import { useEffect, useState } from 'react'
 import { useGetClassesGroupList } from '../../../../hooks/uni-admin/lecturers/useGetClassesGroupList'
+import { errorDisplayHandler } from '../../../../utils/errorDisplayHandler'
+import './add-new-students.scss'
 
 type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
-	addNewConfirmHandler: (data: LecturerCreateRequest) => void
+	addNewConfirmHandler: (data: StudentCreateRequest) => void
 	isFormReset: boolean
-}
-
-export interface AddLecturerFormData {
-	username: string
-	email: string
-	firstName: string
-	lastName: string
-	contactNumber?: string
-	assignedSchools?: any | Group[]
-	assignedClasses?: any | Group[]
-	assignedDegrees?: any | Group[]
 }
 
 const schema = yup.object().shape({
@@ -38,7 +28,18 @@ const schema = yup.object().shape({
 		.matches(/^\+?\d+$/, 'Contact number must contain only digits'),
 })
 
-const AddNewLecturer = ({
+export interface FormData {
+	username: string
+	email: string
+	firstName: string
+	lastName: string
+	contactNumber?: string
+	assignedSchools?: any | Group[]
+	assignedClasses?: any | Group[]
+	assignedDegrees?: any | Group[]
+}
+
+const AddNewStudents = ({
 	isAddNewModalOpen,
 	modalCloseHandler,
 	addNewConfirmHandler,
@@ -47,15 +48,15 @@ const AddNewLecturer = ({
 	const {
 		handleSubmit,
 		control,
-		formState: { errors },
 		reset,
-	} = useForm<AddLecturerFormData>({
+		formState: { errors },
+	} = useForm<FormData>({
 		resolver: yupResolver(schema),
 	})
-	const [isLoading, setIsLoading] = useState(false)
 	const [schoolsList, setSchoolsList] = useState<Group[]>([])
 	const [degreesList, setDegreesList] = useState<Group[]>([])
 	const [classesList, setClassesList] = useState<Group[]>([])
+	const [isLoading, setIsLoading] = useState(false)
 	const {
 		getSchoolsGroupsListResponse,
 		error_getSchoolsGroups,
@@ -81,10 +82,12 @@ const AddNewLecturer = ({
 	} = useGetClassesGroupList()
 
 	useEffect(() => {
-		mutate_getSchoolsGroups()
-		mutate_getDegreesGroups()
-		mutate_getClassesGroups()
-	}, [])
+		if (isAddNewModalOpen) {
+			if (schoolsList.length === 0) mutate_getSchoolsGroups()
+			if (degreesList.length === 0) mutate_getDegreesGroups()
+			if (classesList.length === 0) mutate_getClassesGroups()
+		}
+	}, [isAddNewModalOpen])
 
 	useEffect(() => {
 		if (getSchoolsGroupsListResponse) {
@@ -132,10 +135,6 @@ const AddNewLecturer = ({
 		errorDisplayHandler(error_getClassesGroups)
 	}, [error_getSchoolsGroups, error_getDegreesGroups, error_getClassesGroups])
 
-	useEffect(() => {
-		if (isFormReset) reset()
-	}, [isFormReset])
-
 	const mapSelectedGroups = (
 		selectedGroups: { [key: string]: boolean } | null,
 		groups: Group[]
@@ -147,7 +146,7 @@ const AddNewLecturer = ({
 				.map((cls) => cls.name)
 	}
 
-	const formDataConverter = (formData: AddLecturerFormData) => {
+	const formDataConverter = (formData: FormData) => {
 		const selectedClasses = mapSelectedGroups(
 			formData?.assignedClasses || null,
 			classesList
@@ -164,7 +163,7 @@ const AddNewLecturer = ({
 		formData.assignedDegrees = selectedDegrees
 		formData.assignedSchools = selectedSchools
 
-		const data: LecturerCreateRequest = {
+		const data: StudentCreateRequest = {
 			email: formData.email,
 			username: formData.username,
 			contactNumber: formData.contactNumber,
@@ -177,22 +176,31 @@ const AddNewLecturer = ({
 		addNewConfirmHandler(data)
 	}
 
+	// if (isFormReset) {
+	// 	reset()
+	// 	// reset the form if submission was successful
+	// }
+
+	useEffect(() => {
+		if (isFormReset) reset()
+	}, [isFormReset])
+
 	return (
 		<>
-			<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
+			<Modal
+				show={isAddNewModalOpen}
+				onHide={modalCloseHandler}
+				size="lg"
+				className="add-new-students-modal"
+			>
 				<Form onSubmit={handleSubmit(formDataConverter)}>
-					{/* <Form
-					onSubmit={handleSubmit((data) => {
-						console.log(data)
-						console.log(mapSelectedGroups(data.assignedClasses, classesList))
-					})}
-				> */}
 					<Modal.Header closeButton>
-						<Modal.Title>Add Lecturer</Modal.Title>
+						<Modal.Title>Add Student</Modal.Title>
 					</Modal.Header>
-					<Modal.Body>
-						<div className="">
-							<div className="">General Details</div>
+					<Modal.Body className="col2-container">
+						<div className="col1">
+							<div className="add-details-topic">General Details</div>
+
 							<Form.Group controlId="firstName">
 								<Form.Label>First Name</Form.Label>
 								<Controller
@@ -258,10 +266,11 @@ const AddNewLecturer = ({
 								</Form.Text>
 							</Form.Group>
 						</div>
-						<div className="">
-							<div className="">Faculty Details</div>
 
-							<Form.Group controlId="schools">
+						<div className="col1">
+							<div className="add-details-topic">Faculty Details</div>
+
+							<Form.Group controlId="schools" className="group-section">
 								<Form.Label>Schools</Form.Label>
 								{schoolsList &&
 									schoolsList.map((school) => (
@@ -274,7 +283,7 @@ const AddNewLecturer = ({
 									))}
 							</Form.Group>
 
-							<Form.Group controlId="degrees">
+							<Form.Group controlId="degrees" className="group-section">
 								<Form.Label>Degree Programs</Form.Label>
 								{degreesList &&
 									degreesList.map((degree) => (
@@ -287,7 +296,7 @@ const AddNewLecturer = ({
 									))}
 							</Form.Group>
 
-							<Form.Group controlId="classes">
+							<Form.Group controlId="classes" className="group-section">
 								<Form.Label>Classes</Form.Label>
 								{classesList &&
 									classesList.map((class1) => (
@@ -305,8 +314,8 @@ const AddNewLecturer = ({
 						<Button variant="secondary" onClick={modalCloseHandler}>
 							Close
 						</Button>
-						<Button variant="primary" type="submit">
-							Add Lecturer
+						<Button type="submit" variant="primary">
+							Add Student
 						</Button>
 					</Modal.Footer>
 				</Form>
@@ -323,4 +332,4 @@ const AddNewLecturer = ({
 	)
 }
 
-export default AddNewLecturer
+export default AddNewStudents

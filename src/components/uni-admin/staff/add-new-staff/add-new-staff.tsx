@@ -7,6 +7,7 @@ type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
 	addNewConfirmHandler: (data: FormData) => void
+	editData?: FormData
 }
 
 const schema = yup.object().shape({
@@ -25,26 +26,45 @@ export interface FormData {
 	firstName: string
 	lastName: string
 	contactNumber?: string
+	enabled?: boolean
 }
 
 const AddNewStaff = ({
 	isAddNewModalOpen,
 	modalCloseHandler,
 	addNewConfirmHandler,
+	editData,
 }: Props) => {
 	const {
 		handleSubmit,
 		control,
 		formState: { errors },
 	} = useForm<FormData>({
-		resolver: yupResolver(schema),
+		resolver: editData === undefined ? yupResolver(schema) : undefined,
+		defaultValues: editData || undefined,
 	})
 
+	// if (editData) console.log(editData.username)
+
+	const closeHandler = () => {
+		if (editData) editData = undefined
+		modalCloseHandler()
+	}
+
+	const submitHandler = (data: FormData) => {
+		// if (editData) addNewConfirmHandler(data, )
+		if (editData) editData = undefined
+		addNewConfirmHandler(data)
+	}
+
 	return (
-		<Modal show={isAddNewModalOpen} onHide={modalCloseHandler}>
-			<Form onSubmit={handleSubmit(addNewConfirmHandler)}>
+		<Modal show={isAddNewModalOpen} onHide={() => closeHandler()}>
+			<Form onSubmit={handleSubmit(submitHandler)}>
+				{/* <Form onSubmit={handleSubmit((data) => console.log(data))}> */}
 				<Modal.Header closeButton>
-					<Modal.Title>Add Staff Member</Modal.Title>
+					<Modal.Title>
+						{editData ? 'Edit Staff Member Details' : 'Add Staff Member'}
+					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Form.Group controlId="firstName">
@@ -52,7 +72,6 @@ const AddNewStaff = ({
 						<Controller
 							name="firstName"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
 						/>
 						<Form.Text className="text-danger">
@@ -65,7 +84,6 @@ const AddNewStaff = ({
 						<Controller
 							name="lastName"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
 						/>
 						<Form.Text className="text-danger">
@@ -78,8 +96,13 @@ const AddNewStaff = ({
 						<Controller
 							name="username"
 							control={control}
-							defaultValue=""
-							render={({ field }) => <Form.Control {...field} />}
+							render={({ field }) => (
+								<Form.Control
+									{...field}
+									readOnly={!!editData}
+									disabled={editData ? true : false}
+								/>
+							)}
 						/>
 						<Form.Text className="text-danger">
 							{errors.username?.message}
@@ -91,8 +114,13 @@ const AddNewStaff = ({
 						<Controller
 							name="email"
 							control={control}
-							defaultValue=""
-							render={({ field }) => <Form.Control {...field} />}
+							render={({ field }) => (
+								<Form.Control
+									{...field}
+									readOnly={!!editData}
+									disabled={editData ? true : false}
+								/>
+							)}
 						/>
 						<Form.Text className="text-danger">
 							{errors.email?.message}
@@ -104,20 +132,41 @@ const AddNewStaff = ({
 						<Controller
 							name="contactNumber"
 							control={control}
-							defaultValue=""
 							render={({ field }) => <Form.Control {...field} />}
 						/>
 						<Form.Text className="text-danger">
 							{errors.contactNumber?.message}
 						</Form.Text>
 					</Form.Group>
+
+					{editData && (
+						<Form.Group controlId="enabled">
+							{/* <Form.Label>Account Status</Form.Label> */}
+							<Controller
+								name="enabled"
+								control={control}
+								render={({ field }) => (
+									<Form.Check
+										{...field}
+										type="switch"
+										id="enabled"
+										label="Account Active"
+										// value={field.value ? 'true' : 'false'}
+										checked={field.value}
+										onChange={(e) => field.onChange(e.target.checked)}
+										value={undefined}
+									/>
+								)}
+							/>
+						</Form.Group>
+					)}
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={modalCloseHandler}>
+					<Button variant="secondary" onClick={() => closeHandler()}>
 						Close
 					</Button>
 					<Button type="submit" variant="primary">
-						Add Staff
+						{editData ? 'Edit' : 'Add'}
 					</Button>
 				</Modal.Footer>
 			</Form>

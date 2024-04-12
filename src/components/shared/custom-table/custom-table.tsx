@@ -1,6 +1,7 @@
 import React from 'react'
-import { Form, Table } from 'react-bootstrap'
+import { Button, Form, Table } from 'react-bootstrap'
 import './custom-table.scss'
+import editIcon from '@/assets/images/edit-icon.svg'
 
 function CustomTable<dataRowType extends Record<string, unknown>>({
 	tableHeaders,
@@ -8,12 +9,14 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 	children,
 	rowClickHandler,
 	selectedDataRows,
+	editClickHandler,
 }: {
 	tableHeaders?: string[]
 	tableData?: dataRowType[]
 	children?: React.ReactNode
 	rowClickHandler?: (item: dataRowType) => void
 	selectedDataRows?: dataRowType[]
+	editClickHandler?: (item: dataRowType) => void
 }) {
 	return (
 		<div className="custom-table">
@@ -52,7 +55,8 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 									<tr
 										key={index}
 										onClick={
-											rowClickHandler ? () => rowClickHandler(item) : undefined
+											// rowClickHandler ? () => rowClickHandler(item) : undefined
+											undefined
 										}
 										style={rowClickHandler ? { cursor: 'pointer' } : {}}
 										// className={rowClickHandler ? 'clickable-row' : ''}
@@ -106,6 +110,25 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 												)
 											}
 										})}
+
+										{editClickHandler && (
+											<td
+												key={`edit-${index}`}
+												className={
+													item.status === 'Inactive' ? 'enabled-div' : ''
+												}
+											>
+												<div
+													onClick={
+														editClickHandler
+															? () => editClickHandler(item)
+															: undefined
+													}
+												>
+													<img src={editIcon} width="20px" />
+												</div>
+											</td>
+										)}
 									</tr>
 								)
 							})}

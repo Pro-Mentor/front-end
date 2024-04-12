@@ -50,6 +50,7 @@ const LoginComponent = () => {
 		isValidating_login,
 		error_login,
 		setIsRequestReady_login,
+		mutate_login,
 	} = useLogin()
 	const navigate = useNavigate()
 
@@ -58,6 +59,7 @@ const LoginComponent = () => {
 
 		setLoginRequest(data)
 		setIsRequestReady_login(true)
+		mutate_login()
 	}
 
 	useEffect(() => {
@@ -115,6 +117,7 @@ const LoginComponent = () => {
 											{...field}
 											type="text"
 											placeholder="Enter username"
+											autoComplete="username"
 										/>
 									)}
 								/>
@@ -134,6 +137,7 @@ const LoginComponent = () => {
 											{...field}
 											type="password"
 											placeholder="Enter password"
+											autoComplete="current-password"
 										/>
 									)}
 								/>
