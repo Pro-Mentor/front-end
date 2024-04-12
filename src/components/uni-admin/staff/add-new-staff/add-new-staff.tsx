@@ -26,6 +26,7 @@ export interface FormData {
 	firstName: string
 	lastName: string
 	contactNumber?: string
+	enabled?: boolean
 }
 
 const AddNewStaff = ({
@@ -137,6 +138,28 @@ const AddNewStaff = ({
 							{errors.contactNumber?.message}
 						</Form.Text>
 					</Form.Group>
+
+					{editData && (
+						<Form.Group controlId="enabled">
+							{/* <Form.Label>Account Status</Form.Label> */}
+							<Controller
+								name="enabled"
+								control={control}
+								render={({ field }) => (
+									<Form.Check
+										{...field}
+										type="switch"
+										id="enabled"
+										label="Account Active"
+										// value={field.value ? 'true' : 'false'}
+										checked={field.value}
+										onChange={(e) => field.onChange(e.target.checked)}
+										value={undefined}
+									/>
+								)}
+							/>
+						</Form.Group>
+					)}
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" onClick={() => closeHandler()}>

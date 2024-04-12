@@ -217,6 +217,7 @@ const UniStaff = () => {
 				lastName: getStaffByIdResponse.lastName || '',
 				contactNumber: getStaffByIdResponse.contactNumber,
 				email: getStaffByIdResponse.email,
+				enabled: getStaffByIdResponse.enabled,
 			})
 		}
 	}, [getStaffByIdResponse])

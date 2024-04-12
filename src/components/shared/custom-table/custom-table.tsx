@@ -112,7 +112,12 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 										})}
 
 										{editClickHandler && (
-											<td key={`edit-${index}`}>
+											<td
+												key={`edit-${index}`}
+												className={
+													item.status === 'Inactive' ? 'enabled-div' : ''
+												}
+											>
 												<div
 													onClick={
 														editClickHandler
