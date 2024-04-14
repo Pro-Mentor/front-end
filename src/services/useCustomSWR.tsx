@@ -35,7 +35,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 		requestType === 'GET' ? true : false
 	)
 	const [request, setRequest] = useState<RequestType | null>(null)
-	const [response, setResponse] = useState<any>()
+	const [response, setResponse] = useState<ResponseType>()
 	const [globalError, setGlobalError] = useState<IGlobalError | string | null>(
 		null
 	)
@@ -48,7 +48,7 @@ export function useCustomSWR<RequestType, ResponseType>(
 		// setIsRequestReady(false)
 
 		try {
-			let res
+			let res: ResponseType
 			if (endpoint !== null) {
 				switch (requestType) {
 					case 'GET':

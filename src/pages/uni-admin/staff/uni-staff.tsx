@@ -221,7 +221,7 @@ const UniStaff = () => {
 		// console.log(getStaffResponse)
 		if (getStaffResponse && getStaffResponse.length > 0) {
 			staffTableDataSetter(getStaffResponse)
-		} else if (getStaffResponse.length === 0) {
+		} else if (getStaffResponse && getStaffResponse.length === 0) {
 			setStaffTableList([])
 		}
 	}, [getStaffResponse])

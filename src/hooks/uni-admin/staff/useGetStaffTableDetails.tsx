@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AuthService } from '../../../services/api/auth-service.api.endpoints'
 import { useCustomSWR } from '../../../services/useCustomSWR'
 import { GetResourceManagersResponse } from '@promentor-app/shared-lib'
@@ -16,6 +16,10 @@ export const useGetStaffTableDetails = () => {
 		}),
 		'GET'
 	)
+
+	useEffect(() => {
+		// console.log(data)
+	}, [data])
 
 	return {
 		getStaffResponse: data,
