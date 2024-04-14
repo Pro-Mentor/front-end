@@ -1,4 +1,4 @@
-import { Button, Modal, Spinner } from 'react-bootstrap'
+import { Button, Form, FormControl, Modal, Spinner } from 'react-bootstrap'
 import PageHeader from '../../../components/shared/page-header/page-header'
 import { useEffect, useState } from 'react'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
@@ -12,6 +12,7 @@ import { useGetStudentsTableDetails } from '../../../hooks/uni-admin/students/us
 import { useUpdateStudent } from '../../../hooks/uni-admin/students/useUpdateStudent'
 import { toast } from 'react-toastify'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
+import { useForm } from 'react-hook-form'
 
 type StudentItem = {
 	id: string
@@ -32,6 +33,8 @@ const Students = () => {
 	const [selectedStudentsList, setSelectedStudentsList] = useState<
 		StudentItem[]
 	>([])
+	const { register, handleSubmit } = useForm<{ search: string }>()
+
 	const {
 		setCreateStudentRequest,
 		createStudentResponse,
@@ -47,6 +50,7 @@ const Students = () => {
 		isValidating_getStudents,
 		error_getStudents,
 		mutate_getStudents,
+		setSearch_getStudents,
 	} = useGetStudentsTableDetails()
 
 	const {
@@ -59,6 +63,19 @@ const Students = () => {
 		setIsRequestReady_updateStudent,
 		mutate_updateStudent,
 	} = useUpdateStudent()
+
+	const searchHandler = (data: { search: string }) => {
+		console.log(data)
+
+		if (data.search !== null && data.search !== undefined) {
+			setSearch_getStudents(data.search)
+			mutate_getStudents()
+		}
+	}
+
+	const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') handleSubmit(searchHandler)()
+	}
 
 	// open add new lecturer modal
 	const addNewHandler = () => {
@@ -131,6 +148,8 @@ const Students = () => {
 	useEffect(() => {
 		if (getStudentsResponse && getStudentsResponse.length > 0) {
 			studentsTableDataSetter(getStudentsResponse)
+		} else if (getStudentsResponse && getStudentsResponse.length === 0) {
+			setStudentsTableList([])
 		}
 	}, [getStudentsResponse])
 
@@ -167,6 +186,15 @@ const Students = () => {
 			<div className="page uni-students-page">
 				<PageHeader title="Students">
 					<>
+						<Form onSubmit={handleSubmit(searchHandler)}>
+							<FormControl
+								type="text"
+								placeholder="Search"
+								className="mr-sm-2"
+								{...register('search')}
+								onKeyDown={keyDownHandler} // Listen for Enter key press
+							/>
+						</Form>
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>
