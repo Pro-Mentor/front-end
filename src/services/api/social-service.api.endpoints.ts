@@ -11,4 +11,8 @@ export class SocialService {
 	Post_CreatePost() {
 		return this.gateway + 'posts'
 	}
+
+	Get_Posts(params: Record<string, string> = {}) {
+		return this.gateway + 'posts' + '?' + this.qs.setQueryParams(params)
+	}
 }
