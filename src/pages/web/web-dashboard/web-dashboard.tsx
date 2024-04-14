@@ -54,8 +54,12 @@ const WebDashboard = () => {
 						</Button>
 					</Container>
 
-					<div className="latest-events-container">latest events</div>
-					<div className="latest-jobs-container">latest jobs</div>
+					<div className="latest-events-container">
+						<div className="title">Latest Events</div>
+					</div>
+					<div className="latest-jobs-container">
+						<div className="title">Latest Jobs</div>
+					</div>
 				</div>
 			</div>
 

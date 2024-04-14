@@ -30,12 +30,84 @@
 		align-items: center;
 		justify-content: space-between;
 
-        .comment-line {
-            width: 25rem;
-        }
+		.comment-line {
+			width: 25rem;
+		}
 
-        .comments-btn {
-            cursor: pointer;
-        }
+		.comments-btn {
+			cursor: pointer;
+		}
+
+		.like-container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			column-gap: 0.3rem;
+
+			.like-btn {
+				cursor: pointer;
+			}
+			.likes-count {
+				font-size: 0.7rem;
+			}
+		}
 	}
+
+	.no-comments {
+		font-size: 0.8rem;
+		text-align: center;
+		padding: 1.5rem 0;
+	}
+
+	.comments {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		row-gap: 0.5rem;
+		margin-top: 1rem;
+		border-top: 1px solid lightgray;
+		padding-top: 1rem;
+
+		.top-row {
+			align-items: flex-start;
+		}
+
+		.comment-container {
+			width: -webkit-fill-available;
+
+			.name-and-time {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				width: -webkit-fill-available;
+
+				.fullname {
+					font-size: 0.9rem;
+				}
+			}
+
+			.comment-line {
+				padding-bottom: 1rem;
+			}
+		}
+	}
+}
+
+.card-parent {
+	position: relative;
+}
+
+.loading-card {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.spinner-container {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
