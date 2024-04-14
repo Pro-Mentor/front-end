@@ -23,13 +23,6 @@ const WebDashboard = () => {
 		mutate_getPostsList()
 	}, [])
 
-	// useEffect(() => {
-	// 	if (getPostsListResponse && getPostsListResponse.length > 0) {
-	// 		console.log(getPostsListResponse)
-	// 	} else if (getPostsListResponse && getPostsListResponse.length === 0) {
-	// 	}
-	// }, [getPostsListResponse])
-
 	useEffect(() => {
 		if (isLoading_getPostsList || isValidating_getPostsList) {
 			setIsLoading(true)
@@ -48,6 +41,10 @@ const WebDashboard = () => {
 				<div className="col1">
 					{getPostsListResponse && getPostsListResponse.length > 0 && (
 						<PostsList list={getPostsListResponse} />
+					)}
+
+					{getPostsListResponse && getPostsListResponse.length === 0 && (
+						<div className="">No Posts Found!</div>
 					)}
 				</div>
 				<div className="col2">

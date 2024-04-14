@@ -1,0 +1,41 @@
+.post-item-container {
+	padding: 0.8rem;
+	margin-bottom: 0.5rem;
+
+	.top-row {
+		display: flex;
+		align-items: center;
+		column-gap: 1rem;
+		margin-bottom: 0.5rem;
+
+		.name-and-time {
+			font-size: 1rem;
+			font-weight: 600;
+
+			.time-ago {
+				font-size: 0.8rem;
+				font-weight: 400;
+			}
+		}
+	}
+
+	.description-container {
+		padding-bottom: 1.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.footer {
+		margin-top: 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+        .comment-line {
+            width: 25rem;
+        }
+
+        .comments-btn {
+            cursor: pointer;
+        }
+	}
+}
