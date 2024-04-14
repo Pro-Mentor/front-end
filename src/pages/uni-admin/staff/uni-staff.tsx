@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Modal, Spinner } from 'react-bootstrap'
+import { Button, Form, FormControl, Modal, Spinner } from 'react-bootstrap'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
 import PageHeader from '../../../components/shared/page-header/page-header'
 import './uni-staff.scss'
@@ -17,6 +17,7 @@ import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 import { GetResourceManagersResponse } from '@promentor-app/shared-lib'
 import { useUpdateStaff } from '../../../hooks/uni-admin/staff/useUpdateStaff'
 import { useGetStaffById } from '../../../hooks/uni-admin/staff/useGetStaffById'
+import { useForm } from 'react-hook-form'
 
 type StaffItem = {
 	id: string
@@ -42,6 +43,7 @@ const UniStaff = () => {
 	const [editStaffData, setEditStaffData] = useState<FormData | undefined>(
 		undefined
 	)
+	const { register, handleSubmit } = useForm<{ search: string }>()
 
 	const {
 		setCreateStaffRequest,
@@ -58,6 +60,7 @@ const UniStaff = () => {
 		isValidating_getStaff,
 		error_getStaff,
 		mutate_getStaff,
+		setSearch_getStaff,
 	} = useGetStaffTableDetails()
 
 	const {
@@ -80,6 +83,19 @@ const UniStaff = () => {
 		setIsRequestReady_updateStaff,
 		mutate_updateStaff,
 	} = useUpdateStaff()
+
+	const searchHandler = (data: { search: string }) => {
+		console.log(data)
+
+		if (data.search !== null && data.search !== undefined) {
+			setSearch_getStaff(data.search)
+			mutate_getStaff()
+		}
+	}
+
+	const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') handleSubmit(searchHandler)()
+	}
 
 	// open add new staff modal
 	const addNewHandler = () => {
@@ -205,6 +221,8 @@ const UniStaff = () => {
 		// console.log(getStaffResponse)
 		if (getStaffResponse && getStaffResponse.length > 0) {
 			staffTableDataSetter(getStaffResponse)
+		} else if (getStaffResponse && getStaffResponse.length === 0) {
+			setStaffTableList([])
 		}
 	}, [getStaffResponse])
 
@@ -281,6 +299,15 @@ const UniStaff = () => {
 			<div className="page uni-staff-page">
 				<PageHeader title="Staff">
 					<>
+						<Form onSubmit={handleSubmit(searchHandler)}>
+							<FormControl
+								type="text"
+								placeholder="Search"
+								className="mr-sm-2"
+								{...register('search')}
+								onKeyDown={keyDownHandler} // Listen for Enter key press
+							/>
+						</Form>
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>
@@ -293,6 +320,7 @@ const UniStaff = () => {
 						</Button>
 					</>
 				</PageHeader>
+				<div className=""></div>
 				<div className="">
 					{staffTableList && (
 						<CustomTable<StaffItem>

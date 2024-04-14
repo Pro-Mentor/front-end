@@ -1,7 +1,14 @@
-import React from 'react'
+import { Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 const WebDashboard = () => {
-	return <div>WebDashboard</div>
+	const navigate = useNavigate()
+
+	return (
+		<div className="page">
+			<Button onClick={() => navigate('/create-post')}>Create a Post</Button>
+		</div>
+	)
 }
 
 export default WebDashboard

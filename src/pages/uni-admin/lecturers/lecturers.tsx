@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Modal, Spinner } from 'react-bootstrap'
+import { Button, Form, FormControl, Modal, Spinner } from 'react-bootstrap'
 import PageHeader from '../../../components/shared/page-header/page-header'
 import CustomTable from '../../../components/shared/custom-table/custom-table'
 import { useEffect, useState } from 'react'
@@ -16,6 +16,7 @@ import {
 } from '@promentor-app/shared-lib'
 import { toast } from 'react-toastify'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
+import { useForm } from 'react-hook-form'
 
 type LecturerItem = {
 	id: string
@@ -38,6 +39,7 @@ const Lecturers = () => {
 	const [selectedLecturerList, setSelectedLecturerList] = useState<
 		LecturerItem[]
 	>([])
+	const { register, handleSubmit } = useForm<{ search: string }>()
 
 	const {
 		setCreateLecturerRequest,
@@ -54,6 +56,7 @@ const Lecturers = () => {
 		isValidating_getLecturers,
 		error_getLecturers,
 		mutate_getLecturers,
+		setSearch_getLecturers,
 	} = useGetLecturersTableDetails()
 
 	const {
@@ -66,6 +69,19 @@ const Lecturers = () => {
 		setIsRequestReady_updateLecturer,
 		mutate_updateLecturer,
 	} = useUpdateLecturer()
+
+	const searchHandler = (data: { search: string }) => {
+		console.log(data)
+
+		if (data.search !== null && data.search !== undefined) {
+			setSearch_getLecturers(data.search)
+			mutate_getLecturers()
+		}
+	}
+
+	const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') handleSubmit(searchHandler)()
+	}
 
 	// open add new lecturer modal
 	const addNewHandler = () => {
@@ -165,6 +181,8 @@ const Lecturers = () => {
 	useEffect(() => {
 		if (getLecturersResponse && getLecturersResponse.length > 0) {
 			lecturersTableDataSetter(getLecturersResponse)
+		} else if (getLecturersResponse && getLecturersResponse.length === 0) {
+			setLecturersTableList([])
 		}
 	}, [getLecturersResponse])
 
@@ -210,6 +228,15 @@ const Lecturers = () => {
 			<div className="page uni-lecturer-page">
 				<PageHeader title="Lecturers">
 					<>
+						<Form onSubmit={handleSubmit(searchHandler)}>
+							<FormControl
+								type="text"
+								placeholder="Search"
+								className="mr-sm-2"
+								{...register('search')}
+								onKeyDown={keyDownHandler} // Listen for Enter key press
+							/>
+						</Form>
 						<Button variant="primary" onClick={addNewHandler}>
 							Add New
 						</Button>

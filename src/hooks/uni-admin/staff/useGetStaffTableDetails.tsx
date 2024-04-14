@@ -1,12 +1,25 @@
+import { useEffect, useState } from 'react'
 import { AuthService } from '../../../services/api/auth-service.api.endpoints'
 import { useCustomSWR } from '../../../services/useCustomSWR'
-import { GetResourceManagersResponse, Group } from '@promentor-app/shared-lib'
+import { GetResourceManagersResponse } from '@promentor-app/shared-lib'
 
 const api = new AuthService()
 
 export const useGetStaffTableDetails = () => {
-	const { data, error, isLoading, isValidating, mutate, customMutate } =
-		useCustomSWR<unknown, GetResourceManagersResponse[]>(api.Get_Staff(), 'GET')
+	const [search, setSearch] = useState('')
+	const { data, error, isLoading, isValidating, customMutate } = useCustomSWR<
+		unknown,
+		GetResourceManagersResponse[]
+	>(
+		api.Get_Staff({
+			search: search,
+		}),
+		'GET'
+	)
+
+	useEffect(() => {
+		// console.log(data)
+	}, [data])
 
 	return {
 		getStaffResponse: data,
@@ -14,5 +27,6 @@ export const useGetStaffTableDetails = () => {
 		isLoading_getStaff: isLoading,
 		isValidating_getStaff: isValidating,
 		mutate_getStaff: customMutate,
+		setSearch_getStaff: setSearch,
 	}
 }

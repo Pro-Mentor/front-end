@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Form, Table } from 'react-bootstrap'
+import { Form, Table } from 'react-bootstrap'
 import './custom-table.scss'
 import editIcon from '@/assets/images/edit-icon.svg'
 
@@ -21,11 +21,11 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 	return (
 		<div className="custom-table">
 			<div className="select-all-row">
-				<Form.Check
+				{/* <Form.Check
 					type="checkbox"
 					id="custom-table-select-all"
 					label="Select All"
-				/>
+				/> */}
 				<div className="total-count-container">
 					Total: <span>{tableData?.length}</span>
 				</div>
@@ -50,6 +50,7 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 				) : (
 					<tbody>
 						{tableData &&
+							tableData.length > 0 &&
 							tableData.map((item, index) => {
 								return (
 									<tr
@@ -132,6 +133,8 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 									</tr>
 								)
 							})}
+
+						{tableData?.length === 0 && <tr>No Data Found</tr>}
 					</tbody>
 				)}
 			</Table>

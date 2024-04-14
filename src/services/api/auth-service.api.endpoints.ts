@@ -64,4 +64,8 @@ export class AuthService {
 	Patch_Students(id: string) {
 		return this.gateway + 'students/' + id
 	}
+
+	Get_StudentById(id: string) {
+		return this.gateway + 'students' + '/' + id
+	}
 }

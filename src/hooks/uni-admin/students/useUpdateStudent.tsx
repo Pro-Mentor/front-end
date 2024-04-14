@@ -23,9 +23,9 @@ export const useUpdateStudent = () => {
 		'PATCH'
 	)
 
-	// useEffect(() => {
-	// 	console.log(data)
-	// }, [data])
+	useEffect(() => {
+		// 	console.log(data)
+	}, [data])
 
 	return {
 		updateStudentsResponse: data,

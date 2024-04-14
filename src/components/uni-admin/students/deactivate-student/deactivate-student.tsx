@@ -13,7 +13,7 @@ type Props = {
 	deactivateList: DeactivateItem[]
 }
 
-const DeactivateLecturer = ({
+const DeactivateStudent = ({
 	isDeactivateModalOpen,
 	modalCloseHandler,
 	deactivateConfirmHandler,
@@ -22,12 +22,11 @@ const DeactivateLecturer = ({
 	return (
 		<Modal show={isDeactivateModalOpen} onHide={modalCloseHandler}>
 			<Modal.Header closeButton>
-				<Modal.Title>Deactivate Lecturer Account</Modal.Title>
+				<Modal.Title>Deactivate Student Account</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
 				<div className="">
-					Are you sure you want to deactive following selected lecturer
-					accounts?
+					Are you sure you want to deactive following selected student accounts?
 				</div>
 				<div className="">
 					{deactivateList &&
@@ -54,4 +53,4 @@ const DeactivateLecturer = ({
 	)
 }
 
-export default DeactivateLecturer
+export default DeactivateStudent

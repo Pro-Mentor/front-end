@@ -69,22 +69,26 @@ export async function PostRequestHandler<RequestType, ResponseType>(
 		let response: AxiosResponse<ResponseType>
 
 		if (isFileUpload && file) {
-			response = await fileUploadClient.post(endpoint, file, globalConfig)
+			response = await fileUploadClient.post(endpoint, file, {
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
+			})
 		} else {
-			response = await client.post(endpoint, requestModel, globalConfig)
-			// .catch((error) => {
-			// 	console.log(error)
-			// 	throw error
-			// })
-			//const { data } = response
-
-			const responseData = response.data as any
-			if (responseData?.data) return responseData.data as ResponseType
-			else return responseData as ResponseType
+			response = await client.post(endpoint, requestModel, {
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
+			})
 		}
+		const responseData = response.data as any
+		if (responseData?.data) return responseData.data as ResponseType
+		else return responseData as ResponseType
 	} catch (error: any) {
 		console.log(error.response.data)
-		throw error.response.data
+		throw error
 	}
 }
 
@@ -112,25 +116,31 @@ export async function GetRequestHandler<ResponseType>(endpoint: string) {
 export async function PutRequestHandler<RequestType, ResponseType>(
 	requestModel: RequestType | null,
 	endpoint: string
-): Promise<ResponseType | string> {
+) {
 	try {
 		const response: AxiosResponse<ResponseType> = await client.put(
 			endpoint,
 			requestModel,
-			globalConfig
+			{
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
+			}
 		)
-		const { data } = response
-
-		return data
+		const responseData = response.data as any
+		if (responseData?.data) return responseData.data as ResponseType
+		else return responseData as ResponseType
 	} catch (error: any) {
-		return error.response
+		console.log(error.response.data)
+		throw error
 	}
 }
 
 export async function DeleteRequestHandler<RequestType, ResponseType>(
 	requestModel: RequestType | null,
 	endpoint: string
-): Promise<ResponseType | string> {
+) {
 	try {
 		const response: AxiosResponse<ResponseType> = await client.delete(
 			endpoint,
@@ -138,47 +148,59 @@ export async function DeleteRequestHandler<RequestType, ResponseType>(
 				data: requestModel,
 			}
 		)
-		const { data } = response
-
-		return data
+		const responseData = response.data as any
+		if (responseData?.data) return responseData.data as ResponseType
+		else return responseData as ResponseType
 	} catch (error: any) {
-		return error.response
+		console.log(error.response.data)
+		throw error
 	}
 }
 
 export async function PatchRequestHandler<RequestType, ResponseType>(
 	requestModel: RequestType | null,
 	endpoint: string
-): Promise<ResponseType | string> {
+) {
 	try {
 		const response: AxiosResponse<ResponseType> = await client.patch(
 			endpoint,
 			requestModel,
-			globalConfig
+			{
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
+			}
 		)
-		const { data } = response
-
-		return data
+		const responseData = response.data as any
+		if (responseData?.data) return responseData.data as ResponseType
+		else return responseData as ResponseType
 	} catch (error: any) {
-		return error.response
+		console.log(error.response.data)
+		throw error
 	}
 }
 
 export async function FileUploadHandler<ResponseType>(
 	endpoint: string,
 	file: FormData
-): Promise<ResponseType | string> {
+) {
 	try {
 		const response: AxiosResponse<ResponseType> = await fileUploadClient.post(
 			endpoint,
 			file,
-			globalConfig
+			{
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
+			}
 		)
-
-		const { data } = response
-
-		return data
+		const responseData = response.data as any
+		if (responseData?.data) return responseData.data as ResponseType
+		else return responseData as ResponseType
 	} catch (error: any) {
-		return error.response
+		console.log(error.response.data)
+		throw error
 	}
 }
