@@ -14,8 +14,9 @@ import './add-new-students.scss'
 type Props = {
 	isAddNewModalOpen: boolean
 	modalCloseHandler: () => void
-	addNewConfirmHandler: (data: StudentCreateRequest) => void
+	addNewConfirmHandler: (data: StudentCreateRequest | FormData) => void
 	isFormReset: boolean
+	editData?: FormData
 }
 
 const schema = yup.object().shape({
@@ -37,6 +38,7 @@ export interface FormData {
 	assignedSchools?: any | Group[]
 	assignedClasses?: any | Group[]
 	assignedDegrees?: any | Group[]
+	enabled?: boolean
 }
 
 const AddNewStudents = ({
@@ -44,6 +46,7 @@ const AddNewStudents = ({
 	modalCloseHandler,
 	addNewConfirmHandler,
 	isFormReset,
+	editData,
 }: Props) => {
 	const {
 		handleSubmit,
@@ -51,7 +54,8 @@ const AddNewStudents = ({
 		reset,
 		formState: { errors },
 	} = useForm<FormData>({
-		resolver: yupResolver(schema),
+		resolver: editData === undefined ? yupResolver(schema) : undefined,
+		defaultValues: editData || undefined,
 	})
 	const [schoolsList, setSchoolsList] = useState<Group[]>([])
 	const [degreesList, setDegreesList] = useState<Group[]>([])
@@ -163,16 +167,30 @@ const AddNewStudents = ({
 		formData.assignedDegrees = selectedDegrees
 		formData.assignedSchools = selectedSchools
 
-		const data: StudentCreateRequest = {
-			email: formData.email,
-			username: formData.username,
-			contactNumber: formData.contactNumber,
-			firstName: formData.firstName,
-			lastName: formData.lastName,
-			degreeProgram: selectedDegrees,
-			school: selectedSchools,
-			studentClass: selectedClasses,
+		let data: FormData | StudentCreateRequest
+
+		if (editData) {
+			data = {
+				email: formData.email,
+				username: formData.username,
+				contactNumber: formData.contactNumber,
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				enabled: formData?.enabled,
+			}
+		} else {
+			data = {
+				email: formData.email,
+				username: formData.username,
+				contactNumber: formData.contactNumber,
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				degreeProgram: selectedDegrees,
+				school: selectedSchools,
+				studentClass: selectedClasses,
+			}
 		}
+
 		addNewConfirmHandler(data)
 	}
 
@@ -195,7 +213,9 @@ const AddNewStudents = ({
 			>
 				<Form onSubmit={handleSubmit(formDataConverter)}>
 					<Modal.Header closeButton>
-						<Modal.Title>Add Student</Modal.Title>
+						<Modal.Title>
+							{editData ? 'Edit Student Details' : 'Add Student'}
+						</Modal.Title>
 					</Modal.Header>
 					<Modal.Body className="col2-container">
 						<div className="col1">
@@ -233,7 +253,13 @@ const AddNewStudents = ({
 									name="username"
 									control={control}
 									defaultValue=""
-									render={({ field }) => <Form.Control {...field} />}
+									render={({ field }) => (
+										<Form.Control
+											{...field}
+											readOnly={!!editData}
+											disabled={editData ? true : false}
+										/>
+									)}
 								/>
 								<Form.Text className="text-danger">
 									{errors.username?.message}
@@ -246,7 +272,13 @@ const AddNewStudents = ({
 									name="email"
 									control={control}
 									defaultValue=""
-									render={({ field }) => <Form.Control {...field} />}
+									render={({ field }) => (
+										<Form.Control
+											{...field}
+											readOnly={!!editData}
+											disabled={editData ? true : false}
+										/>
+									)}
 								/>
 								<Form.Text className="text-danger">
 									{errors.email?.message}
@@ -267,55 +299,79 @@ const AddNewStudents = ({
 							</Form.Group>
 						</div>
 
-						<div className="col1">
-							<div className="add-details-topic">Faculty Details</div>
+						{!editData && (
+							<div className="col1">
+								<div className="add-details-topic">Faculty Details</div>
 
-							<Form.Group controlId="schools" className="group-section">
-								<Form.Label>Schools</Form.Label>
-								{schoolsList &&
-									schoolsList.map((school) => (
-										<Form.Check
-											key={school.id}
-											type="checkbox"
-											label={school.name}
-											{...control.register(`assignedSchools.${school.id}`)}
-										/>
-									))}
-							</Form.Group>
+								<Form.Group controlId="schools" className="group-section">
+									<Form.Label>Schools</Form.Label>
+									{schoolsList &&
+										schoolsList.map((school) => (
+											<Form.Check
+												key={school.id}
+												type="checkbox"
+												label={school.name}
+												{...control.register(`assignedSchools.${school.id}`)}
+											/>
+										))}
+								</Form.Group>
 
-							<Form.Group controlId="degrees" className="group-section">
-								<Form.Label>Degree Programs</Form.Label>
-								{degreesList &&
-									degreesList.map((degree) => (
-										<Form.Check
-											key={degree.id}
-											type="checkbox"
-											label={degree.name}
-											{...control.register(`assignedDegrees.${degree.id}`)}
-										/>
-									))}
-							</Form.Group>
+								<Form.Group controlId="degrees" className="group-section">
+									<Form.Label>Degree Programs</Form.Label>
+									{degreesList &&
+										degreesList.map((degree) => (
+											<Form.Check
+												key={degree.id}
+												type="checkbox"
+												label={degree.name}
+												{...control.register(`assignedDegrees.${degree.id}`)}
+											/>
+										))}
+								</Form.Group>
 
-							<Form.Group controlId="classes" className="group-section">
-								<Form.Label>Classes</Form.Label>
-								{classesList &&
-									classesList.map((class1) => (
+								<Form.Group controlId="classes" className="group-section">
+									<Form.Label>Classes</Form.Label>
+									{classesList &&
+										classesList.map((class1) => (
+											<Form.Check
+												key={class1.id}
+												type="checkbox"
+												label={class1.name}
+												{...control.register(`assignedClasses.${class1.id}`)}
+											/>
+										))}
+								</Form.Group>
+							</div>
+						)}
+
+						{editData && (
+							<Form.Group controlId="enabled">
+								{/* <Form.Label>Account Status</Form.Label> */}
+								<Controller
+									name="enabled"
+									control={control}
+									render={({ field }) => (
 										<Form.Check
-											key={class1.id}
-											type="checkbox"
-											label={class1.name}
-											{...control.register(`assignedClasses.${class1.id}`)}
+											{...field}
+											type="switch"
+											id="enabled"
+											label="Account Active"
+											// value={field.value ? 'true' : 'false'}
+											checked={field.value}
+											onChange={(e) => field.onChange(e.target.checked)}
+											value={undefined}
 										/>
-									))}
+									)}
+								/>
 							</Form.Group>
-						</div>
+						)}
 					</Modal.Body>
 					<Modal.Footer>
 						<Button variant="secondary" onClick={modalCloseHandler}>
 							Close
 						</Button>
 						<Button type="submit" variant="primary">
-							Add Student
+							{editData ? 'Edit' : 'Add'}
 						</Button>
 					</Modal.Footer>
 				</Form>

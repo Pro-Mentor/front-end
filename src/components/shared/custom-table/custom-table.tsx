@@ -21,11 +21,11 @@ function CustomTable<dataRowType extends Record<string, unknown>>({
 	return (
 		<div className="custom-table">
 			<div className="select-all-row">
-				<Form.Check
+				{/* <Form.Check
 					type="checkbox"
 					id="custom-table-select-all"
 					label="Select All"
-				/>
+				/> */}
 				<div className="total-count-container">
 					Total: <span>{tableData?.length}</span>
 				</div>
