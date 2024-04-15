@@ -43,4 +43,8 @@ export class SocialService {
 	Put_EditPost(postId: string) {
 		return this.gateway + 'posts' + '/' + postId
 	}
+
+	Delete_deletePost(postId: string) {
+		return this.gateway + 'posts' + '/' + postId
+	}
 }

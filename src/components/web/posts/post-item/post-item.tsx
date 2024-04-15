@@ -25,6 +25,8 @@ import { useGetPost } from '../../../../hooks/web/posts/useGetPost'
 import { SessionHandler } from '../../../../utils/session-handler'
 import DotsToggle from '../../../shared/dots-toggle/dots-toggle'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { useDeletePost } from '../../../../hooks/web/posts/useDeletePost'
+import PostDelete from '../post-delete/post-delete'
 
 type Props = {
 	postItem: GetPostsListResponse
@@ -45,6 +47,7 @@ function PostItem({ postItem }: Props) {
 	const [isLoading, setIsLoading] = useState(false)
 	const [showComments, setShowComments] = useState(false)
 	const [isOwner, setIsOwner] = useState(false)
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	const {
 		getCommentsResponse,
@@ -82,6 +85,15 @@ function PostItem({ postItem }: Props) {
 		getPostResponse,
 		mutate_getPost,
 	} = useGetPost()
+	const {
+		isLoading_deletePost,
+		isValidating_deletePost,
+		error_deletePost,
+		setPostId_deletePost,
+		mutate_deletePost,
+		deletePostResponse,
+		setIsRequestReady_deletePost,
+	} = useDeletePost()
 
 	const likeHandler = () => {
 		// setLiked(!liked)
@@ -116,6 +128,17 @@ function PostItem({ postItem }: Props) {
 		setShowComments(!showComments)
 		setPostId_getComments(post.id)
 		mutate_getComments()
+	}
+
+	const postDeleteHandler = () => {
+		console.log(post.id)
+		setPostId_deletePost(post.id)
+		setIsRequestReady_deletePost(true)
+		mutate_deletePost()
+	}
+
+	const deleteModalCloseHandler = () => {
+		setIsDeleteModalOpen(false)
 	}
 
 	const checkPermission = () => {
@@ -154,6 +177,15 @@ function PostItem({ postItem }: Props) {
 	}, [postLikeResponse])
 
 	useEffect(() => {
+		if (deletePostResponse) {
+			toast.success('Post deleted successfully!')
+			setIsDeleteModalOpen(false)
+			// navigate('/')
+			// TODO: make the posts list mutate
+		}
+	}, [deletePostResponse])
+
+	useEffect(() => {
 		if (getPostResponse) {
 			setPost(getPostResponse)
 			setLiked(getPostResponse.likedByMe)
@@ -176,7 +208,9 @@ function PostItem({ postItem }: Props) {
 			isValidating_AddComment ||
 			isValidating_getComments ||
 			isValidating_postLike ||
-			isValidating_getPost
+			isValidating_getPost ||
+			isLoading_deletePost ||
+			isValidating_deletePost
 		) {
 			setIsLoading(true)
 		} else {
@@ -191,6 +225,8 @@ function PostItem({ postItem }: Props) {
 		isValidating_getComments,
 		isValidating_postLike,
 		isValidating_getPost,
+		isLoading_deletePost,
+		isValidating_deletePost,
 	])
 
 	useEffect(() => {
@@ -198,141 +234,160 @@ function PostItem({ postItem }: Props) {
 		errorDisplayHandler(error_getComments)
 		errorDisplayHandler(error_postLike)
 		errorDisplayHandler(error_getPost)
-	}, [error_AddComment, error_getComments, error_postLike, error_getPost])
+		errorDisplayHandler(error_deletePost)
+	}, [
+		error_AddComment,
+		error_getComments,
+		error_postLike,
+		error_getPost,
+		error_deletePost,
+	])
 
 	return (
-		<div className="card-parent">
-			{post && (
-				<Card className="post-item-container">
-					<div className="top-row">
-						<div className="d-flexss">
-							<Avatar
-								name={fullName}
-								className="rounded-circle avatar"
-								size="35"
-							/>
+		<>
+			<div className="card-parent">
+				{post && (
+					<Card className="post-item-container">
+						<div className="top-row">
+							<div className="d-flexss">
+								<Avatar
+									name={fullName}
+									className="rounded-circle avatar"
+									size="35"
+								/>
 
-							<div className="name-and-time">
-								<div className="">{fullName}</div>
-								<div className="time-ago">{timeAgo(post.createdAt)}</div>
+								<div className="name-and-time">
+									<div className="">{fullName}</div>
+									<div className="time-ago">{timeAgo(post.createdAt)}</div>
+								</div>
+							</div>
+							{isOwner && (
+								<Dropdown>
+									<Dropdown.Toggle as={DotsToggle} />
+									<Dropdown.Menu>
+										<Dropdown.Item
+											onClick={() => navigate('/edit-post/' + postItem.id)}
+										>
+											Edit Post
+										</Dropdown.Item>
+										<Dropdown.Item onClick={() => setIsDeleteModalOpen(true)}>
+											Delete Post
+										</Dropdown.Item>
+									</Dropdown.Menu>
+								</Dropdown>
+							)}
+						</div>
+
+						<div className="description-container">
+							<ExpandDescription text={post.description} />
+						</div>
+
+						<Card.Img src={post.imageUrl} />
+
+						<div className="footer">
+							<div className="like-container">
+								<FontAwesomeIcon
+									style={{ color: '#35314e' }}
+									icon={liked ? solidHeart : outlineHeart}
+									fontSize={25}
+									className="like-btn"
+									onClick={likeHandler}
+								/>
+								<div className="likes-count">{post.numberOfLikes}</div>
+							</div>
+
+							<Form onSubmit={handleSubmit(addCommentHandler)}>
+								<InputGroup className="comment-line">
+									<Form.Control
+										placeholder="Add a comment"
+										aria-label="Add a comment"
+										{...register('comment')}
+										onKeyDown={keyDownHandler} // Listen for Enter key press
+									/>
+									<InputGroup.Text id="basic-addon2">
+										<FontAwesomeIcon
+											icon={faComment}
+											style={{ color: '#35314e' }}
+										/>
+									</InputGroup.Text>
+								</InputGroup>
+							</Form>
+
+							<div
+								className="comments-btn"
+								onClick={commentSectionDisplayHandler}
+							>
+								<FontAwesomeIcon
+									icon={faComments}
+									className="px-2"
+									style={{ color: '#35314e' }}
+									fontSize={18}
+								/>
 							</div>
 						</div>
-						{isOwner && (
-							<Dropdown>
-								<Dropdown.Toggle as={DotsToggle} />
-								<Dropdown.Menu>
-									<Dropdown.Item
-										onClick={() => navigate('/edit-post/' + postItem.id)}
-									>
-										Edit Post
-									</Dropdown.Item>
-									<Dropdown.Item>Delete Post</Dropdown.Item>
-								</Dropdown.Menu>
-							</Dropdown>
-						)}
-					</div>
 
-					<div className="description-container">
-						<ExpandDescription text={post.description} />
-					</div>
+						{showComments &&
+							getCommentsResponse &&
+							getCommentsResponse.length === 0 && (
+								<div className="no-comments">No Comments</div>
+							)}
 
-					<Card.Img src={post.imageUrl} />
+						{showComments &&
+							getCommentsResponse &&
+							getCommentsResponse.length > 0 && (
+								<div className="comments">
+									{getCommentsResponse.map((comment) => {
+										const fullName =
+											comment?.firstName && comment?.lastName
+												? `${comment?.firstName} ${comment?.lastName}`
+												: 'Unknown User'
+										return (
+											<>
+												<div className="top-row" key={comment.id}>
+													<Avatar
+														name={fullName}
+														className="rounded-circle avatar"
+														size="35"
+													/>
 
-					<div className="footer">
-						<div className="like-container">
-							<FontAwesomeIcon
-								style={{ color: '#35314e' }}
-								icon={liked ? solidHeart : outlineHeart}
-								fontSize={25}
-								className="like-btn"
-								onClick={likeHandler}
-							/>
-							<div className="likes-count">{post.numberOfLikes}</div>
-						</div>
-
-						<Form onSubmit={handleSubmit(addCommentHandler)}>
-							<InputGroup className="comment-line">
-								<Form.Control
-									placeholder="Add a comment"
-									aria-label="Add a comment"
-									{...register('comment')}
-									onKeyDown={keyDownHandler} // Listen for Enter key press
-								/>
-								<InputGroup.Text id="basic-addon2">
-									<FontAwesomeIcon
-										icon={faComment}
-										style={{ color: '#35314e' }}
-									/>
-								</InputGroup.Text>
-							</InputGroup>
-						</Form>
-
-						<div
-							className="comments-btn"
-							onClick={commentSectionDisplayHandler}
-						>
-							<FontAwesomeIcon
-								icon={faComments}
-								className="px-2"
-								style={{ color: '#35314e' }}
-								fontSize={18}
-							/>
-						</div>
-					</div>
-
-					{showComments &&
-						getCommentsResponse &&
-						getCommentsResponse.length === 0 && (
-							<div className="no-comments">No Comments</div>
-						)}
-
-					{showComments &&
-						getCommentsResponse &&
-						getCommentsResponse.length > 0 && (
-							<div className="comments">
-								{getCommentsResponse.map((comment) => {
-									const fullName =
-										comment?.firstName && comment?.lastName
-											? `${comment?.firstName} ${comment?.lastName}`
-											: 'Unknown User'
-									return (
-										<>
-											<div className="top-row" key={comment.id}>
-												<Avatar
-													name={fullName}
-													className="rounded-circle avatar"
-													size="35"
-												/>
-
-												<div className="comment-container">
-													<div className="name-and-time">
-														<div className="fullname">{fullName}</div>
-														<div className="time-ago">
-															{timeAgo(comment.createdAt)}
+													<div className="comment-container">
+														<div className="name-and-time">
+															<div className="fullname">{fullName}</div>
+															<div className="time-ago">
+																{timeAgo(comment.createdAt)}
+															</div>
+														</div>
+														<div className="comment-line">
+															<ExpandDescription text={comment.comment} />
 														</div>
 													</div>
-													<div className="comment-line">
-														<ExpandDescription text={comment.comment} />
-													</div>
 												</div>
-											</div>
-										</>
-									)
-								})}
-							</div>
-						)}
-				</Card>
-			)}
+											</>
+										)
+									})}
+								</div>
+							)}
+					</Card>
+				)}
 
-			{/* Loader overlay */}
-			{isLoading && (
-				<Card className="loading-card">
-					<div className="spinner-container">
-						<Spinner animation="border" role="status" />
-					</div>
-				</Card>
+				{/* Loader overlay */}
+				{isLoading && (
+					<Card className="loading-card">
+						<div className="spinner-container">
+							<Spinner animation="border" role="status" />
+						</div>
+					</Card>
+				)}
+			</div>
+
+			{isDeleteModalOpen && (
+				<PostDelete
+					isDeleteModalOpen={isDeleteModalOpen}
+					modalCloseHandler={deleteModalCloseHandler}
+					deleteConfirmHandler={postDeleteHandler}
+				/>
 			)}
-		</div>
+		</>
 	)
 }
 

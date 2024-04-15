@@ -15,20 +15,20 @@ import { useGetPost } from '../../../../hooks/web/posts/useGetPost'
 import { useEditPost } from '../../../../hooks/web/posts/useEditPost'
 
 // Define validation schema
-const schema = yup.object().shape({
-	image: yup.mixed().test('required', 'Image is required', (value) => {
-		// Ensure value is a FileList and has at least one file
-		return value instanceof FileList && value.length > 0
-	}),
-	// image: yup.mixed().when('postId', {
-	// 	is: (postId: string | undefined) => !postId, // Only require image if postId does not exist
-	// 	then: yup.mixed().test('required', 'Image is required', (value) => {
-	// 		// Ensure value is a FileList and has at least one file
-	// 		return value instanceof FileList && value.length > 0
-	// 	}),
-	// }),
-	description: yup.string().required('Description is required'),
-})
+// const schema = yup.object().shape({
+// 	image: yup.mixed().test('required', 'Image is required', (value) => {
+// 		// Ensure value is a FileList and has at least one file
+// 		return value instanceof FileList && value.length > 0
+// 	}),
+// 	// image: yup.mixed().when('postId', {
+// 	// 	is: (postId: string | undefined) => !postId, // Only require image if postId does not exist
+// 	// 	then: yup.mixed().test('required', 'Image is required', (value) => {
+// 	// 		// Ensure value is a FileList and has at least one file
+// 	// 		return value instanceof FileList && value.length > 0
+// 	// 	}),
+// 	// }),
+// 	description: yup.string().required('Description is required'),
+// })
 
 // Define validation schema
 const baseSchema = yup.object().shape({
