@@ -43,6 +43,7 @@ const LoginComponent = () => {
 		GlobalContext
 	) as GlobalContextType
 	const [isLoading, setIsLoading] = useState(false)
+	const [usernameOrEmail, setUsernameOrEmail] = useState('')
 	const {
 		setLoginRequest,
 		loginResponse,
@@ -55,8 +56,8 @@ const LoginComponent = () => {
 	const navigate = useNavigate()
 
 	const onSubmit = (data: ILogin) => {
-		console.log(data)
-
+		// console.log(data)
+		setUsernameOrEmail(data.username)
 		setLoginRequest(data)
 		setIsRequestReady_login(true)
 		mutate_login()
@@ -73,19 +74,21 @@ const LoginComponent = () => {
 			// console.log(loginResponse)
 			// sessionHandler.saveSession('token', loginResponse.access_token as string)
 
-			const userRole = loginResponse?.clientData?.realm_access?.roles.find(
-				(role: string) =>
-					role === 'admin' ||
-					role === 'resources-management' ||
-					role === 'lecture' ||
-					role === 'student' ||
-					role === 'user'
-			)
+			const userRole =
+				loginResponse?.clientData?.realm_access?.roles &&
+				loginResponse?.clientData?.realm_access?.roles.find(
+					(role: string) =>
+						role === 'admin' ||
+						role === 'resources-management' ||
+						role === 'lecture' ||
+						role === 'student' ||
+						role === 'user'
+				)
 
 			setupLoggedInUser(userRole || null)
 			setupToken(loginResponse?.access_token || null)
 			setupIsAuthenticated(true)
-
+			sessionHandler.saveSession('usernameOrEmail', usernameOrEmail)
 			navigate('/')
 		}
 	}, [loginResponse])
