@@ -84,6 +84,7 @@ export async function PostRequestHandler<RequestType, ResponseType>(
 			})
 		}
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
@@ -129,6 +130,7 @@ export async function PutRequestHandler<RequestType, ResponseType>(
 			}
 		)
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
@@ -149,6 +151,7 @@ export async function DeleteRequestHandler<RequestType, ResponseType>(
 			}
 		)
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
@@ -173,6 +176,7 @@ export async function PatchRequestHandler<RequestType, ResponseType>(
 			}
 		)
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {

@@ -48,17 +48,19 @@ const WebDashboard = () => {
 					)}
 				</div>
 				<div className="col2">
-					<Container className="create-btn-container">
-						<Button onClick={() => navigate('/create-post')}>
-							Create a Post
-						</Button>
-					</Container>
+					<div className="col2-container">
+						<Container className="create-btn-container">
+							<Button onClick={() => navigate('/create-post')}>
+								Create a Post
+							</Button>
+						</Container>
 
-					<div className="latest-events-container">
-						<div className="title">Latest Events</div>
-					</div>
-					<div className="latest-jobs-container">
-						<div className="title">Latest Jobs</div>
+						<div className="latest-events-container">
+							<div className="title">Latest Events</div>
+						</div>
+						<div className="latest-jobs-container">
+							<div className="title">Latest Jobs</div>
+						</div>
 					</div>
 				</div>
 			</div>

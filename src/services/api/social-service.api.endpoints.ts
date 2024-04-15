@@ -16,6 +16,10 @@ export class SocialService {
 		return this.gateway + 'posts' + '?' + this.qs.setQueryParams(params)
 	}
 
+	Get_Post(postId: string) {
+		return this.gateway + 'posts' + '/' + postId
+	}
+
 	Post_AddComment(postId: string) {
 		return this.gateway + 'posts' + '/' + postId + '/comments'
 	}
@@ -30,5 +34,9 @@ export class SocialService {
 			'?' +
 			this.qs.setQueryParams(params)
 		)
+	}
+
+	Put_PostLike(postId: string) {
+		return this.gateway + 'posts' + '/' + postId + '/like'
 	}
 }

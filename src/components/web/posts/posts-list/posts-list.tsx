@@ -11,7 +11,7 @@ function PostsList({ list }: Props) {
 			{list &&
 				list.length > 0 &&
 				list.map((post) => {
-					return <PostItem key={post.id} post={post} />
+					return <PostItem key={post.id} postItem={post} />
 				})}
 		</div>
 	)

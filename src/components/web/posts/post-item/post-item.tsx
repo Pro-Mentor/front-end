@@ -20,19 +20,22 @@ import { useAddCommentByPost } from '../../../../hooks/web/posts/useAddCommentBy
 import { errorDisplayHandler } from '../../../../utils/errorDisplayHandler'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import { usePostLike } from '../../../../hooks/web/posts/usePostLike'
+import { useGetPost } from '../../../../hooks/web/posts/useGetPost'
 
 type Props = {
-	post: GetPostsListResponse
+	postItem: GetPostsListResponse
 }
 
-function PostItem({ post }: Props) {
+function PostItem({ postItem }: Props) {
+	const [post, setPost] = useState(postItem)
 	const fullName =
-		post.owner !== null
+		post?.owner !== null
 			? `${post?.owner?.firstName} ${post?.owner?.lastName}`
 			: 'Unknown User'
 
 	const { register, handleSubmit, reset } = useForm<{ comment: string }>()
-	const [liked, setLiked] = useState(post.likedByMe)
+	const [liked, setLiked] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [showComments, setShowComments] = useState(false)
 
@@ -52,11 +55,35 @@ function PostItem({ post }: Props) {
 		isValidating_AddComment,
 		error_AddComment,
 		setPostId_AddComment,
-		mutate_AddComment,
+		// mutate_AddComment,
 	} = useAddCommentByPost()
+	const {
+		setPostId_postLike,
+		postLikeResponse,
+		isLoading_postLike,
+		isValidating_postLike,
+		error_postLike,
+		mutate_postLike,
+		setIsRequestReady_postLike,
+		setPostLikeRequest,
+	} = usePostLike()
+	const {
+		isLoading_getPost,
+		isValidating_getPost,
+		error_getPost,
+		setPostId_getPost,
+		getPostResponse,
+		mutate_getPost,
+	} = useGetPost()
 
 	const likeHandler = () => {
-		setLiked(!liked)
+		// setLiked(!liked)
+		setPostId_postLike(post.id)
+		setPostLikeRequest({
+			id: post.id,
+		})
+		setIsRequestReady_postLike(true)
+		mutate_postLike()
 	}
 
 	const addCommentHandler = (data: { comment: string }) => {
@@ -85,15 +112,33 @@ function PostItem({ post }: Props) {
 	}
 
 	useEffect(() => {
-		setPostId_getComments(post.id)
+		// setPostId_getComments(post.id)
+		// console.log(postItem)
+		setPost(postItem)
+		setLiked(postItem.likedByMe)
 		// mutate_getComments()
 	}, [])
 
+	// useEffect(() => {
+	// 	if (getCommentsResponse && getCommentsResponse.length > 0) {
+	// 		console.log(getCommentsResponse)
+	// 	}
+	// }, [getCommentsResponse])
+
 	useEffect(() => {
-		if (getCommentsResponse && getCommentsResponse.length > 0) {
-			console.log(getCommentsResponse)
+		if (postLikeResponse) {
+			setPostId_getPost(post.id)
+			mutate_getPost()
 		}
-	}, [getCommentsResponse])
+	}, [postLikeResponse])
+
+	useEffect(() => {
+		if (getPostResponse) {
+			setPost(getPostResponse)
+			setLiked(getPostResponse.likedByMe)
+			// post = getPostResponse
+		}
+	}, [getPostResponse])
 
 	useEffect(() => {
 		if (AddCommentResponse) {
@@ -105,8 +150,12 @@ function PostItem({ post }: Props) {
 		if (
 			isLoading_AddComment ||
 			isLoading_getComments ||
+			isLoading_postLike ||
+			isLoading_getPost ||
 			isValidating_AddComment ||
-			isValidating_getComments
+			isValidating_getComments ||
+			isValidating_postLike ||
+			isValidating_getPost
 		) {
 			setIsLoading(true)
 		} else {
@@ -115,114 +164,129 @@ function PostItem({ post }: Props) {
 	}, [
 		isLoading_AddComment,
 		isLoading_getComments,
+		isLoading_postLike,
+		isLoading_getPost,
 		isValidating_AddComment,
 		isValidating_getComments,
+		isValidating_postLike,
+		isValidating_getPost,
 	])
 
 	useEffect(() => {
 		errorDisplayHandler(error_AddComment)
 		errorDisplayHandler(error_getComments)
-	}, [error_AddComment, error_getComments])
+		errorDisplayHandler(error_postLike)
+		errorDisplayHandler(error_getPost)
+	}, [error_AddComment, error_getComments, error_postLike, error_getPost])
 
 	return (
 		<div className="card-parent">
-			<Card className="post-item-container">
-				<div className="top-row">
-					<Avatar name={fullName} className="rounded-circle avatar" size="35" />
-
-					<div className="name-and-time">
-						<div className="">{fullName}</div>
-						<div className="time-ago">{timeAgo(post.createdAt)}</div>
-					</div>
-				</div>
-
-				<div className="description-container">
-					<ExpandDescription text={post.description} />
-				</div>
-
-				<Card.Img src={post.imageUrl} />
-
-				<div className="footer">
-					<div className="like-container">
-						<FontAwesomeIcon
-							style={{ color: '#35314e' }}
-							icon={liked ? solidHeart : outlineHeart}
-							fontSize={25}
-							className="like-btn"
-							onClick={likeHandler}
+			{post && (
+				<Card className="post-item-container">
+					<div className="top-row">
+						<Avatar
+							name={fullName}
+							className="rounded-circle avatar"
+							size="35"
 						/>
-						<div className="likes-count">{post.numberOfLikes}</div>
+
+						<div className="name-and-time">
+							<div className="">{fullName}</div>
+							<div className="time-ago">{timeAgo(post.createdAt)}</div>
+						</div>
 					</div>
 
-					<Form onSubmit={handleSubmit(addCommentHandler)}>
-						<InputGroup className="comment-line">
-							<Form.Control
-								placeholder="Add a comment"
-								aria-label="Add a comment"
-								{...register('comment')}
-								onKeyDown={keyDownHandler} // Listen for Enter key press
+					<div className="description-container">
+						<ExpandDescription text={post.description} />
+					</div>
+
+					<Card.Img src={post.imageUrl} />
+
+					<div className="footer">
+						<div className="like-container">
+							<FontAwesomeIcon
+								style={{ color: '#35314e' }}
+								icon={liked ? solidHeart : outlineHeart}
+								fontSize={25}
+								className="like-btn"
+								onClick={likeHandler}
 							/>
-							<InputGroup.Text id="basic-addon2">
-								<FontAwesomeIcon
-									icon={faComment}
-									style={{ color: '#35314e' }}
+							<div className="likes-count">{post.numberOfLikes}</div>
+						</div>
+
+						<Form onSubmit={handleSubmit(addCommentHandler)}>
+							<InputGroup className="comment-line">
+								<Form.Control
+									placeholder="Add a comment"
+									aria-label="Add a comment"
+									{...register('comment')}
+									onKeyDown={keyDownHandler} // Listen for Enter key press
 								/>
-							</InputGroup.Text>
-						</InputGroup>
-					</Form>
+								<InputGroup.Text id="basic-addon2">
+									<FontAwesomeIcon
+										icon={faComment}
+										style={{ color: '#35314e' }}
+									/>
+								</InputGroup.Text>
+							</InputGroup>
+						</Form>
 
-					<div className="comments-btn" onClick={commentSectionDisplayHandler}>
-						<FontAwesomeIcon
-							icon={faComments}
-							className="px-2"
-							style={{ color: '#35314e' }}
-							fontSize={18}
-						/>
+						<div
+							className="comments-btn"
+							onClick={commentSectionDisplayHandler}
+						>
+							<FontAwesomeIcon
+								icon={faComments}
+								className="px-2"
+								style={{ color: '#35314e' }}
+								fontSize={18}
+							/>
+						</div>
 					</div>
-				</div>
 
-				{showComments &&
-					getCommentsResponse &&
-					getCommentsResponse.length === 0 && (
-						<div className="no-comments">No Comments</div>
-					)}
+					{showComments &&
+						getCommentsResponse &&
+						getCommentsResponse.length === 0 && (
+							<div className="no-comments">No Comments</div>
+						)}
 
-				{showComments &&
-					getCommentsResponse &&
-					getCommentsResponse.length > 0 && (
-						<div className="comments">
-							{getCommentsResponse.map((comment) => {
-								const fullName =
-									comment?.firstName && comment?.lastName
-										? `${comment?.firstName} ${comment?.lastName}`
-										: 'Unknown User'
-								return (
-									<>
-										<div className="top-row" key={comment.id}>
-											<Avatar
-												name={fullName}
-												className="rounded-circle avatar"
-												size="35"
-											/>
+					{showComments &&
+						getCommentsResponse &&
+						getCommentsResponse.length > 0 && (
+							<div className="comments">
+								{getCommentsResponse.map((comment) => {
+									const fullName =
+										comment?.firstName && comment?.lastName
+											? `${comment?.firstName} ${comment?.lastName}`
+											: 'Unknown User'
+									return (
+										<>
+											<div className="top-row" key={comment.id}>
+												<Avatar
+													name={fullName}
+													className="rounded-circle avatar"
+													size="35"
+												/>
 
-											<div className="comment-container">
-												<div className="name-and-time">
-													<div className="fullname">{fullName}</div>
-													<div className="time-ago">
-														{timeAgo(comment.createdAt)}
+												<div className="comment-container">
+													<div className="name-and-time">
+														<div className="fullname">{fullName}</div>
+														<div className="time-ago">
+															{timeAgo(comment.createdAt)}
+														</div>
+													</div>
+													<div className="comment-line">
+														<ExpandDescription text={comment.comment} />
 													</div>
 												</div>
-												<div className="comment-line">
-													<ExpandDescription text={comment.comment} />
-												</div>
 											</div>
-										</div>
-									</>
-								)
-							})}
-						</div>
-					)}
-			</Card>
+										</>
+									)
+								})}
+							</div>
+						)}
+				</Card>
+			)}
 
 			{/* Loader overlay */}
 			{isLoading && (
