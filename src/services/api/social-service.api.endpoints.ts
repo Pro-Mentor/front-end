@@ -39,4 +39,8 @@ export class SocialService {
 	Put_PostLike(postId: string) {
 		return this.gateway + 'posts' + '/' + postId + '/like'
 	}
+
+	Put_EditPost(postId: string) {
+		return this.gateway + 'posts' + '/' + postId
+	}
 }

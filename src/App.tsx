@@ -70,6 +70,7 @@ function App() {
 								<Route path="/chats" element={<Chats />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/create-post" element={<CreatePost />} />
+								<Route path="/edit-post/:postId" element={<CreatePost />} />
 							</>
 						)}
 

@@ -4,7 +4,7 @@ import { GetPostsListResponse } from '../../../../hooks/web/posts/useGetPostsLis
 import { timeAgo } from '../../../../utils/dateTImeHandler'
 import './post-item.scss'
 import ExpandDescription from '../../../shared/expand-description/expand-description'
-import { Card, Form, InputGroup, Spinner } from 'react-bootstrap'
+import { Card, Dropdown, Form, InputGroup, Spinner } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faComments,
@@ -22,13 +22,19 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { usePostLike } from '../../../../hooks/web/posts/usePostLike'
 import { useGetPost } from '../../../../hooks/web/posts/useGetPost'
+import { SessionHandler } from '../../../../utils/session-handler'
+import DotsToggle from '../../../shared/dots-toggle/dots-toggle'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 type Props = {
 	postItem: GetPostsListResponse
 }
 
+const sessionHandler = new SessionHandler()
+
 function PostItem({ postItem }: Props) {
 	const [post, setPost] = useState(postItem)
+	const navigate = useNavigate()
 	const fullName =
 		post?.owner !== null
 			? `${post?.owner?.firstName} ${post?.owner?.lastName}`
@@ -38,6 +44,7 @@ function PostItem({ postItem }: Props) {
 	const [liked, setLiked] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [showComments, setShowComments] = useState(false)
+	const [isOwner, setIsOwner] = useState(false)
 
 	const {
 		getCommentsResponse,
@@ -111,11 +118,25 @@ function PostItem({ postItem }: Props) {
 		mutate_getComments()
 	}
 
+	const checkPermission = () => {
+		const usernameOrEmail = sessionHandler.getSession('usernameOrEmail')
+		if (
+			usernameOrEmail !== null &&
+			(usernameOrEmail === postItem?.owner?.username ||
+				usernameOrEmail === postItem?.owner?.email)
+		) {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	useEffect(() => {
 		// setPostId_getComments(post.id)
 		// console.log(postItem)
 		setPost(postItem)
 		setLiked(postItem.likedByMe)
+		setIsOwner(checkPermission())
 		// mutate_getComments()
 	}, [])
 
@@ -184,16 +205,31 @@ function PostItem({ postItem }: Props) {
 			{post && (
 				<Card className="post-item-container">
 					<div className="top-row">
-						<Avatar
-							name={fullName}
-							className="rounded-circle avatar"
-							size="35"
-						/>
+						<div className="d-flexss">
+							<Avatar
+								name={fullName}
+								className="rounded-circle avatar"
+								size="35"
+							/>
 
-						<div className="name-and-time">
-							<div className="">{fullName}</div>
-							<div className="time-ago">{timeAgo(post.createdAt)}</div>
+							<div className="name-and-time">
+								<div className="">{fullName}</div>
+								<div className="time-ago">{timeAgo(post.createdAt)}</div>
+							</div>
 						</div>
+						{isOwner && (
+							<Dropdown>
+								<Dropdown.Toggle as={DotsToggle} />
+								<Dropdown.Menu>
+									<Dropdown.Item
+										onClick={() => navigate('/edit-post/' + postItem.id)}
+									>
+										Edit Post
+									</Dropdown.Item>
+									<Dropdown.Item>Delete Post</Dropdown.Item>
+								</Dropdown.Menu>
+							</Dropdown>
+						)}
 					</div>
 
 					<div className="description-container">

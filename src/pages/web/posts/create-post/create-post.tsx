@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import PageHeader from '../../../../components/shared/page-header/page-header'
 import { Button, Form, Modal, Spinner } from 'react-bootstrap'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { FieldErrors, SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useUploadPost } from '../../../../hooks/web/posts/useUploadPost'
@@ -10,7 +10,9 @@ import { errorDisplayHandler } from '../../../../utils/errorDisplayHandler'
 import './create-post.scss'
 import { useCreatePost } from '../../../../hooks/web/posts/useCreatePost'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useGetPost } from '../../../../hooks/web/posts/useGetPost'
+import { useEditPost } from '../../../../hooks/web/posts/useEditPost'
 
 // Define validation schema
 const schema = yup.object().shape({
@@ -18,7 +20,26 @@ const schema = yup.object().shape({
 		// Ensure value is a FileList and has at least one file
 		return value instanceof FileList && value.length > 0
 	}),
+	// image: yup.mixed().when('postId', {
+	// 	is: (postId: string | undefined) => !postId, // Only require image if postId does not exist
+	// 	then: yup.mixed().test('required', 'Image is required', (value) => {
+	// 		// Ensure value is a FileList and has at least one file
+	// 		return value instanceof FileList && value.length > 0
+	// 	}),
+	// }),
 	description: yup.string().required('Description is required'),
+})
+
+// Define validation schema
+const baseSchema = yup.object().shape({
+	description: yup.string().required('Description is required'),
+})
+
+const imageRequiredSchema = yup.object().shape({
+	image: yup.mixed().test('required', 'Image is required', (value) => {
+		// Ensure value is a FileList and has at least one file
+		return value instanceof FileList && value.length > 0
+	}),
 })
 
 interface PostFormData {
@@ -26,17 +47,33 @@ interface PostFormData {
 	description: string
 }
 
+interface PostFormErrors extends FieldErrors<PostFormData> {
+	image?: {
+		type: string
+		message: string
+	}
+}
+
 const CreatePost = () => {
 	const navigate = useNavigate()
+	const { postId } = useParams()
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<PostFormData>({
-		resolver: yupResolver(schema) as any,
+		reset,
+		// errors,
+	} = useForm<PostFormData | { description: string }, PostFormErrors>({
+		// resolver: yupResolver(schema) as any,
+		resolver: yupResolver(
+			!postId ? baseSchema.concat(imageRequiredSchema) : baseSchema
+		),
 	})
 	const [isLoading, setIsLoading] = useState(false)
 	const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+	// Manually check if the 'image' field has an error
+	const hasImageError = 'image' in errors
 
 	const {
 		setUploadPostRequest,
@@ -46,7 +83,6 @@ const CreatePost = () => {
 		isValidating_uploadPost,
 		error_uploadPost,
 	} = useUploadPost()
-
 	const {
 		setCreatePostRequest,
 		setIsRequestReady_createPost,
@@ -55,14 +91,46 @@ const CreatePost = () => {
 		isValidating_createPost,
 		error_createPost,
 	} = useCreatePost()
+	const {
+		isLoading_getPost,
+		isValidating_getPost,
+		error_getPost,
+		getPostResponse,
+		setPostId_getPost,
+		mutate_getPost,
+	} = useGetPost()
+	const {
+		isLoading_editPost,
+		isValidating_editPost,
+		error_editPost,
+		setIsRequestReady_editPost,
+		setEditPostRequest,
+		setPostId_editPost,
+		mutate_editPost,
+		editPostResponse,
+	} = useEditPost()
 
-	const onSubmit: SubmitHandler<PostFormData> = async (data) => {
-		console.log(data)
-		setCreatePostRequest({
-			imageUrl: selectedImage || '',
-			description: data.description,
-		})
-		setIsRequestReady_createPost(true)
+	const onSubmit: SubmitHandler<
+		PostFormData | { description: string }
+	> = async (data) => {
+		console.log(postId)
+
+		if (postId) {
+			console.log(data)
+			setPostId_editPost(postId)
+			setEditPostRequest({
+				imageUrl: selectedImage || '',
+				description: data.description,
+			})
+			setIsRequestReady_editPost(true)
+			mutate_editPost()
+		} else {
+			setCreatePostRequest({
+				imageUrl: selectedImage || '',
+				description: data.description,
+			})
+			setIsRequestReady_createPost(true)
+		}
 	}
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +142,25 @@ const CreatePost = () => {
 			setIsRequestReady_uploadPost(true)
 		}
 	}
+
+	useEffect(() => {
+		console.log(postId)
+		if (postId) {
+			// get post details to edit
+			setPostId_getPost(postId)
+			mutate_getPost()
+		}
+	}, [])
+
+	useEffect(() => {
+		if (getPostResponse) {
+			reset({
+				description: getPostResponse.description,
+				image: undefined,
+			})
+			setSelectedImage(getPostResponse.imageUrl)
+		}
+	}, [getPostResponse])
 
 	useEffect(() => {
 		if (uploadPostResponse) {
@@ -91,16 +178,29 @@ const CreatePost = () => {
 	}, [createPostResponse])
 
 	useEffect(() => {
+		if (editPostResponse) {
+			console.log(editPostResponse)
+			toast.success('Post updated successfully!')
+		}
+	}, [editPostResponse])
+
+	useEffect(() => {
 		errorDisplayHandler(error_uploadPost)
 		errorDisplayHandler(error_createPost)
-	}, [error_uploadPost, error_createPost])
+		errorDisplayHandler(error_getPost)
+		errorDisplayHandler(error_editPost)
+	}, [error_uploadPost, error_createPost, error_getPost, error_editPost])
 
 	useEffect(() => {
 		if (
 			isLoading_uploadPost ||
 			isValidating_uploadPost ||
 			isLoading_createPost ||
-			isValidating_createPost
+			isValidating_createPost ||
+			isLoading_getPost ||
+			isValidating_getPost ||
+			isLoading_editPost ||
+			isValidating_editPost
 		) {
 			setIsLoading(true)
 		} else {
@@ -111,12 +211,16 @@ const CreatePost = () => {
 		isValidating_uploadPost,
 		isLoading_createPost,
 		isValidating_createPost,
+		isLoading_getPost,
+		isValidating_getPost,
+		isLoading_editPost,
+		isValidating_editPost,
 	])
 
 	return (
 		<>
 			<div className="page create-post-page">
-				<PageHeader title="Create a Post"></PageHeader>
+				<PageHeader title={postId ? 'Edit Post' : 'Create a Post'}></PageHeader>
 				<div className="">
 					<Form onSubmit={handleSubmit(onSubmit)} className="form">
 						{selectedImage !== null && (
@@ -134,9 +238,9 @@ const CreatePost = () => {
 								{...register('image')}
 								onChange={handleImageChange}
 							/>
-							{errors.image && (
+							{!postId && hasImageError && (
 								<Form.Text className="text-danger">
-									{errors.image.message}
+									{errors?.image?.message}
 								</Form.Text>
 							)}
 						</Form.Group>
@@ -152,7 +256,7 @@ const CreatePost = () => {
 						</Form.Group>
 
 						<Button variant="primary" type="submit">
-							Submit
+							{postId ? 'Save' : 'Submit'}
 						</Button>
 					</Form>
 				</div>
