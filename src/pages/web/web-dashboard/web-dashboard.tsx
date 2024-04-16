@@ -40,7 +40,10 @@ const WebDashboard = () => {
 			<div className="page web-dashboard-page">
 				<div className="col1">
 					{getPostsListResponse && getPostsListResponse.length > 0 && (
-						<PostsList list={getPostsListResponse} />
+						<PostsList
+							list={getPostsListResponse}
+							mutateList={mutate_getPostsList}
+						/>
 					)}
 
 					{getPostsListResponse && getPostsListResponse.length === 0 && (
