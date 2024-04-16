@@ -1,0 +1,48 @@
+.selected-job {
+	width: calc(2 / 3 * 100%);
+}
+
+.selected-top-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.details-section {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 1rem 0;
+}
+
+.tags-section {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 1rem;
+}
+
+.detail-item {
+	display: flex;
+	width: 15rem;
+	align-items: center;
+	justify-content: flex-start;
+	column-gap: 0.5rem;
+}
+
+.detail-icon {
+	width: 1rem;
+}
+
+.detail-detail {
+	font-weight: 500;
+}
+
+.title-section .title {
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+
+.title-section .company-name {
+	font-size: 0.8rem;
+}
