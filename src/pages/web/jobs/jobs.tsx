@@ -1,8 +1,23 @@
 import JobsItem from '../../../components/web/jobs/jobs-item/jobs-item'
 import JobsDetailItem from '../../../components/web/jobs/jobs-detail-item/jobs-detail-item'
 import { useEffect, useState } from 'react'
+import { Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { SessionHandler } from '../../../utils/session-handler'
+import './jobs.scss'
+
+const sessionHandler = new SessionHandler()
+
+const checkUser = () => {
+	const user = sessionHandler.getSession('user')
+
+	if (user === 'lecture' || user === 'user') return true
+	else return false
+}
 
 const Jobs = () => {
+	const navigate = useNavigate()
+	const isCreateVisible = checkUser()
 	const [selectedJob, setSelectedJob] = useState<any>()
 
 	useEffect(() => {
@@ -25,6 +40,12 @@ const Jobs = () => {
 					<div className="filter-title">Location</div>
 					<div className="filter-dropdown">dropdown</div>
 				</div>
+
+				{isCreateVisible && (
+					<Button onClick={() => navigate('/create-job')}>
+						Create Job Post
+					</Button>
+				)}
 			</div>
 			<div className="content">
 				<div className="latest-list">
