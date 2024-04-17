@@ -16,8 +16,8 @@ import WebEvents from './pages/web/web-events/web-events'
 import Jobs from './pages/web/jobs/jobs'
 import Chats from './pages/web/chats/chats'
 import Profile from './pages/web/profile/profile'
-import CreatePost from './pages/web/create-post/create-post'
 import CareerGuide from './pages/web/career-guide/career-guide'
+import CreatePost from './pages/web/posts/create-post/create-post'
 
 document.title = 'ProMentor'
 
@@ -71,6 +71,7 @@ function App() {
 								<Route path="/chats" element={<Chats />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/create-post" element={<CreatePost />} />
+								<Route path="/edit-post/:postId" element={<CreatePost />} />
 							</>
 						)}
 

@@ -84,6 +84,7 @@ export async function PostRequestHandler<RequestType, ResponseType>(
 			})
 		}
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
@@ -129,6 +130,7 @@ export async function PutRequestHandler<RequestType, ResponseType>(
 			}
 		)
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
@@ -145,10 +147,15 @@ export async function DeleteRequestHandler<RequestType, ResponseType>(
 		const response: AxiosResponse<ResponseType> = await client.delete(
 			endpoint,
 			{
-				data: requestModel,
+				headers: {
+					Authorization: `Bearer ${sessionHandler.getSession('token')}`,
+				},
+				//globalConfig,
 			}
 		)
+		console.log(response)
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
@@ -173,6 +180,7 @@ export async function PatchRequestHandler<RequestType, ResponseType>(
 			}
 		)
 		const responseData = response.data as any
+		if (responseData === '') return true
 		if (responseData?.data) return responseData.data as ResponseType
 		else return responseData as ResponseType
 	} catch (error: any) {
