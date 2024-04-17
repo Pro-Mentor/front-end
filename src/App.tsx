@@ -17,6 +17,7 @@ import Jobs from './pages/web/jobs/jobs'
 import Chats from './pages/web/chats/chats'
 import Profile from './pages/web/profile/profile'
 import CreatePost from './pages/web/create-post/create-post'
+import CareerGuide from './pages/web/career-guide/career-guide'
 
 document.title = 'ProMentor'
 
@@ -75,7 +76,7 @@ function App() {
 
 						{loggedInUser === 'student' && (
 							<>
-								{/* <Route path="/career-guide" element={<CareerGuide />} /> */}
+								<Route path="/career-guide" element={<CareerGuide />} />
 							</>
 						)}
 					</Route>
