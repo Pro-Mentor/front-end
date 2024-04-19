@@ -6,6 +6,8 @@ import { GetSkillListResponse, useGetSkills } from '../../../hooks/web/career-gu
 import { useEffect, useState } from 'react'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 import { CareerGuideResponse, usePostCareerGuide } from '../../../hooks/web/career-guide/usePostCareerGuide'
+import './career-guide.scss'
+import DisplayGuide from '../../../components/web/posts/career-guide/display-guide'
 
 export interface SelectSkillsFormData {
 	skills?: any | string[]
@@ -14,6 +16,7 @@ export interface SelectSkillsFormData {
 const CareerGuide = () => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [career, setCareer] = useState("")
+	const [isDisplayGuide, setIsDisplayGuide] = useState(false)
 	const [guides, setGuides] = useState<CareerGuideResponse[]>([])
 	const [skills, setSkills] = useState<GetSkillListResponse[]>([])
 	const { handleSubmit, control } = useForm<SelectSkillsFormData>()
@@ -59,10 +62,19 @@ const CareerGuide = () => {
 
 	}
 
+	// close both add and deactivate modals
+	const modalCloseHandler = () => {
+		setIsDisplayGuide(false)
+	}
+
 	useEffect(() => {
 		if (getCareerPathResponse) {
 			setCareer(getCareerPathResponse.job)
 			setGuides(getCareerPathResponse.guides)
+			setIsDisplayGuide(true)
+		} else {
+			setCareer("")
+			setGuides([])
 		}
 	}, [getCareerPathResponse])
 
@@ -128,21 +140,17 @@ const CareerGuide = () => {
 			</div>
 		</div>
 
-		{
-			career &&
-			<div>
-				{career}
-				{
-					guides.map(item => <div>{item.value}</div>)
-				}
-			</div>
-		}
+		<DisplayGuide 
+			isDisplayGuide={isDisplayGuide}
+			modalCloseHandler={modalCloseHandler}
+			title={career}
+			guides={guides}
+		/>
 
 		{/* Loader overlay */}
 		<Modal show={isLoading} backdrop="static" keyboard={false} centered>
 				<Modal.Body className="text-center">
 					<Spinner animation="border" role="status" />
-					{/* <p>{loaderMsg}</p> */}
 				</Modal.Body>
 			</Modal>
 		</>
