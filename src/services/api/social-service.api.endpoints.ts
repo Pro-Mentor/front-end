@@ -79,4 +79,12 @@ export class SocialService {
 	Post_CreateJob() {
 		return this.gateway + 'jobs'
 	}
+
+	Get_Jobs(params: Record<string, string> = {}) {
+		return this.gateway + 'jobs' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_Job(jobId: string) {
+		return this.gateway + 'jobs' + '/' + jobId
+	}
 }

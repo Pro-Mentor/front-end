@@ -8,28 +8,31 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { timeAgo } from '../../../../utils/dateTImeHandler'
 import './jobs-detail-item.scss'
 import { useEffect } from 'react'
+import { GetJobListResponse } from '../../../../hooks/web/jobs/useGetJobList'
+import Avatar from 'react-avatar'
+import { Card, Container } from 'react-bootstrap'
 
 type Props = {
-	jobId: string
+	jobDetails: GetJobListResponse
 }
 
-function JobsDetailItem({ jobId }: Props) {
-	useEffect(() => {
-		if (jobId) {
-			// TODO: get selected job's details to display
-		}
-	}, [jobId])
+function JobsDetailItem({ jobDetails }: Props) {
 	return (
-		<div className="selected-job">
+		<Card className="selected-job">
 			<div className="selected-top-row">
 				<div className="company-logo">
-					<img src="" alt="company-logo" />
+					<Avatar
+						name={jobDetails.companyName}
+						className="rounded-circle avatar"
+						size="40"
+					/>
+					<div className="title-section">
+						<div className="title">{jobDetails.title}</div>
+						<div className="company-name">{jobDetails.companyName}</div>
+					</div>
 				</div>
-				<div className="title-section">
-					<div className="title">Associate Software Engineer</div>
-					<div className="company-name">Digital Tech Pvt. Ltd</div>
-				</div>
-				<div className="times-ago">{timeAgo(new Date().toString())}</div>
+
+				<div className="times-ago">{timeAgo(jobDetails.updatedAt)}</div>
 				<div className="share-btn">
 					<FontAwesomeIcon icon={faShare} />
 				</div>
@@ -40,40 +43,33 @@ function JobsDetailItem({ jobId }: Props) {
 					<div className="detail-icon">
 						<FontAwesomeIcon icon={faLocationPin} />
 					</div>
-					<div className="detail-detail">Colombo, Sri Lanka</div>
+					<div className="detail-detail">{jobDetails.location.location}</div>
 				</div>
 				<div className="detail-item">
 					<div className="detail-icon">
 						<FontAwesomeIcon icon={faSuitcase} />
 					</div>
-					<div className="detail-detail">Remote</div>
+					<div className="detail-detail">{jobDetails.modality.key}</div>
 				</div>
 				<div className="detail-item">
 					<div className="detail-icon">
 						<FontAwesomeIcon icon={faClock} />
 					</div>
-					<div className="detail-detail">Full-time</div>
+					<div className="detail-detail">{jobDetails.type.key}</div>
 				</div>
 			</div>
 
 			<div className="tags-section">
-				<div className="badge rounded-pill text-bg-primary">React JS</div>
-				<div className="badge rounded-pill text-bg-primary">Node JS</div>
-				<div className="badge rounded-pill text-bg-primary">Docker</div>
-				<div className="badge rounded-pill text-bg-primary">React JS</div>
-				<div className="badge rounded-pill text-bg-primary">Node JS</div>
-				<div className="badge rounded-pill text-bg-primary">Docker</div>
+				{jobDetails.tags &&
+					jobDetails.tags.map((tag) => (
+						<div key={tag.id} className="badge rounded-pill text-bg-primary">
+							{tag.key}
+						</div>
+					))}
 			</div>
 
-			<div className="description-section">
-				Our Guiding Principles set the standard for how we work with one
-				another. They define who we are as an organization and guide everything
-				we do. By applying the same shared values that unleash prosperity in
-				free societies—such as value creation, integrity, responsibility, free
-				speech, and toleration—we encourage one another to take initiative and
-				to challenge the status quo.
-			</div>
-		</div>
+			<div className="description-section">{jobDetails.description}</div>
+		</Card>
 	)
 }
 

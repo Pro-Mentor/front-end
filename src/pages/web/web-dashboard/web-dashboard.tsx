@@ -6,6 +6,11 @@ import { useGetPostsList } from '../../../hooks/web/posts/useGetPostsList'
 import { useEffect, useState } from 'react'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
 import PostsList from '../../../components/web/posts/posts-list/posts-list'
+import JobsItem from '../../../components/web/jobs/jobs-item/jobs-item'
+import {
+	GetJobListResponse,
+	useGetJobList,
+} from '../../../hooks/web/jobs/useGetJobList'
 
 const WebDashboard = () => {
 	const navigate = useNavigate()
@@ -18,22 +23,47 @@ const WebDashboard = () => {
 		error_getPostsList,
 		mutate_getPostsList,
 	} = useGetPostsList()
+	const {
+		isLoading_getJobs,
+		isValidating_getJobs,
+		error_getJobs,
+		mutate_getJobs,
+		getJobsListResponse,
+		setSize_getJobs,
+	} = useGetJobList()
+
+	const jobSelectHandler = (job: GetJobListResponse) => {
+		navigate('/jobs/' + job.id)
+	}
 
 	useEffect(() => {
+		setSize_getJobs('3')
+		mutate_getJobs()
 		mutate_getPostsList()
 	}, [])
 
 	useEffect(() => {
-		if (isLoading_getPostsList || isValidating_getPostsList) {
+		if (
+			isLoading_getPostsList ||
+			isValidating_getPostsList ||
+			isLoading_getJobs ||
+			isValidating_getJobs
+		) {
 			setIsLoading(true)
 		} else {
 			setIsLoading(false)
 		}
-	}, [isLoading_getPostsList, isValidating_getPostsList])
+	}, [
+		isLoading_getPostsList,
+		isValidating_getPostsList,
+		isLoading_getJobs,
+		isValidating_getJobs,
+	])
 
 	useEffect(() => {
 		errorDisplayHandler(error_getPostsList)
-	}, [error_getPostsList])
+		errorDisplayHandler(error_getJobs)
+	}, [error_getPostsList, error_getJobs])
 
 	return (
 		<>
@@ -63,6 +93,18 @@ const WebDashboard = () => {
 						</div>
 						<div className="latest-jobs-container">
 							<div className="title">Latest Jobs</div>
+							<div className="div">
+								{getJobsListResponse &&
+									getJobsListResponse.map((job) => {
+										return (
+											<JobsItem
+												item={job}
+												key={job.id}
+												setSelectedJob={jobSelectHandler}
+											/>
+										)
+									})}
+							</div>
 						</div>
 					</div>
 				</div>
