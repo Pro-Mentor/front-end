@@ -1,8 +1,12 @@
 .top-row {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
 	padding: 0.7rem 0;
+
+	.filter {
+		width: calc(100% / 5);
+	}
 }
 
 .content {

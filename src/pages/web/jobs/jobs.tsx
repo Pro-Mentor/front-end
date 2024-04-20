@@ -2,7 +2,7 @@
 import JobsItem from '../../../components/web/jobs/jobs-item/jobs-item'
 import JobsDetailItem from '../../../components/web/jobs/jobs-detail-item/jobs-detail-item'
 import { useEffect, useState } from 'react'
-import { Button, Modal, Spinner } from 'react-bootstrap'
+import { Button, Form, FormControl, Modal, Spinner } from 'react-bootstrap'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SessionHandler } from '../../../utils/session-handler'
 import './jobs.scss'
@@ -12,6 +12,20 @@ import {
 } from '../../../hooks/web/jobs/useGetJobList'
 import { useGetJob } from '../../../hooks/web/jobs/useGetJob'
 import { errorDisplayHandler } from '../../../utils/errorDisplayHandler'
+import {
+	GetJobTypeListResponse,
+	useGetJobTypeList,
+} from '../../../hooks/web/jobs/useGetJobTypeList'
+import {
+	GetModalityListResponse,
+	useGetModalityList,
+} from '../../../hooks/web/jobs/useGetModalityList'
+import {
+	GetLocationListResponse,
+	useGetLocationList,
+} from '../../../hooks/web/jobs/useGetLocationList'
+import Select from 'react-dropdown-select'
+import { useForm } from 'react-hook-form'
 
 const sessionHandler = new SessionHandler()
 
@@ -22,12 +36,31 @@ const checkUser = () => {
 	else return false
 }
 
+interface FormData {
+	search?: string
+	selectedJobTypes?: GetJobTypeListResponse[]
+	selectedModality?: GetModalityListResponse[]
+	selectedLocations?: GetLocationListResponse[]
+}
+
 const Jobs = () => {
 	const { jobId } = useParams()
 	const navigate = useNavigate()
+	const { handleSubmit, register, setValue } = useForm<FormData>({
+		resolver: undefined,
+	})
 	const [isLoading, setIsLoading] = useState(false)
 	const isCreateVisible = checkUser()
+	const [manuallySelected, setManuallySelected] = useState(false)
+	const [filtered, setFiltered] = useState(false)
 	const [selectedJob, setSelectedJob] = useState<GetJobListResponse>()
+	const [locationList, setLocationList] = useState<GetLocationListResponse[]>(
+		[]
+	)
+	const [modalityList, setModalityList] = useState<GetModalityListResponse[]>(
+		[]
+	)
+	const [jobTypeList, setJobTypeList] = useState<GetJobTypeListResponse[]>([])
 	const {
 		isLoading_getJobs,
 		isValidating_getJobs,
@@ -48,25 +81,77 @@ const Jobs = () => {
 		setJobId_getJob,
 		mutate_getJob,
 	} = useGetJob()
+	const {
+		isLoading_getJobType,
+		isValidating_getJobType,
+		error_getJobType,
+		getJobTypeListResponse,
+		mutate_getJobType,
+	} = useGetJobTypeList()
+	const {
+		isLoading_getModality,
+		isValidating_getModality,
+		error_getModality,
+		getModalityListResponse,
+		mutate_getModality,
+	} = useGetModalityList()
+	const {
+		isLoading_getLocations,
+		isValidating_getLocations,
+		error_getLocations,
+		mutate_getLocations,
+		getLocationsListResponse,
+	} = useGetLocationList()
 
 	const jobItemSelectHandler = (item: GetJobListResponse) => {
-		navigate(`/jobs/${item.id}`)
+		setManuallySelected(true)
+		setFiltered(false)
 		setSelectedJob(item)
+		navigate(`/jobs/${item.id}`)
+	}
+
+	// const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+	// 	// if (event.key === 'Enter') handleSubmit(filterSubmitHandler)()
+	// }
+
+	const filterSubmitHandler = (data: FormData) => {
+		// console.log(data)
+		setFiltered(true)
+		setManuallySelected(false)
+		setTypeId_getJobs(data.selectedJobTypes?.map((x) => x.id) || [''])
+		setLocationId_getJobs(data.selectedLocations?.map((x) => x.id) || [''])
+		setModalityId_getJobs(data.selectedModality?.map((x) => x.id) || [''])
+		setSearch_getJobs(data?.search || '')
+
+		console.log('send filters ===>')
+		mutate_getJobs()
 	}
 
 	useEffect(() => {
 		mutate_getJobs()
+		mutate_getJobType()
+		mutate_getLocations()
+		mutate_getModality()
 	}, [])
 
 	useEffect(() => {
 		if (jobId) {
+			console.log('got job id')
 			setJobId_getJob(jobId)
 			mutate_getJob()
 		}
 	}, [jobId])
 
 	useEffect(() => {
-		if (getJobResponse) {
+		// if (
+		// 	(getJobResponse && !manuallySelected && filtered) ||
+		// 	(getJobResponse && !filtered && manuallySelected)
+		// ) {
+		// 	console.log('got data ===>')
+		// 	setSelectedJob(getJobResponse)
+		// }
+		if (getJobResponse && !manuallySelected) {
+			console.log('got data ===>')
 			setSelectedJob(getJobResponse)
 		}
 	}, [getJobResponse])
@@ -76,7 +161,25 @@ const Jobs = () => {
 			setSelectedJob(getJobsListResponse[0])
 			navigate(`/jobs/${getJobsListResponse[0].id}`)
 		}
-	}, [getJobsListResponse, jobId])
+	}, [getJobsListResponse])
+
+	useEffect(() => {
+		// if (getJobTypeListResponse) {
+		setJobTypeList(getJobTypeListResponse || [])
+		// }
+	}, [getJobTypeListResponse])
+
+	useEffect(() => {
+		// if (getModalityListResponse) {
+		setModalityList(getModalityListResponse || [])
+		// }
+	}, [getModalityListResponse])
+
+	useEffect(() => {
+		// if (getLocationsListResponse) {
+		setLocationList(getLocationsListResponse || [])
+		// }
+	}, [getLocationsListResponse])
 
 	useEffect(() => {
 		if (
@@ -102,27 +205,106 @@ const Jobs = () => {
 	return (
 		<>
 			<div className="page jobs-page">
-				<div className="top-row">
-					<div className="search-bar">search</div>
-					<div className="filter">
-						<div className="filter-title">Job Type</div>
-						<div className="filter-dropdown">dropdown</div>
-					</div>
-					<div className="filter">
-						<div className="filter-title">Modality</div>
-						<div className="filter-dropdown">dropdown</div>
-					</div>
-					<div className="filter">
-						<div className="filter-title">Location</div>
-						<div className="filter-dropdown">dropdown</div>
-					</div>
+				<Form className="top-row" onSubmit={handleSubmit(filterSubmitHandler)}>
+					<Form.Group className="filter">
+						<Form.Label>Search</Form.Label>
+						<FormControl
+							type="text"
+							placeholder="Search"
+							className="mr-sm-2"
+							{...register('search')}
+							// onKeyDown={keyDownHandler} // Listen for Enter key press
+						/>
+					</Form.Group>
+
+					<Form.Group className="filter">
+						<Form.Label>Job Type</Form.Label>
+						{jobTypeList && (
+							<Select
+								options={jobTypeList.map((type) => ({
+									value: type.id,
+									label: type.key,
+								}))}
+								values={[]}
+								name="select"
+								multi
+								onChange={(val) => {
+									setValue(
+										'selectedJobTypes',
+										val.map((v) => ({
+											id: v.value,
+											key: v.label,
+										}))
+									)
+									// handleSubmit(filterSubmitHandler)()
+								}}
+								clearable
+							/>
+						)}
+					</Form.Group>
+
+					<Form.Group className="filter">
+						<Form.Label>Modality</Form.Label>
+						{modalityList && (
+							<Select
+								options={modalityList.map((type) => ({
+									value: type.id,
+									label: type.key,
+								}))}
+								values={[]}
+								name="select"
+								multi
+								onChange={(val) => {
+									setValue(
+										'selectedModality',
+										val.map((v) => ({
+											id: v.value,
+											key: v.label,
+										}))
+									)
+									// handleSubmit(filterSubmitHandler)()
+								}}
+								clearable
+							/>
+						)}
+					</Form.Group>
+
+					<Form.Group className="filter">
+						<Form.Label>Location</Form.Label>
+						{locationList && (
+							<Select
+								options={locationList.map((type) => ({
+									value: type.id,
+									label: type.location,
+								}))}
+								values={[]}
+								name="select"
+								multi
+								onChange={(val) => {
+									setValue(
+										'selectedLocations',
+										val.map((v) => ({
+											id: v.value,
+											location: v.label,
+										}))
+									)
+									// handleSubmit(filterSubmitHandler)()
+								}}
+								clearable
+							/>
+						)}
+					</Form.Group>
+
+					<Button variant="primary" type="submit">
+						Filter
+					</Button>
 
 					{isCreateVisible && (
 						<Button onClick={() => navigate('/create-job')}>
 							Create Job Post
 						</Button>
 					)}
-				</div>
+				</Form>
 				<div className="content">
 					<div className="latest-list">
 						{getJobsListResponse &&
