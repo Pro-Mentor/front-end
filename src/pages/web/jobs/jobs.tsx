@@ -110,10 +110,6 @@ const Jobs = () => {
 		navigate(`/jobs/${item.id}`)
 	}
 
-	// const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-	// 	// if (event.key === 'Enter') handleSubmit(filterSubmitHandler)()
-	// }
-
 	const filterSubmitHandler = (data: FormData) => {
 		// console.log(data)
 		setFiltered(true)
@@ -123,7 +119,7 @@ const Jobs = () => {
 		setModalityId_getJobs(data.selectedModality?.map((x) => x.id) || [''])
 		setSearch_getJobs(data?.search || '')
 
-		console.log('send filters ===>')
+		// console.log('send filters ===>')
 		mutate_getJobs()
 	}
 
@@ -136,27 +132,26 @@ const Jobs = () => {
 
 	useEffect(() => {
 		if (jobId) {
-			console.log('got job id')
+			// console.log('got job id')
 			setJobId_getJob(jobId)
 			mutate_getJob()
 		}
 	}, [jobId])
 
 	useEffect(() => {
-		// if (
-		// 	(getJobResponse && !manuallySelected && filtered) ||
-		// 	(getJobResponse && !filtered && manuallySelected)
-		// ) {
-		// 	console.log('got data ===>')
-		// 	setSelectedJob(getJobResponse)
-		// }
 		if (getJobResponse && !manuallySelected) {
-			console.log('got data ===>')
+			// console.log('got data ===>')
 			setSelectedJob(getJobResponse)
 		}
 	}, [getJobResponse])
 
 	useEffect(() => {
+		if (getJobsListResponse && getJobsListResponse.length === 0) {
+			return
+		}
+		if (getJobsListResponse && filtered) {
+			jobItemSelectHandler(getJobsListResponse[0])
+		}
 		if (getJobsListResponse && !jobId) {
 			setSelectedJob(getJobsListResponse[0])
 			navigate(`/jobs/${getJobsListResponse[0].id}`)
@@ -164,43 +159,58 @@ const Jobs = () => {
 	}, [getJobsListResponse])
 
 	useEffect(() => {
-		// if (getJobTypeListResponse) {
 		setJobTypeList(getJobTypeListResponse || [])
-		// }
 	}, [getJobTypeListResponse])
 
 	useEffect(() => {
-		// if (getModalityListResponse) {
 		setModalityList(getModalityListResponse || [])
-		// }
 	}, [getModalityListResponse])
 
 	useEffect(() => {
-		// if (getLocationsListResponse) {
 		setLocationList(getLocationsListResponse || [])
-		// }
 	}, [getLocationsListResponse])
 
 	useEffect(() => {
 		if (
 			isLoading_getJob ||
 			isLoading_getJobs ||
+			isLoading_getJobType ||
+			isLoading_getLocations ||
+			isLoading_getModality ||
 			isValidating_getJob ||
-			isValidating_getJobs
+			isValidating_getJobs ||
+			isValidating_getJobType ||
+			isValidating_getLocations ||
+			isValidating_getModality
 		) {
 			setIsLoading(true)
 		} else setIsLoading(false)
 	}, [
 		isLoading_getJob,
 		isLoading_getJobs,
+		isLoading_getJobType,
+		isLoading_getLocations,
+		isLoading_getModality,
 		isValidating_getJob,
 		isValidating_getJobs,
+		isValidating_getJobType,
+		isValidating_getLocations,
+		isValidating_getModality,
 	])
 
 	useEffect(() => {
 		errorDisplayHandler(error_getJob)
 		errorDisplayHandler(error_getJobs)
-	}, [error_getJob, error_getJobs])
+		errorDisplayHandler(error_getJobType)
+		errorDisplayHandler(error_getLocations)
+		errorDisplayHandler(error_getModality)
+	}, [
+		error_getJob,
+		error_getJobs,
+		error_getJobType,
+		error_getLocations,
+		error_getModality,
+	])
 
 	return (
 		<>
@@ -305,22 +315,27 @@ const Jobs = () => {
 						</Button>
 					)}
 				</Form>
-				<div className="content">
-					<div className="latest-list">
-						{getJobsListResponse &&
-							getJobsListResponse.map((job) => {
-								return (
-									<JobsItem
-										item={job}
-										setSelectedJob={jobItemSelectHandler}
-										key={job.id}
-									/>
-								)
-							})}
-					</div>
 
-					{selectedJob && <JobsDetailItem jobDetails={selectedJob} />}
-				</div>
+				{getJobsListResponse && getJobsListResponse.length > 0 ? (
+					<div className="content">
+						<div className="latest-list">
+							{getJobsListResponse &&
+								getJobsListResponse.map((job) => {
+									return (
+										<JobsItem
+											item={job}
+											setSelectedJob={jobItemSelectHandler}
+											key={job.id}
+										/>
+									)
+								})}
+						</div>
+
+						{selectedJob && <JobsDetailItem jobDetails={selectedJob} />}
+					</div>
+				) : (
+					<div className="no-data">No Data Found</div>
+				)}
 			</div>
 
 			{/* Loader overlay */}

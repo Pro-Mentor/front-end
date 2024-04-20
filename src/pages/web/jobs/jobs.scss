@@ -38,3 +38,10 @@
 .job-item .company-name {
 	font-size: 0.7rem;
 }
+
+.no-data {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: calc(100% - 11.5rem);
+}
