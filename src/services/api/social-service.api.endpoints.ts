@@ -47,4 +47,45 @@ export class SocialService {
 	Delete_deletePost(postId: string) {
 		return this.gateway + 'posts' + '/' + postId
 	}
+
+	Get_Locations(params: Record<string, string> = {}) {
+		return this.gateway + 'locations' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_ModalityList(params: Record<string, string> = {}) {
+		return this.gateway + 'job-modality' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_JobTypes(params: Record<string, string> = {}) {
+		return this.gateway + 'job-type' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_Tags(params: Record<string, string> = {}) {
+		return this.gateway + 'tags' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Post_Location() {
+		return this.gateway + 'locations'
+	}
+
+	Post_Modality() {
+		return this.gateway + 'job-modality'
+	}
+
+	Post_JobType() {
+		return this.gateway + 'job-type'
+	}
+
+	Post_CreateJob() {
+		return this.gateway + 'jobs'
+	}
+
+	Get_Jobs(params: Record<string, string> = {}) {
+		console.log(params)
+		return this.gateway + 'jobs' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_Job(jobId: string) {
+		return this.gateway + 'jobs' + '/' + jobId
+	}
 }

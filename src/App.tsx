@@ -17,6 +17,7 @@ import Jobs from './pages/web/jobs/jobs'
 import Chats from './pages/web/chats/chats'
 import Profile from './pages/web/profile/profile'
 import CreatePost from './pages/web/posts/create-post/create-post'
+import CreateJob from './pages/web/jobs/create-job/create-job'
 
 document.title = 'ProMentor'
 
@@ -66,11 +67,19 @@ function App() {
 							<>
 								<Route path="/" element={<WebDashboard />} />
 								<Route path="/jobs" element={<Jobs />} />
+								<Route path="/jobs/:jobId" element={<Jobs />} />
 								<Route path="/events" element={<WebEvents />} />
 								<Route path="/chats" element={<Chats />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/create-post" element={<CreatePost />} />
 								<Route path="/edit-post/:postId" element={<CreatePost />} />
+							</>
+						)}
+
+						{(loggedInUser === 'lecture' || loggedInUser === 'user') && (
+							<>
+								<Route path="/create-job" element={<CreateJob />} />
+								<Route path="/edit-job/:jobId" element={<CreateJob />} />
 							</>
 						)}
 

@@ -10,8 +10,9 @@ import useSWR from 'swr'
 import { ErrorCode } from '@promentor-app/shared-lib'
 
 export interface IGlobalError {
-	errors: ErrorObj[]
-	errorCode: ErrorCode
+	errors?: ErrorObj[]
+	errorCode?: ErrorCode
+	message?: string
 }
 
 export interface ErrorObj {

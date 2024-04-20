@@ -24,17 +24,18 @@ import { usePostLike } from '../../../../hooks/web/posts/usePostLike'
 import { useGetPost } from '../../../../hooks/web/posts/useGetPost'
 import { SessionHandler } from '../../../../utils/session-handler'
 import DotsToggle from '../../../shared/dots-toggle/dots-toggle'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useDeletePost } from '../../../../hooks/web/posts/useDeletePost'
 import PostDelete from '../post-delete/post-delete'
 
 type Props = {
 	postItem: GetPostsListResponse
+	mutateList: () => Promise<GetPostsListResponse[] | undefined>
 }
 
 const sessionHandler = new SessionHandler()
 
-function PostItem({ postItem }: Props) {
+function PostItem({ postItem, mutateList }: Props) {
 	const [post, setPost] = useState(postItem)
 	const navigate = useNavigate()
 	const fullName =
@@ -180,8 +181,7 @@ function PostItem({ postItem }: Props) {
 		if (deletePostResponse) {
 			toast.success('Post deleted successfully!')
 			setIsDeleteModalOpen(false)
-			// navigate('/')
-			// TODO: make the posts list mutate
+			mutateList()
 		}
 	}, [deletePostResponse])
 
