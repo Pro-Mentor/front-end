@@ -279,7 +279,7 @@ function CreateEvent() {
 		<>
 			<div className="page create-event-page">
 				<PageHeader title="Create Event" />
-				<Form className="cont" onSubmit={handleSubmit(formDataConverter)}>
+				<Form className="form cont" onSubmit={handleSubmit(formDataConverter)}>
 					<Form.Group controlId="title">
 						<Form.Label>Title</Form.Label>
 						<Form.Control {...register('title')} />
@@ -320,21 +320,6 @@ function CreateEvent() {
 						)}
 					</Form.Group>
 
-					<Form.Group>
-						<Form.Label>Date & Time</Form.Label>
-						<DatePicker
-							selected={selectedDate}
-							onChange={(date: Date) => {
-								console.log(date)
-								date && setSelectedDate(date)
-								date && setValue('time', date)
-							}}
-							showTimeSelect
-							required
-							dateFormat="MMMM d, yyyy h:mm aa"
-						/>
-					</Form.Group>
-
 					<Form.Group controlId="companyName">
 						<Form.Label>Company Name</Form.Label>
 						<Form.Control {...register('companyName')} />
@@ -343,33 +328,20 @@ function CreateEvent() {
 						</Form.Text>
 					</Form.Group>
 
-					<div className="filters">
-						<Form.Group className="filter">
-							<Form.Label>Location</Form.Label>
-							{locationList && (
-								<Select
-									options={locationList.map((location) => ({
-										value: location.id,
-										label: location.location,
-									}))}
-									values={[]}
-									name="select"
-									onChange={(val) => {
-										setValue('selectedLocation', {
-											id: val[0].value,
-											location: val[0].label,
-										})
-									}}
-									clearable
-									required
-									create
-									onCreateNew={(value) => {
-										// setValue('selectedLocation', value)
-										setCreateLocationRequest({ location: value.label })
-										setIsRequestReady_createLocation(true)
-									}}
-								/>
-							)}
+					<div className="one-row">
+						<Form.Group className="date-time">
+							<Form.Label>Date & Time</Form.Label>
+							<DatePicker
+								selected={selectedDate}
+								onChange={(date: Date) => {
+									console.log(date)
+									date && setSelectedDate(date)
+									date && setValue('time', date)
+								}}
+								showTimeSelect
+								required
+								dateFormat="MMMM d, yyyy h:mm aa"
+							/>
 						</Form.Group>
 
 						<Form.Group className="filter">
@@ -394,6 +366,35 @@ function CreateEvent() {
 									onCreateNew={(value) => {
 										setCreateModeRequest({ key: value.label })
 										setIsRequestReady_createMode(true)
+									}}
+								/>
+							)}
+						</Form.Group>
+					</div>
+
+					<div className="filters">
+						<Form.Group className="filter">
+							<Form.Label>Location</Form.Label>
+							{locationList && (
+								<Select
+									options={locationList.map((location) => ({
+										value: location.id,
+										label: location.location,
+									}))}
+									values={[]}
+									name="select"
+									onChange={(val) => {
+										setValue('selectedLocation', {
+											id: val[0].value,
+											location: val[0].label,
+										})
+									}}
+									clearable
+									create
+									onCreateNew={(value) => {
+										// setValue('selectedLocation', value)
+										setCreateLocationRequest({ location: value.label })
+										setIsRequestReady_createLocation(true)
 									}}
 								/>
 							)}
