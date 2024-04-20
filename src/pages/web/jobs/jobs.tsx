@@ -26,6 +26,8 @@ import {
 } from '../../../hooks/web/jobs/useGetLocationList'
 import Select from 'react-dropdown-select'
 import { useForm } from 'react-hook-form'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilter } from '@fortawesome/free-solid-svg-icons'
 
 const sessionHandler = new SessionHandler()
 
@@ -305,12 +307,20 @@ const Jobs = () => {
 						)}
 					</Form.Group>
 
-					<Button variant="primary" type="submit">
-						Filter
-					</Button>
+					<button className="filter-btn" type="submit">
+						<FontAwesomeIcon
+							icon={faFilter}
+							className="px-2"
+							style={{ color: '#35314e' }}
+							fontSize={18}
+						/>
+					</button>
 
 					{isCreateVisible && (
-						<Button onClick={() => navigate('/create-job')}>
+						<Button
+							className="create-btn"
+							onClick={() => navigate('/create-job')}
+						>
 							Create Job Post
 						</Button>
 					)}

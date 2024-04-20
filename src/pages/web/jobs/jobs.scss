@@ -2,7 +2,13 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
-	padding: 0.7rem 0;
+	// padding: 0.7rem 0;
+	/* max-height: 8rem; */
+	/* overflow-y: auto; */
+	margin: 0.5rem 0;
+	border: 1px solid lightgray;
+	border-radius: 0.5rem;
+	padding: 0.5rem;
 
 	.filter {
 		width: calc(100% / 5);
@@ -44,4 +50,20 @@
 	justify-content: center;
 	align-items: center;
 	height: calc(100% - 11.5rem);
+}
+
+.jobs-page {
+	.filter-btn {
+		margin-top: 2rem;
+		height: 2.3rem;
+		border: 1px solid darkgray;
+		border-radius: 0.5rem;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.create-btn {
+		margin-top: 2rem;
+	}
 }
