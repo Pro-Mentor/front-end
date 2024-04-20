@@ -29,6 +29,7 @@ import {
 import { useCreateJob } from '../../../../hooks/web/jobs/useCreateJob'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import './create-job.scss'
 
 const schema = yup.object().shape({
 	title: yup.string().required('Title is required'),
@@ -241,7 +242,7 @@ function CreateJob() {
 		<>
 			<div className="page create-job-page">
 				<PageHeader title="Create Job Post" />
-				<Form className="" onSubmit={handleSubmit(formDataConverter)}>
+				<Form className="cont" onSubmit={handleSubmit(formDataConverter)}>
 					<Form.Group controlId="title">
 						<Form.Label>Title</Form.Label>
 						<Controller
@@ -283,91 +284,92 @@ function CreateJob() {
 						</Form.Text>
 					</Form.Group>
 
-					<Form.Group>
-						<Form.Label>Location</Form.Label>
-						{locationList && (
-							<Select
-								options={locationList.map((location) => ({
-									value: location.id,
-									label: location.location,
-								}))}
-								values={[]}
-								name="select"
-								onChange={(val) => {
-									setValue('selectedLocation', {
-										id: val[0].value,
-										location: val[0].label,
-									})
-								}}
-								clearable
-								required
-								create
-								onCreateNew={(value) => {
-									// setValue('selectedLocation', value)
-									setCreateLocationRequest({ location: value.label })
-									setIsRequestReady_createLocation(true)
-								}}
-							/>
-						)}
-					</Form.Group>
+					<div className="filters">
+						<Form.Group className="filter">
+							<Form.Label>Location</Form.Label>
+							{locationList && (
+								<Select
+									options={locationList.map((location) => ({
+										value: location.id,
+										label: location.location,
+									}))}
+									values={[]}
+									name="select"
+									onChange={(val) => {
+										setValue('selectedLocation', {
+											id: val[0].value,
+											location: val[0].label,
+										})
+									}}
+									clearable
+									required
+									create
+									onCreateNew={(value) => {
+										// setValue('selectedLocation', value)
+										setCreateLocationRequest({ location: value.label })
+										setIsRequestReady_createLocation(true)
+									}}
+								/>
+							)}
+						</Form.Group>
 
-					<Form.Group>
-						<Form.Label>Modality</Form.Label>
-						{modalityList && (
-							<Select
-								options={modalityList.map((mode) => ({
-									value: mode.id,
-									label: mode.key,
-								}))}
-								values={[]}
-								name="select"
-								onChange={(val) => {
-									setValue('selectedModality', {
-										id: val[0].value,
-										key: val[0].label,
-									})
-								}}
-								clearable
-								required
-								create
-								onCreateNew={(value) => {
-									// setValue('selectedModality', value)
-									setCreateModalityRequest({ key: value.label })
-									setIsRequestReady_createModality(true)
-								}}
-							/>
-						)}
-					</Form.Group>
+						<Form.Group className="filter">
+							<Form.Label>Modality</Form.Label>
+							{modalityList && (
+								<Select
+									options={modalityList.map((mode) => ({
+										value: mode.id,
+										label: mode.key,
+									}))}
+									values={[]}
+									name="select"
+									onChange={(val) => {
+										setValue('selectedModality', {
+											id: val[0].value,
+											key: val[0].label,
+										})
+									}}
+									clearable
+									required
+									create
+									onCreateNew={(value) => {
+										// setValue('selectedModality', value)
+										setCreateModalityRequest({ key: value.label })
+										setIsRequestReady_createModality(true)
+									}}
+								/>
+							)}
+						</Form.Group>
 
-					<Form.Group>
-						<Form.Label>Job Type</Form.Label>
-						{modalityList && (
-							<Select
-								options={jobTypeList.map((mode) => ({
-									value: mode.id,
-									label: mode.key,
-								}))}
-								values={[]}
-								name="select"
-								onChange={(val) => {
-									setValue('selectedType', {
-										id: val[0].value,
-										key: val[0].label,
-									})
-								}}
-								clearable
-								required
-								create
-								onCreateNew={(value) => {
-									// setValue('selectedJobType', value)
-									setCreateJobTypeRequest({ key: value.label })
-									setIsRequestReady_createJobType(true)
-								}}
-							/>
-						)}
-					</Form.Group>
-
-					<Form.Group>
+						<Form.Group className="filter">
+							<Form.Label>Job Type</Form.Label>
+							{modalityList && (
+								<Select
+									options={jobTypeList.map((mode) => ({
+										value: mode.id,
+										label: mode.key,
+									}))}
+									values={[]}
+									name="select"
+									onChange={(val) => {
+										setValue('selectedType', {
+											id: val[0].value,
+											key: val[0].label,
+										})
+									}}
+									clearable
+									required
+									create
+									onCreateNew={(value) => {
+										// setValue('selectedJobType', value)
+										setCreateJobTypeRequest({ key: value.label })
+										setIsRequestReady_createJobType(true)
+									}}
+								/>
+							)}
+						</Form.Group>
+					</div>
+					<Form.Group className="tags-filter">
 						<Form.Label>Tags</Form.Label>
 						{allTagsList && (
 							<Select

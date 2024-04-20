@@ -192,7 +192,11 @@ const NavbarLocal = () => {
 									>
 										<Sidebar.Nav.Link
 											eventKey={item.path}
-											active={item.path === window.location.pathname}
+											active={
+												item.path !== '/'
+													? window.location.pathname.includes(item.path)
+													: window.location.pathname === item.path
+											}
 											onSelect={() => navigate(item.path)}
 										>
 											<Sidebar.Nav.Icon>

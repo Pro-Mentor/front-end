@@ -1,17 +1,19 @@
-.top-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	// padding: 0.7rem 0;
-	/* max-height: 8rem; */
-	/* overflow-y: auto; */
-	margin-bottom: 0.5rem;
-	border: 1px solid lightgray;
-	border-radius: 0.5rem;
-	padding: 0.5rem;
+.jobs-page {
+	.top-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		// padding: 0.7rem 0;
+		/* max-height: 8rem; */
+		/* overflow-y: auto; */
+		margin-bottom: 0.5rem;
+		border: 1px solid lightgray;
+		border-radius: 0.5rem;
+		padding: 0.5rem;
 
-	.filter {
-		width: calc(100% / 5);
+		.filter {
+			width: calc(100% / 5);
+		}
 	}
 }
 
