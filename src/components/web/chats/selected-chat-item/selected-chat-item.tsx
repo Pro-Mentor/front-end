@@ -1,16 +1,52 @@
-import { Card } from "react-bootstrap"
+import { Button, Card, Form } from "react-bootstrap"
 import Avatar from 'react-avatar'
-import "./selected-chat-item.scss"
+import * as yup from 'yup'
 import { ChatUser } from "../../../../hooks/web/chats/useChatUserCreate"
+import { yupResolver } from "@hookform/resolvers/yup"
+import "./selected-chat-item.scss"
+import { Controller, useForm } from "react-hook-form"
+import { useMessageCreate } from "../../../../hooks/web/chats/useMessageCreate"
 
+const schema = yup.object().shape({
+	message: yup.string().required('message is required'),
+})
 
-type Props = {
-	chatSelected: ChatUser
+export interface IMessage {
+	message: string;
 }
 
-function SelectedChatItem({ 
-    chatSelected
-}: Props) {
+type Props = {
+	chatSelected: ChatUser,
+	currentUser: string
+}
+
+const SelectedChatItem = ({ 
+    chatSelected,
+	currentUser
+}: Props) => {
+
+	const {
+		handleSubmit,
+		control,
+		formState: { errors },
+	} = useForm({
+		resolver: yupResolver(schema),
+	})
+
+	const { setMessage } = useMessageCreate()
+
+	const onSubmit = (data: IMessage) => {
+		console.log(data)
+		if (data?.message) {
+			setMessage({
+				from: currentUser,
+				to: chatSelected.username,
+				message: data.message
+			})
+		}
+	}
+
+
     return (
 		<Card className="selected-chat">
            <div className="selected-top-row">
@@ -26,7 +62,33 @@ function SelectedChatItem({
 					</div>
 				</div>
 			</div>
-            <div>Content</div>
+            <div className="chat-contenct">
+				content
+			</div>
+			<div>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<Form.Group controlId="message">
+						<Controller
+							name="message"
+							control={control}
+							defaultValue=""
+							render={({ field }) => (
+								<Form.Control
+									{...field}
+									type="text"
+									placeholder="Type a Message..."
+								/>
+							)}
+						/>
+						<Form.Text className="text-danger">
+							{errors.message?.message}
+						</Form.Text>
+					</Form.Group>
+					<Button variant="primary" type="submit">
+								Send
+					</Button>
+				</Form>
+			</div>
         </Card>
     )
 }

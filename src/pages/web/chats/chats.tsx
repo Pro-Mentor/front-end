@@ -42,7 +42,7 @@ const Chats = () => {
 					</div>
 					{
 						selectedChat && 
-							<SelectedChatItem chatSelected={selectedChat} />
+							<SelectedChatItem chatSelected={selectedChat} currentUser={sessionHandler.getSession("username")}/>
 					}
 
 				</div>

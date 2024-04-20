@@ -36,7 +36,7 @@ export const useChatUserCreate = (user: ChatUser) => {
             }
         };
 
-        addUser();
+        addUser()
 		
 	}, [])
 

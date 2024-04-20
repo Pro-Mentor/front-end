@@ -1,4 +1,4 @@
-import { collection, doc, writeBatch, query, getDocs } from "firebase/firestore"
+import { collection, doc, writeBatch, query, getDocs, serverTimestamp } from "firebase/firestore"
 import { firestore } from "./firebase";
 
 export interface FirebaseObject {
@@ -16,7 +16,10 @@ const createDocument = async <T extends FirebaseObject>(collectionKey: string, p
 
     params.forEach(item => {
         const documentRef = doc(collectionRef, item.title)
-        batch.set(documentRef, item)
+        batch.set(documentRef, {
+            ...item,
+            timestamp: serverTimestamp()
+        })
     })
 
     await batch.commit()
