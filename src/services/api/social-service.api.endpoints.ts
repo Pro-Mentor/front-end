@@ -104,4 +104,13 @@ export class SocialService {
 	Post_Mode() {
 		return this.gateway + 'modes'
 	}
+
+	Get_Events(params: Record<string, string> = {}) {
+		// console.log(params)
+		return this.gateway + 'events' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_Event(id: string) {
+		return this.gateway + 'events' + '/' + id
+	}
 }

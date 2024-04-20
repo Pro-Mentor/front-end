@@ -71,6 +71,7 @@ function App() {
 								<Route path="/jobs" element={<Jobs />} />
 								<Route path="/jobs/:jobId" element={<Jobs />} />
 								<Route path="/events" element={<WebEvents />} />
+								<Route path="/events/:eventId" element={<WebEvents />} />
 								<Route path="/chats" element={<Chats />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/create-post" element={<CreatePost />} />
