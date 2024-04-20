@@ -89,6 +89,8 @@ const LoginComponent = () => {
 			setupToken(loginResponse?.access_token || null)
 			setupIsAuthenticated(true)
 			sessionHandler.saveSession('usernameOrEmail', usernameOrEmail)
+			sessionHandler.saveSession('username', loginResponse?.clientData?.username || usernameOrEmail)
+			sessionHandler.saveSession('name', loginResponse?.clientData?.name || usernameOrEmail)
 			navigate('/')
 		}
 	}, [loginResponse])
