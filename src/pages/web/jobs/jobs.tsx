@@ -69,7 +69,7 @@ const Jobs = () => {
 		error_getJobs,
 		setLocationId_getJobs,
 		setSearch_getJobs,
-		setTagId_getJobs,
+		// setTagId_getJobs,
 		setModalityId_getJobs,
 		setTypeId_getJobs,
 		mutate_getJobs,

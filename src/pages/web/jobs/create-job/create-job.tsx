@@ -30,6 +30,7 @@ import { useCreateJob } from '../../../../hooks/web/jobs/useCreateJob'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import './create-job.scss'
+import { useCreateTag } from '../../../../hooks/web/jobs/useCreateTag'
 
 const schema = yup.object().shape({
 	title: yup.string().required('Title is required'),
@@ -103,6 +104,11 @@ function CreateJob() {
 		setCreateJobTypeRequest,
 	} = useCreateJobType()
 	const {
+		createTagResponse,
+		setIsRequestReady_createTag,
+		setCreateTagRequest,
+	} = useCreateTag()
+	const {
 		getTagsListResponse,
 		isLoading_getTags,
 		isValidating_getTags,
@@ -139,6 +145,12 @@ function CreateJob() {
 			mutate_getModality()
 		}
 	}, [createModalityResponse])
+
+	useEffect(() => {
+		if (createTagResponse) {
+			mutate_getTags()
+		}
+	}, [createTagResponse])
 
 	useEffect(() => {
 		if (createJobTypeResponse) {
@@ -343,7 +355,7 @@ function CreateJob() {
 
 						<Form.Group className="filter">
 							<Form.Label>Job Type</Form.Label>
-							{modalityList && (
+							{jobTypeList && (
 								<Select
 									options={jobTypeList.map((mode) => ({
 										value: mode.id,
@@ -393,8 +405,8 @@ function CreateJob() {
 								required
 								create
 								onCreateNew={(value) => {
-									setCreateJobTypeRequest({ key: value.label })
-									setIsRequestReady_createJobType(true)
+									setCreateTagRequest({ key: value.label })
+									setIsRequestReady_createTag(true)
 								}}
 							/>
 						)}
