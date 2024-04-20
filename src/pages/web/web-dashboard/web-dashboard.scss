@@ -18,6 +18,8 @@
 			display: flex;
 			flex-direction: column;
 			row-gap: 0.2rem;
+			object-fit: scale-down;
+			scale: 0.9;
 		}
 
 		.col2-container {
@@ -40,6 +42,19 @@
 		.title {
 			font-size: 1rem;
 			font-weight: 600;
+		}
+
+		.latest-container {
+			.title-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+
+				.see-more {
+					font-size: 0.8rem;
+					cursor: pointer;
+				}
+			}
 		}
 	}
 }

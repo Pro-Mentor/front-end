@@ -81,7 +81,7 @@ export class SocialService {
 	}
 
 	Get_Jobs(params: Record<string, string> = {}) {
-		console.log(params)
+		// console.log(params)
 		return this.gateway + 'jobs' + '?' + this.qs.setQueryParams(params)
 	}
 
