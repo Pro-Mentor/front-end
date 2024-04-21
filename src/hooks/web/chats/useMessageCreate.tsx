@@ -33,6 +33,7 @@ export const useMessageCreate = () => {
                             title: `${message.to}_${message.from}_${uniqid()}`
                         }
                     ])
+                    setMessage(undefined)
                     setIsPending(false)
                     setIsSendSuccess(true)
         

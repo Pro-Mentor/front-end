@@ -29,6 +29,7 @@ const SelectedChatItem = ({
 		handleSubmit,
 		control,
 		formState: { errors },
+		reset
 	} = useForm({
 		resolver: yupResolver(schema),
 	})
@@ -44,6 +45,7 @@ const SelectedChatItem = ({
 				message: data.message
 			})
 		}
+		reset()
 	}
 
 

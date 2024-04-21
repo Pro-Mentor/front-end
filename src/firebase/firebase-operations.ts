@@ -1,5 +1,6 @@
-import { collection, doc, writeBatch, query, getDocs, serverTimestamp } from "firebase/firestore"
+import { collection, doc, writeBatch, query, startAfter, getDocs, orderBy, serverTimestamp, onSnapshot } from "firebase/firestore"
 import { firestore } from "./firebase";
+import { FieldValueTypeToDate } from "../utils/dateTImeHandler";
 
 export interface FirebaseObject {
     title: string;
@@ -7,6 +8,10 @@ export interface FirebaseObject {
 
 export interface FirebaseGetAllResponseObject {
 
+}
+
+export interface FirebaseItemListenObject {
+    timestamp: Date
 }
 
 const createDocument = async <T extends FirebaseObject>(collectionKey: string, params: T[]) => {
@@ -26,7 +31,7 @@ const createDocument = async <T extends FirebaseObject>(collectionKey: string, p
     
 }
 
-const getAllCollections =async <T extends FirebaseGetAllResponseObject>(collectionKey: string) : Promise<T[]> => {
+const getAllCollections = async <T extends FirebaseGetAllResponseObject>(collectionKey: string) : Promise<T[]> => {
 
     const collectionRef = collection(firestore, collectionKey)
 
@@ -38,7 +43,41 @@ const getAllCollections =async <T extends FirebaseGetAllResponseObject>(collecti
     
 }
 
+const retriveMessages = <T extends FirebaseItemListenObject>(collectionKey: string, setResult: (item: T) => void, lastTimestampRef:React.MutableRefObject<Date | null>) => {
+
+    const collectionRef = collection(firestore, collectionKey)
+    let queryRef;
+
+    if (lastTimestampRef?.current) {
+        queryRef = query(collectionRef, orderBy("timestamp"), startAfter(lastTimestampRef.current));
+    } else {
+        queryRef = query(collectionRef, orderBy("timestamp"))
+    }
+
+    return onSnapshot(queryRef, (snapshot) => {
+        const retrivedMessages: T[] = [];
+
+        snapshot.forEach((doc) => {
+            retrivedMessages.push(doc.data() as T);
+        });
+
+        if (snapshot.docs.length > 0) {
+            const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+
+            if (lastTimestampRef?.current) {
+                setResult({
+                    ...lastDoc.data(),
+                    timestamp: FieldValueTypeToDate(lastDoc.data().timestamp.seconds, lastDoc.data().timestamp.nanoseconds)
+                } as T)
+            }
+
+            lastTimestampRef.current = lastDoc.data().timestamp; // Update last timestamp
+        }
+    })
+}
+
 export {
     createDocument,
-    getAllCollections
+    getAllCollections,
+    retriveMessages
 }

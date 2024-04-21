@@ -17,3 +17,7 @@ export function timeAgo(dateString: string): string {
 		return `${seconds}s ago`
 	}
 }
+
+export function FieldValueTypeToDate(seconds: number, nanoseconds: number) : Date {
+	return new Date(seconds * 1000 + nanoseconds / 1000000);
+}

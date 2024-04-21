@@ -1,18 +1,25 @@
 import { Card } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { timeAgo } from '../../../../utils/dateTImeHandler'
-
 import "./chat-item.scss"
-import { ChatUser } from '../../../../hooks/web/chats/useChatUserCreate'
+
+export interface ChatUserItem {
+	username: string;
+    name: string;
+	newMessageCount?: number,
+	latestMessage?: string,
+	latestMessageTime?: Date
+}
 
 type Props = {
-	item: ChatUser
-	setSelectedChat?: (item: ChatUser) => void
+	item: ChatUserItem
+	setSelectedChat?: (item: ChatUserItem) => void,
+	
 }
 
 function ChatsItem({ 
     item, 
-    setSelectedChat 
+    setSelectedChat,
 }: Props) {
 
 	return (
@@ -31,13 +38,18 @@ function ChatsItem({
                 <div>
                     <div className="name">{item.name}</div>
                     {/* <div className="company-name">{"text company"}</div> */}
-                    <div className="last-message">{"lkfd djf j djfdjf ipdjfodf dfd fd f df dfd jodj o"}</div>
+                    <div className="last-message">{item?.latestMessage}</div>
                 </div>
 				<div className='side-content'>
-                    <div className="times-ago">{timeAgo(new Date().toDateString())}</div>
-                    <div className='counter-wrapper'>
-                        <div className="count">1</div>
-                    </div>
+                    <div className="times-ago">{item?.latestMessageTime && timeAgo(item.latestMessageTime.toISOString())}</div>
+                    {
+						item?.newMessageCount &&
+						(
+							<div className='counter-wrapper'>
+								<div className="count">{item.newMessageCount}</div>
+							</div>
+						)
+					}
                 </div>
 			</div>
 		</Card>
