@@ -17,6 +17,10 @@
 		width: 85%;
 	}
 
+    .left-data {
+        width: calc(100% - 20px);
+    }
+
     .name {
         color: #8F87A1;
         font-size: 14px;

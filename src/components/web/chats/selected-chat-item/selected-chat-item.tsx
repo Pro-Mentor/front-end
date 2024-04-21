@@ -15,14 +15,23 @@ export interface IMessage {
 	message: string;
 }
 
+export interface ChatMessage {
+	message: string;
+	reserved: boolean;
+}
+
 type Props = {
 	chatSelected: ChatUser,
-	currentUser: string
+	currentUser: string,
+	onMessageSend: (message: string, to: string) => void,
+	localMessageList: ChatMessage[]
 }
 
 const SelectedChatItem = ({ 
     chatSelected,
-	currentUser
+	currentUser,
+	onMessageSend,
+	localMessageList
 }: Props) => {
 
 	const {
@@ -44,9 +53,12 @@ const SelectedChatItem = ({
 				to: chatSelected.username,
 				message: data.message
 			})
+			onMessageSend(data.message, chatSelected.username)
 		}
 		reset()
 	}
+
+
 
 
     return (
@@ -65,7 +77,13 @@ const SelectedChatItem = ({
 				</div>
 			</div>
             <div className="chat-contenct">
-				content
+				{
+					localMessageList &&
+						localMessageList.map((item, index) => <div key={index}>
+							<div>{item.reserved ? "from" : "me"}</div>
+							<div>{item.message}</div>
+						</div>)
+				}
 			</div>
 			<div>
 				<Form onSubmit={handleSubmit(onSubmit)}>

@@ -1,4 +1,4 @@
-import { collection, doc, writeBatch, query, startAfter, getDocs, orderBy, serverTimestamp, onSnapshot } from "firebase/firestore"
+import { collection, doc, writeBatch, query, startAfter, getDocs, orderBy, serverTimestamp, onSnapshot, where } from "firebase/firestore"
 import { firestore } from "./firebase";
 import { FieldValueTypeToDate } from "../utils/dateTImeHandler";
 
@@ -67,7 +67,7 @@ const retriveMessages = <T extends FirebaseItemListenObject>(collectionKey: stri
             if (lastTimestampRef?.current) {
                 setResult({
                     ...lastDoc.data(),
-                    timestamp: FieldValueTypeToDate(lastDoc.data().timestamp.seconds, lastDoc.data().timestamp.nanoseconds)
+                    timestamp: FieldValueTypeToDate(lastDoc.data().timestamp?.seconds, lastDoc.data().timestamp?.nanoseconds)
                 } as T)
             }
 
@@ -76,8 +76,25 @@ const retriveMessages = <T extends FirebaseItemListenObject>(collectionKey: stri
     })
 }
 
+const getAllChatsWithFilter = async <T extends FirebaseGetAllResponseObject>(
+    collectionKey: string,
+    valus: string[]
+  ): Promise<T[]> => {
+
+    const collectionRef = collection(firestore, collectionKey);
+
+    const q = query(collectionRef,
+      where("to", "in", valus), // Filter "to" property 
+      where("from", "in", valus), // Filter "from" property
+      orderBy("timestamp")
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(docSnapshot => docSnapshot.data() as T);
+  };
+
 export {
     createDocument,
     getAllCollections,
-    retriveMessages
+    retriveMessages,
+    getAllChatsWithFilter
 }

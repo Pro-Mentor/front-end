@@ -35,7 +35,7 @@ function ChatsItem({
 				/>
 			</div>
 			<div className="data">
-                <div>
+                <div className="left-data">
                     <div className="name">{item.name}</div>
                     {/* <div className="company-name">{"text company"}</div> */}
                     <div className="last-message">{item?.latestMessage}</div>
