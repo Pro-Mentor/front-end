@@ -68,4 +68,8 @@ export class AuthService {
 	Get_StudentById(id: string) {
 		return this.gateway + 'students' + '/' + id
 	}
+
+	Get_Summery() {
+		return this.gateway + 'summery/count'
+	}
 }

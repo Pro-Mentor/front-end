@@ -113,4 +113,8 @@ export class SocialService {
 	Get_Event(id: string) {
 		return this.gateway + 'events' + '/' + id
 	}
+
+	Get_Summery() {
+		return this.gateway + 'summery'
+	}
 }

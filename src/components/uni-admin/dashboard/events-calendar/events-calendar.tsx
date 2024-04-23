@@ -5,13 +5,26 @@ import './events-calendar.scss'
 
 const localizer = momentLocalizer(moment) // or globalizeLocalizer
 
-const EventsCalendar = () => {
+export interface EventItem  {
+    id: string;
+    title: string;
+    desc: string;
+    start: Date;
+    end: Date;
+    time: Date;
+}
+
+type Props = {
+	eventItemList: EventItem[]
+}
+
+const EventsCalendar = ({ eventItemList } : Props) => {
 	return (
 		<div className="calendar-container">
 			<div className="calendar-title">Upcoming Events</div>
 			<Calendar
 				localizer={localizer}
-				// events={myEventsList}
+				events={eventItemList}
 				startAccessor="start"
 				endAccessor="end"
 			/>

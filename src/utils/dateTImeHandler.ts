@@ -21,3 +21,11 @@ export function timeAgo(dateString: string): string {
 export function FieldValueTypeToDate(seconds: number, nanoseconds: number) : Date {
 	return new Date(seconds * 1000 + nanoseconds / 1000000);
 }
+
+export function DateTimeToOnlyDateMonth(dateString: string) {
+	const date = new Date(dateString);
+	const month = date.toLocaleString('default', { month: 'long' });
+	const day = date.getDate();
+	
+	return  `${month} ${day}`;
+}

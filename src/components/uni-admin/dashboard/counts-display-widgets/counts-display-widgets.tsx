@@ -1,46 +1,20 @@
 import './counts-display-widgets.scss'
 
-// icons
-import IEvents from '@/assets/images/events.svg'
-import Iadmins from '@/assets/images/nav-admin.svg'
-import Istudents from '@/assets/images/nav-students.svg'
-import ILecturers from '@/assets/images/nav-lecturers.svg'
-import IStaff from '@/assets/images/nav-staff.svg'
 import { useGetCounts } from '../../../../hooks/uni-admin/dashboard/useGetCounts'
 
-const countsList = [
-	{
-		id: 1,
-		icon: Iadmins,
-		title: 'Admins',
-		count: 5,
-	},
-	{
-		id: 2,
-		icon: IStaff,
-		title: 'Staff',
-		count: 12,
-	},
-	{
-		id: 3,
-		icon: Istudents,
-		title: 'Students',
-		count: 2548,
-	},
-	{
-		id: 4,
-		icon: ILecturers,
-		title: 'Lecturers',
-		count: 30,
-	},
-	{
-		id: 5,
-		icon: IEvents,
-		title: 'Events',
-		count: 15,
-	},
-]
-const CountsDisplayWidgets = () => {
+export interface SummeryCounts {
+	icon: string;
+	title: string;
+	count: number;
+}
+
+
+type Props = {
+	countsList: SummeryCounts[]
+}
+
+
+const CountsDisplayWidgets = ({ countsList }: Props) => {
 	const { countsData, isLoading, isValidating, error } = useGetCounts()
 
 	if (error) return <div>Failed to load</div>
@@ -49,9 +23,9 @@ const CountsDisplayWidgets = () => {
 
 	return (
 		<div className="counts-display">
-			{countsList.map((count) => {
+			{countsList.map((count, index) => {
 				return (
-					<div className="count-container" key={count.id}>
+					<div className="count-container" key={index}>
 						<div className="icon">
 							<img src={count.icon} alt="icon" />
 						</div>
