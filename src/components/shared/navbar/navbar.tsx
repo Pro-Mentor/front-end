@@ -74,11 +74,11 @@ const NavbarLocal = () => {
 			title: 'Chats',
 			path: '/chats',
 		},
-		{
-			id: 55,
-			title: 'Profile',
-			path: '/profile',
-		},
+		// {
+		// 	id: 55,
+		// 	title: 'Profile',
+		// 	path: '/profile',
+		// },
 	]
 
 	function navIconSetter(id: number) {

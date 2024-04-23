@@ -17,6 +17,8 @@ import { SessionHandler } from '../utils/session-handler'
 import { useNavigate } from 'react-router-dom'
 import { GlobalContext, GlobalContextType } from '../context/global.context'
 import { errorDisplayHandler } from '../utils/errorDisplayHandler'
+import './login.scss'
+import logo from '@/assets/images/nav-logo.svg'
 
 // Define validation schema
 const schema = yup.object().shape({
@@ -88,9 +90,26 @@ const LoginComponent = () => {
 			setupLoggedInUser(userRole || null)
 			setupToken(loginResponse?.access_token || null)
 			setupIsAuthenticated(true)
+
+			console.log(loginResponse?.clientData)
+
 			sessionHandler.saveSession('usernameOrEmail', usernameOrEmail)
-			sessionHandler.saveSession('username', loginResponse?.clientData?.username || usernameOrEmail)
-			sessionHandler.saveSession('name', loginResponse?.clientData?.name || usernameOrEmail)
+			sessionHandler.saveSession(
+				'username',
+				loginResponse?.clientData?.username || usernameOrEmail
+			)
+			sessionHandler.saveSession(
+				'name',
+				loginResponse?.clientData?.name || usernameOrEmail
+			)
+			sessionHandler.saveSession(
+				'email',
+				loginResponse?.clientData?.email || 'abc@gmail.com'
+			)
+			sessionHandler.saveSession(
+				'email_verified',
+				loginResponse?.clientData?.email || String(false)
+			)
 			navigate('/')
 		}
 	}, [loginResponse])
@@ -108,9 +127,12 @@ const LoginComponent = () => {
 		<>
 			<Container>
 				<Row className="justify-content-md-center mt-5">
+					<div className="login-logo">
+						<img src={logo} alt="logo" />
+					</div>
 					<Col xs={12} md={6}>
-						<h2>Login to your account</h2>
-						<Form onSubmit={handleSubmit(onSubmit)}>
+						<h2 className="text-center">Login to your account</h2>
+						<Form onSubmit={handleSubmit(onSubmit)} className="login-form">
 							<Form.Group controlId="username">
 								<Form.Label>Username</Form.Label>
 								<Controller
@@ -131,7 +153,7 @@ const LoginComponent = () => {
 								</Form.Text>
 							</Form.Group>
 
-							<Form.Group controlId="password">
+							<Form.Group controlId="password" className="pswd">
 								<Form.Label>Password</Form.Label>
 								<Controller
 									name="password"
@@ -151,9 +173,11 @@ const LoginComponent = () => {
 								</Form.Text>
 							</Form.Group>
 
-							<Button variant="primary" type="submit">
-								Login
-							</Button>
+							<div className="btn-cont">
+								<Button variant="primary" type="submit" className="login-btn">
+									Login
+								</Button>
+							</div>
 						</Form>
 					</Col>
 				</Row>
