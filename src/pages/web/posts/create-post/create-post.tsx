@@ -221,7 +221,7 @@ const CreatePost = () => {
 		<>
 			<div className="page create-post-page">
 				<PageHeader title={postId ? 'Edit Post' : 'Create a Post'}></PageHeader>
-				<div className="">
+				<div className="cont">
 					<Form onSubmit={handleSubmit(onSubmit)} className="form">
 						{selectedImage !== null && (
 							<img

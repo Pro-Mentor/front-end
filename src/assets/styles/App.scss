@@ -25,7 +25,7 @@
 	grid-area: main;
 	box-shadow: inset 2px 1px 9px 1px rgba($dark, 0.1);
 	overflow: auto;
-	padding: 0.5rem rem;
+	padding: 0.5rem;
 }
 
 .page {
@@ -40,4 +40,36 @@
 .enabled-div {
 	pointer-events: visible;
 	opacity: 1;
+}
+
+.react-datepicker__input-container input {
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var(--bs-body-color);
+	appearance: none;
+	background-color: var(--bs-body-bg);
+	background-clip: padding-box;
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	border-radius: var(--bs-border-radius);
+	transition:
+		border-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
+}
+
+.react-dropdown-select {
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var(--bs-body-color);
+	appearance: none;
+	background-color: var(--bs-body-bg);
+	background-clip: padding-box;
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	border-radius: var(--bs-border-radius);
+	transition:
+		border-color 0.15s ease-in-out,
+		box-shadow 0.15s ease-in-out;
 }

@@ -18,6 +18,8 @@ import Chats from './pages/web/chats/chats'
 import Profile from './pages/web/profile/profile'
 import CreatePost from './pages/web/posts/create-post/create-post'
 import CreateJob from './pages/web/jobs/create-job/create-job'
+import CreateEvent from './pages/web/web-events/create-event/create-event'
+import 'react-datepicker/dist/react-datepicker.css'
 
 document.title = 'ProMentor'
 
@@ -69,10 +71,12 @@ function App() {
 								<Route path="/jobs" element={<Jobs />} />
 								<Route path="/jobs/:jobId" element={<Jobs />} />
 								<Route path="/events" element={<WebEvents />} />
+								<Route path="/events/:eventId" element={<WebEvents />} />
 								<Route path="/chats" element={<Chats />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/create-post" element={<CreatePost />} />
 								<Route path="/edit-post/:postId" element={<CreatePost />} />
+								<Route path="/create-event" element={<CreateEvent />} />
 							</>
 						)}
 

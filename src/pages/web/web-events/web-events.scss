@@ -1,4 +1,4 @@
-.jobs-page {
+.events-page {
 	.top-row {
 		display: flex;
 		justify-content: space-between;
@@ -34,16 +34,16 @@
 	overflow-y: auto;
 }
 
-.jobs-page .times-ago {
+.events-page .times-ago {
 	font-size: 0.7rem;
 	font-weight: 400;
 }
 
-.job-item .title {
+.event-item .title {
 	font-weight: 600;
 }
 
-.job-item .company-name {
+.event-item .company-name {
 	font-size: 0.7rem;
 }
 
@@ -54,7 +54,7 @@
 	height: calc(100% - 11.5rem);
 }
 
-.jobs-page {
+.events-page {
 	.filter-btn {
 		margin-top: 2rem;
 		height: 2.3rem;

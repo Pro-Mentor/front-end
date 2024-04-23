@@ -88,11 +88,33 @@ const WebDashboard = () => {
 							</Button>
 						</Container>
 
-						<div className="latest-events-container">
-							<div className="title">Latest Events</div>
+						<div className="latest-container">
+							<div className="title-header">
+								<div className="title">Latest Events</div>
+								<div className="see-more" onClick={() => navigate('/events')}>
+									see more &gt;&gt;&gt;
+								</div>
+							</div>
+							<div className="div">
+								{getJobsListResponse &&
+									getJobsListResponse.map((job) => {
+										return (
+											<JobsItem
+												item={job}
+												key={job.id}
+												setSelectedJob={jobSelectHandler}
+											/>
+										)
+									})}
+							</div>
 						</div>
-						<div className="latest-jobs-container">
-							<div className="title">Latest Jobs</div>
+						<div className="latest-container">
+							<div className="title-header">
+								<div className="title">Latest Jobs</div>
+								<div className="see-more" onClick={() => navigate('/jobs')}>
+									see more &gt;&gt;&gt;
+								</div>
+							</div>
 							<div className="div">
 								{getJobsListResponse &&
 									getJobsListResponse.map((job) => {

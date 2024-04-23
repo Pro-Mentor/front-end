@@ -81,11 +81,36 @@ export class SocialService {
 	}
 
 	Get_Jobs(params: Record<string, string> = {}) {
-		console.log(params)
+		// console.log(params)
 		return this.gateway + 'jobs' + '?' + this.qs.setQueryParams(params)
 	}
 
 	Get_Job(jobId: string) {
 		return this.gateway + 'jobs' + '/' + jobId
+	}
+
+	Get_ModeList(params: Record<string, string> = {}) {
+		return this.gateway + 'modes' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Post_CreateEvent() {
+		return this.gateway + 'events'
+	}
+
+	Post_Tag() {
+		return this.gateway + 'tags'
+	}
+
+	Post_Mode() {
+		return this.gateway + 'modes'
+	}
+
+	Get_Events(params: Record<string, string> = {}) {
+		// console.log(params)
+		return this.gateway + 'events' + '?' + this.qs.setQueryParams(params)
+	}
+
+	Get_Event(id: string) {
+		return this.gateway + 'events' + '/' + id
 	}
 }
