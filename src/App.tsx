@@ -16,6 +16,7 @@ import WebEvents from './pages/web/web-events/web-events'
 import Jobs from './pages/web/jobs/jobs'
 import Chats from './pages/web/chats/chats'
 import Profile from './pages/web/profile/profile'
+import CareerGuide from './pages/web/career-guide/career-guide'
 import CreatePost from './pages/web/posts/create-post/create-post'
 import CreateJob from './pages/web/jobs/create-job/create-job'
 import CreateEvent from './pages/web/web-events/create-event/create-event'
@@ -89,7 +90,7 @@ function App() {
 
 						{loggedInUser === 'student' && (
 							<>
-								{/* <Route path="/career-guide" element={<CareerGuide />} /> */}
+								<Route path="/career-guide" element={<CareerGuide />} />
 							</>
 						)}
 					</Route>
